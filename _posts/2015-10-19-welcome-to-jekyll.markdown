@@ -54,7 +54,8 @@ all the detail in there to your username. Change things in `about.md` as well.
 Also in `_layouts/post.html` and
 `_layouts/page.html`, there is a part with "karpathy", change that to your
 username. Basically, search for all text with the original owner's name and
-replace them with your name. 
+replace them with your name. You might also want to delete everything in i
+`assets`, as those are the picture that the original owner uses.  
 
 And voila, you are done.
 
@@ -84,3 +85,13 @@ Configuration file: /Users/hd/Documents/Blog/hduongtrong.github.io/_config.yml
 
 Open your web browser, and go to `http://127.0.0.1:4000/`, you will see your
 post there. 
+
+Now to push this online, just 
+
+```
+cd username.github.io/
+git add .
+git commit -m "First blog"
+git push origin master
+```
+And go to `username.github.io`.

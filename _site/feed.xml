@@ -5,8 +5,8 @@
     <description>Learning Machine Learning</description>
     <link>http://hduongtrong.github.io/</link>
     <atom:link href="http://hduongtrong.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Tue, 20 Oct 2015 00:36:02 -0700</pubDate>
-    <lastBuildDate>Tue, 20 Oct 2015 00:36:02 -0700</lastBuildDate>
+    <pubDate>Tue, 20 Oct 2015 00:53:14 -0700</pubDate>
+    <lastBuildDate>Tue, 20 Oct 2015 00:53:14 -0700</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
@@ -58,7 +58,8 @@ all the detail in there to your username. Change things in &lt;code&gt;about.md&
 Also in &lt;code&gt;_layouts/post.html&lt;/code&gt; and
 &lt;code&gt;_layouts/page.html&lt;/code&gt;, there is a part with &amp;quot;karpathy&amp;quot;, change that to your
 username. Basically, search for all text with the original owner&amp;#39;s name and
-replace them with your name. &lt;/p&gt;
+replace them with your name. You might also want to delete everything in i
+&lt;code&gt;assets&lt;/code&gt;, as those are the picture that the original owner uses.  &lt;/p&gt;
 
 &lt;p&gt;And voila, you are done.&lt;/p&gt;
 
@@ -84,6 +85,14 @@ Configuration file: /Users/hd/Documents/Blog/hduongtrong.github.io/_config.yml
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Open your web browser, and go to &lt;code&gt;http://127.0.0.1:4000/&lt;/code&gt;, you will see your
 post there. &lt;/p&gt;
+
+&lt;p&gt;Now to push this online, just &lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;cd username.github.io/
+git add .
+git commit -m &amp;quot;First blog&amp;quot;
+git push origin master
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;And go to &lt;code&gt;username.github.io&lt;/code&gt;.&lt;/p&gt;
 </description>
         <pubDate>Mon, 19 Oct 2015 09:46:27 -0700</pubDate>
         <link>http://hduongtrong.github.io/jekyll/update/2015/10/19/welcome-to-jekyll/</link>

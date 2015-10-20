@@ -31,11 +31,11 @@
 
   <div class="wrap">
 
-    <div style="float:left; margin-top:10px; margin-right:10px;">
-    <a href="/feed.xml">
-      <img src="/assets/rssicon.svg" width="40">
-    </a>
-    </div>
+    <!div style="float:left; margin-top:10px; margin-right:10px;">
+    <!a href="/feed.xml">
+      <!img src="/assets/rssicon.svg" width="40">
+    <!/a>
+    <!/div>
 
     <a class="site-title" href="/">Hoang Duong blog</a>
     
@@ -123,7 +123,8 @@ all the detail in there to your username. Change things in <code>about.md</code>
 Also in <code>_layouts/post.html</code> and
 <code>_layouts/page.html</code>, there is a part with &quot;karpathy&quot;, change that to your
 username. Basically, search for all text with the original owner&#39;s name and
-replace them with your name. </p>
+replace them with your name. You might also want to delete everything in i
+<code>assets</code>, as those are the picture that the original owner uses.  </p>
 
 <p>And voila, you are done.</p>
 
@@ -149,6 +150,14 @@ Configuration file: /Users/hd/Documents/Blog/hduongtrong.github.io/_config.yml
 </code></pre></div>
 <p>Open your web browser, and go to <code>http://127.0.0.1:4000/</code>, you will see your
 post there. </p>
+
+<p>Now to push this online, just </p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">cd username.github.io/
+git add .
+git commit -m &quot;First blog&quot;
+git push origin master
+</code></pre></div>
+<p>And go to <code>username.github.io</code>.</p>
 
   </article>
 
@@ -189,7 +198,7 @@ post there. </p>
     <div class="footer-col-1 column">
       <ul>
         <li>Hoang Duong blog</li>
-        <!-- <li><a href="mailto:"></a></li> -->
+        <!-- <li><a href="mailto:hduong@berkeley.edu">hduong@berkeley.edu</a></li> -->
       </ul>
     </div>
 
