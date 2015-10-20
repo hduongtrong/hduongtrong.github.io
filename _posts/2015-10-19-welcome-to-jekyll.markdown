@@ -1,34 +1,86 @@
 ---
 layout: post
-title:  "Deep Reinforcement Learning"
+comments: true
+title:  "How to make a blog like this"
 date:   2015-10-19 16:46:27
 categories: jekyll update
+mathjax: true
 ---
-You’ll find this post in your `_posts` directory. Go ahead and edit it and 
-re-build the site to see your changes. You can rebuild the site in many 
-different ways, but the most common way is to run `jekyll serve`, which 
-launches a web server and auto-regenerates your site when a file is updated.
 
-To add new posts, simply add a file in the `_posts` directory that follows the 
-convention `YYYY-MM-DD-name-of-post.ext` and includes the necessary front 
-matter. Take a look at the source for this post to get an idea about how it 
-works.
+## Motivation
+I have been seeing beautiful blog posts coupled with great contents such as 
 
-Jekyll also offers powerful support for code snippets:
+* [The Zen of Gradient Descent](
+    http://blog.mrtz.org/2013/09/07/the-zen-of-gradient-descent.html)
+* [The Unreasonable Effectiveness of Recurrent Neural Networks]( 
+    http://karpathy.github.io/2015/05/21/rnn-effectiveness/ )
+* [Understanding LSTM Networks]( 
+    http://colah.github.io/posts/2015-08-Understanding-LSTMs/)
 
-{% highlight ruby %}
-def print_hi(name)
-  puts "Hi, #{name}"
-end
-print_hi('Tom')
-#=> prints 'Hi, Tom' to STDOUT.
-{% endhighlight %}
+My definition of being "beautiful" is just text and no distraction, look
+good both on mobile and on desktop, and display Latex. My definition of "great
+content" often involve machine learning, optimization, and related topics. 
 
-Check out the [Jekyll docs][jekyll] for more info on how to get the most out of 
-Jekyll. File all bugs/feature requests at [Jekyll’s GitHub repo][jekyll-gh]. If 
-you have questions, you can ask them on 
-[Jekyll’s dedicated Help repository][jekyll-help].
+## Setting up
+So without being further ado, let's start with how to make a blog like those
+three mentioned above blog. You will need a couple components:
 
-[jekyll]:      http://jekyllrb.com
-[jekyll-gh]:   https://github.com/jekyll/jekyll
-[jekyll-help]: https://github.com/jekyll/jekyll-help
+* [Jekyll](http://jekyllrb.com): Pretty easy to install on Mac, just follow the
+  link
+* [Github Pages](https://pages.gith…): Also pretty easy to setup. Create a
+  github account if you haven't got one, then follow the link.
+
+After spending some good hours and failing at setting up the various 
+requirements, here is the trick I found: just clone the blog of the people
+above. In particular, I clone Karpathy blog into mine. Many thanks to Andre
+Karpathy for this, and my apology if my blog accidentally contains some stuffs
+from yours. Ok now open **Terminal** in Mac:
+
+```
+mkdir MyBlog
+# Downloading sample github page from Andre Karpathy
+git clone https://github.com/karpathy/karpathy.github.io.git
+# Downloading your own github page blog. Replacing username with your github
+# user name
+git clone https://github.com/username/username.github.io.git
+cp ./karpathy.github.io/* ./username.github.io/
+# Removing stuff associated with the original owner
+rm nntutorial.md
+rm _posts/* # Hist posts
+```
+
+You will need to change a few more information. Open `_config.yaml`\_ and change
+all the detail in there to your username. Change things in `about.md` as well. 
+Also in `_layouts/post.html` and
+`_layouts/page.html`, there is a part with "karpathy", change that to your
+username. Basically, search for all text with the original owner's name and
+replace them with your name. 
+
+And voila, you are done.
+
+## Hello World
+To create your first blog post, again copy over a sample post say from
+
+```
+cp ./karpathy.github.io/_posts/2015-05-21-rnn-effectiveness.markdown
+   ./username.github.io/_posts/
+```
+And you can start changing things in there. Then do this `jekyll serve` inside
+your `username.github.io` folder. You should see something like this if
+successful 
+
+```
+Configuration file: /Users/hd/Documents/Blog/hduongtrong.github.io/_config.yml
+            Source: /Users/hd/Documents/Blog/hduongtrong.github.io
+       Destination: /Users/hd/Documents/Blog/hduongtrong.github.io/_site
+      Generating... 
+     Build Warning: Layout 'none' requested in feed.xml does not exist.
+                    done.
+ Auto-regeneration: enabled for '/Users/hd/Documents/Blog/hduongtrong.github.io'
+Configuration file: /Users/hd/Documents/Blog/hduongtrong.github.io/_config.yml
+    Server address: http://127.0.0.1:4000/
+  Server running... press ctrl-c to stop.
+```
+
+Open your web browser, and go to `http://127.0.0.1:4000/`, you will see your
+post there. 
