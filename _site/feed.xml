@@ -5,8 +5,8 @@
     <description>Learning Machine Learning</description>
     <link>http://hduongtrong.github.io/</link>
     <atom:link href="http://hduongtrong.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Fri, 20 Nov 2015 15:13:32 -0800</pubDate>
-    <lastBuildDate>Fri, 20 Nov 2015 15:13:32 -0800</lastBuildDate>
+    <pubDate>Fri, 20 Nov 2015 15:23:26 -0800</pubDate>
+    <lastBuildDate>Fri, 20 Nov 2015 15:23:26 -0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
@@ -84,36 +84,36 @@ for \( N(w)\) counts the number of occurance of \(w  \) in \( \mathcal{D}\)&lt;/
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;        Word       Cosine distance
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;hr&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;       jay_z      0.732697
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;       jay z      0.732697
    rick_ross      0.731509
        kanye      0.715282
         shyt      0.705407
- chris_brown      0.697447
-       i_luv      0.694622
-   lady_gaga      0.690142
-  john_mayer      0.686606
+ chris brown      0.697447
+       i luv      0.694622
+   lady gaga      0.690142
+  john mayer      0.686606
         ozzy      0.678592
-  soulja_boy      0.671136
+  soulja boy      0.671136
      rihanna      0.670854
         juss      0.670568
-   lil_wayne      0.669848
+   lil wayne      0.669848
      beyonce      0.667990
-       cuz_u      0.664925
+       cuz u      0.664925
       mariah      0.664813
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;jonas&lt;em&gt;brothers      0.664232
+&lt;p&gt;jonas brothers      0.664232
             akon      0.658498
             jayz      0.656809
-    adam&lt;/em&gt;lambert      0.650885
+    adam lambert      0.650885
        radiohead      0.650324
-  kim&lt;em&gt;kardashian      0.650262
+  kim kardashian      0.650262
          britney      0.649744
-    taylor&lt;/em&gt;swift      0.648627
+    taylor swift      0.648627
           bieber      0.645617
          whitney      0.645454
-   avril&lt;em&gt;lavigne      0.643974
-carrie&lt;/em&gt;underwood      0.643186
- michael_jackson      0.641698
+   avril lavigne      0.643974
+carrie underwood      0.643186
+ michael jackson      0.641698
          ritchie      0.641504&lt;/p&gt;
 &lt;/blockquote&gt;
 </description>
@@ -126,7 +126,8 @@ carrie&lt;/em&gt;underwood      0.643186
     
       <item>
         <title>Deep Reinforcement Learning</title>
-        <description>&lt;p&gt;Deep Reinforcement Learning is an exciting new field that encompasses many
+        <description>&lt;p&gt;(INCOMPLETE)
+Deep Reinforcement Learning is an exciting new field that encompasses many
 different fields: computer science, optimal control, statistics, machine
 learning, and so on. Its application are numerous.&lt;/p&gt;
 
