@@ -82,17 +82,3 @@ The official website of word2vec has a very fast code in C++, where one can test
 >          beyonce		0.667990
 >            cuz u		0.664925
 >           mariah		0.664813
->   jonas brothers		0.664232
->             akon		0.658498
->             jayz		0.656809
->     adam lambert		0.650885
->        radiohead		0.650324
->   kim kardashian		0.650262
->          britney		0.649744
->     taylor swift		0.648627
->           bieber		0.645617
->          whitney		0.645454
->    avril lavigne		0.643974
-> carrie underwood		0.643186
->  michael jackson		0.641698
->          ritchie		0.641504
