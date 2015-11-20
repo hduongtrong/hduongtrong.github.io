@@ -1,1 +1,1 @@
-This is my blog. Follow this link [hduongtrong](hduongtrong.github.io)
+This is my blog. Follow this link [hduongtrong](http://hduongtrong.github.io)
