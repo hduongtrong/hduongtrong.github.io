@@ -5,8 +5,8 @@
     <description>Learning Machine Learning</description>
     <link>http://hduongtrong.github.io/</link>
     <atom:link href="http://hduongtrong.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Fri, 20 Nov 2015 15:24:43 -0800</pubDate>
-    <lastBuildDate>Fri, 20 Nov 2015 15:24:43 -0800</lastBuildDate>
+    <pubDate>Fri, 20 Nov 2015 15:34:03 -0800</pubDate>
+    <lastBuildDate>Fri, 20 Nov 2015 15:34:03 -0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
@@ -44,7 +44,27 @@
 &lt;p&gt;You used to call me on my cell phone. &lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;and a window k (consider k = 1 for simplicity), we define the context of a word as its k neighbor words. Word2vec defines a positive dataset \( \mathcal{D} \) of [word, context] pairs: [you, used], [used, you], [used, to], [to, used], ... Each of these pair did appear in the dataset, so we associate them with a label 1. We now define the negative word pairs dataset \( \mathcal{D&amp;#39;} \) [word, not_context], for example [you, someRandomWord], [used, someOtherRandomWord], ..., and label these pair as 0 (Note that when we pick one random word from the vocabulary, there is some tiny chance that the picked word is actually a valid context, but it is very small that we consider it 0).  &lt;/p&gt;
+&lt;p&gt;and a window k (consider k = 1 for simplicity), we define the context of a word as its k neighbor words. Word2vec defines a positive dataset \( \mathcal{D} \) of &lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;[word, context] pairs: 
+[you, used] 
+[used, you] 
+[used, to] 
+[to, used], 
+... &lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Each of these pair did appear in the dataset, so we associate them with a label 1. We now define the negative word pairs dataset \( \mathcal{D&amp;#39;} \) &lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;[word, not_context] pairs: 
+[you, someRandomWord] 
+[used, someOtherRandomWord]
+... &lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;and label these pair as 0 (Note that when we pick one random word from the vocabulary, there is some tiny chance that the picked word is actually a valid context, but it is very small that we consider it 0).  &lt;/p&gt;
 
 &lt;p&gt;We then use the logistic loss to train a vector representation for each word such as it maximize
 $$ \arg \max _{\theta} \prod _{(w,c) \in \mathcal{D}}  p(D _{w,c} = 1 \mid w,c,\theta) 
@@ -54,7 +74,7 @@ $$ \arg \max _{\theta} \sum _{(w,c) \in \mathcal{D }} \log \sigma(  v _c \cdot v
                        \sum _{(w,c) \in \mathcal{D&amp;#39;}} \log \sigma(- v _c \cdot v _w),$$
 for \( \sigma(x) = \frac{1}{1 + e ^ {-x}} \)&lt;/p&gt;
 
-&lt;p&gt;Now to be clear, all of the \( v _w\) are our vector representation of word, together, they form a matrix of size (vocabulary size by projection size), e.g. (100,000 by 300). All of the \( v _w \) are our vector representation of context, together, they form a matrix of similar size if we have one negative sample per positive sample. In practice this later matrix is often discarded. We basically optimize with respect to those two matrix, such that the product \( v _c \cdot v _w\) is big for those (word, context) we see in our dataset, and small for those (word, context) we do not see in our dataset. &lt;/p&gt;
+&lt;p&gt;Now to be clear, all of the \( v _w\) are our vector representation of word, together, they form a matrix of size (vocabulary size by projection size), e.g. (100,000 by 300). All of the \( v _c \) are our vector representation of context, together, they form a matrix of similar size if we have one negative sample per positive sample. In practice this later matrix is often discarded. We basically optimize with respect to those two matrix, such that the product \( v _c \cdot v _w\) is big for those (word, context) we see in our dataset, and small for those (word, context) we do not see in our dataset. &lt;/p&gt;
 
 &lt;h2&gt;Enhancement&lt;/h2&gt;
 
@@ -102,9 +122,9 @@ for \( N(w)\) counts the number of occurance of \(w  \) in \( \mathcal{D}\)&lt;/
       mariah      0.664813
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/blockquote&gt;
 </description>
-        <pubDate>Mon, 19 Oct 2015 18:28:27 -0700</pubDate>
-        <link>http://hduongtrong.github.io/2015/10/19/word2vec/</link>
-        <guid isPermaLink="true">http://hduongtrong.github.io/2015/10/19/word2vec/</guid>
+        <pubDate>Fri, 20 Nov 2015 07:28:27 -0800</pubDate>
+        <link>http://hduongtrong.github.io/2015/11/20/word2vec/</link>
+        <guid isPermaLink="true">http://hduongtrong.github.io/2015/11/20/word2vec/</guid>
         
         
       </item>
@@ -137,11 +157,7 @@ learning, and so on. Its application are numerous.&lt;/p&gt;
         \log q(X;\theta) \right]$$&lt;/p&gt;
 
 &lt;p&gt;Armed with this theorem, we can use a sample average to estimate the expectation. &lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Proposition&lt;/strong&gt; &lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;xrange&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; 
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+</description>
         <pubDate>Mon, 19 Oct 2015 18:28:27 -0700</pubDate>
         <link>http://hduongtrong.github.io/2015/10/19/deep-reinforcement-learning/</link>
         <guid isPermaLink="true">http://hduongtrong.github.io/2015/10/19/deep-reinforcement-learning/</guid>

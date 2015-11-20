@@ -30,10 +30,3 @@ A policy gradient algorithm then calculate \\( \nabla\_ {\theta} \eta (\theta) \
 		\log q(X;\theta) \right]$$
 
 Armed with this theorem, we can use a sample average to estimate the expectation. 
-
-**Proposition** 
-
-```python
-for i in xrange(10):
-	if 
-```
