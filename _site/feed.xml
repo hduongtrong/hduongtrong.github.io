@@ -5,8 +5,8 @@
     <description>Learning Machine Learning</description>
     <link>http://hduongtrong.github.io/</link>
     <atom:link href="http://hduongtrong.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Fri, 20 Nov 2015 15:36:04 -0800</pubDate>
-    <lastBuildDate>Fri, 20 Nov 2015 15:36:04 -0800</lastBuildDate>
+    <pubDate>Fri, 20 Nov 2015 15:39:53 -0800</pubDate>
+    <lastBuildDate>Fri, 20 Nov 2015 15:39:53 -0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
@@ -47,21 +47,29 @@
 &lt;p&gt;and a window k (consider k = 1 for simplicity), we define the context of a word as its k neighbor words. Word2vec defines a positive dataset \( \mathcal{D} \) of &lt;/p&gt;
 
 &lt;blockquote&gt;
-&lt;p&gt;[word, context] pairs: 
-[you, used] 
-[used, you] 
-[used, to] 
-[to, used], 
-... &lt;/p&gt;
+&lt;p&gt;[word, context] pairs: &lt;/p&gt;
+
+&lt;p&gt;[you, used]&lt;/p&gt;
+
+&lt;p&gt;[used, you]&lt;/p&gt;
+
+&lt;p&gt;[used, to]&lt;/p&gt;
+
+&lt;p&gt;[to, used]&lt;/p&gt;
+
+&lt;p&gt;... &lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;p&gt;Each of these pair did appear in the dataset, so we associate them with a label 1. We now define the negative word pairs dataset \( \mathcal{D&amp;#39;} \) &lt;/p&gt;
 
 &lt;blockquote&gt;
-&lt;p&gt;[word, not_context] pairs: 
-[you, someRandomWord] 
-[used, someOtherRandomWord]
-... &lt;/p&gt;
+&lt;p&gt;[word, not_context] pairs: &lt;/p&gt;
+
+&lt;p&gt;[you, someRandomWord] &lt;/p&gt;
+
+&lt;p&gt;[used, someOtherRandomWord]&lt;/p&gt;
+
+&lt;p&gt;... &lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;p&gt;and label these pair as 0 (Note that when we pick one random word from the vocabulary, there is some tiny chance that the picked word is actually a valid context, but it is very small that we consider it 0).  &lt;/p&gt;

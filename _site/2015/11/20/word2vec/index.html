@@ -112,21 +112,29 @@
 <p>and a window k (consider k = 1 for simplicity), we define the context of a word as its k neighbor words. Word2vec defines a positive dataset \( \mathcal{D} \) of </p>
 
 <blockquote>
-<p>[word, context] pairs: 
-[you, used] 
-[used, you] 
-[used, to] 
-[to, used], 
-... </p>
+<p>[word, context] pairs: </p>
+
+<p>[you, used]</p>
+
+<p>[used, you]</p>
+
+<p>[used, to]</p>
+
+<p>[to, used]</p>
+
+<p>... </p>
 </blockquote>
 
 <p>Each of these pair did appear in the dataset, so we associate them with a label 1. We now define the negative word pairs dataset \( \mathcal{D&#39;} \) </p>
 
 <blockquote>
-<p>[word, not_context] pairs: 
-[you, someRandomWord] 
-[used, someOtherRandomWord]
-... </p>
+<p>[word, not_context] pairs: </p>
+
+<p>[you, someRandomWord] </p>
+
+<p>[used, someOtherRandomWord]</p>
+
+<p>... </p>
 </blockquote>
 
 <p>and label these pair as 0 (Note that when we pick one random word from the vocabulary, there is some tiny chance that the picked word is actually a valid context, but it is very small that we consider it 0).  </p>
