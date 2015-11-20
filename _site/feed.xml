@@ -5,9 +5,124 @@
     <description>Learning Machine Learning</description>
     <link>http://hduongtrong.github.io/</link>
     <atom:link href="http://hduongtrong.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Tue, 20 Oct 2015 00:53:14 -0700</pubDate>
-    <lastBuildDate>Tue, 20 Oct 2015 00:53:14 -0700</lastBuildDate>
+    <pubDate>Fri, 20 Nov 2015 15:08:48 -0800</pubDate>
+    <lastBuildDate>Fri, 20 Nov 2015 15:08:48 -0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
+    
+      <item>
+        <title>Word Representation - Word2Vec</title>
+        <description>&lt;h2&gt;Credits&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Original authors: &lt;a href=&quot;http://arxiv.org/abs/1301.3781&quot;&gt;Efficient Estimation of Word Representations in Vector Space&lt;/a&gt;. Tomas Mikolov, Kai Chen, Greg Corrado, Jeffrey Dean.&lt;/li&gt;
+&lt;li&gt;Code Website: &lt;a href=&quot;https://code.google.com/p/word2vec/&quot;&gt;Word2Vec&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Explained Paper: &lt;a href=&quot;http://u.cs.biu.ac.il/%7Enlp/wp-content/uploads/Neural-Word-Embeddings-as-Implicit-Matrix-Factorization-NIPS-2014.pdf&quot;&gt;Neural Word Embedding as Implicit Matrix Factorization&lt;/a&gt;. Omer Levy, Yoav Goldberg&lt;/li&gt;
+&lt;li&gt;Explained Paper Short Version: &lt;a href=&quot;http://arxiv.org/abs/1402.3722&quot;&gt;Word2vec Explained&lt;/a&gt;. Yoav Goldberg, Omer Levy&lt;/li&gt;
+&lt;li&gt;Code easier to understand: &lt;a href=&quot;https://github.com/fchollet/keras/blob/master/examples/skipgram_word_embeddings.py&quot;&gt;Keras Word2vec&lt;/a&gt;. Francois Chollet. &lt;/li&gt;
+&lt;li&gt;TensorFlow code: &lt;a href=&quot;http://tensorflow.org/tutorials/word2vec/index.md&quot;&gt;TensorFlow word2vec&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;If your time is in short supply, just read the Explained Paper Short Version. &lt;/p&gt;
+
+&lt;h2&gt;Goals&lt;/h2&gt;
+
+&lt;p&gt;English language has in the order of 100,000 words. If we are working on an NLP problem, one can represent each word as a one-hot vector of dimension 100,000. This is a sparse and high dimension input. Our goal is to map this into dense low dimensional input of around 300 dimension, \( v _w\). Then we can feed this to some other model like LSTM for some NLP tasks. Hopefully, our new representation respects some semantic rules like &lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Words with similar meaning should be close to each other&lt;/li&gt;
+&lt;li&gt;The direction from &amp;quot;do&amp;quot; to &amp;quot;doing&amp;quot; should be similar to &amp;quot;go&amp;quot; to &amp;quot;going&amp;quot;&lt;/li&gt;
+&lt;li&gt;Doing addition: King - male + female ~ queen&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;It is surprising that word2vec can give us this, without any label on the meaning of words. All it needs is words cooccurance. It is also surpsisingly simple, nothing more complicated than logistic regression.&lt;/p&gt;
+
+&lt;h2&gt;Ideas of Word2vec&lt;/h2&gt;
+
+&lt;p&gt;Given a sentence: &lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;You used to call me on my cell phone. &lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;and a window k (consider k = 1 for simplicity), we define the context of a word as its k neighbor words. Word2vec defines a positive dataset \( \mathcal{D} \) of [word, context] pairs: [you, used], [used, you], [used, to], [to, used], ... Each of these pair did appear in the dataset, so we associate them with a label 1. We now define the negative word pairs dataset \( \mathcal{D&amp;#39;} \) [word, not_context], for example [you, someRandomWord], [used, someOtherRandomWord], ..., and label these pair as 0 (Note that when we pick one random word from the vocabulary, there is some tiny chance that the picked word is actually a valid context, but it is very small that we consider it 0).  &lt;/p&gt;
+
+&lt;p&gt;We then use the logistic loss to train a vector representation for each word such as it maximize
+$$ \arg \max _{\theta} \prod _{(w,c) \in \mathcal{D}}  p(D _{w,c} = 1 \mid w,c,\theta) 
+                       \prod _{(w,c) \in \mathcal{D&amp;#39;}} p(D _{w,c} = 0 \mid w,c,\theta).$$
+So we basically maximize the probability of seeing those word pairs in \( \mathcal{D}\), and not seeing those word pairs in \( \mathcal{D&amp;#39;}\). Taking log, we can rewrite the optimization as 
+$$ \arg \max _{\theta} \sum _{(w,c) \in \mathcal{D }} \log \sigma(  v _c \cdot v _w) + 
+                       \sum _{(w,c) \in \mathcal{D&amp;#39;}} \log \sigma(- v _c \cdot v _w),$$
+for \( \sigma(x) = \frac{1}{1 + e ^ {-x}} \)&lt;/p&gt;
+
+&lt;p&gt;Now to be clear, all of the \( v _w\) are our vector representation of word, together, they form a matrix of size (vocabulary size by projection size), e.g. (100,000 by 300). All of the \( v _w \) are our vector representation of context, together, they form a matrix of similar size if we have one negative sample per positive sample. In practice this later matrix is often discarded. We basically optimize with respect to those two matrix, such that the product \( v _c \cdot v _w\) is big for those (word, context) we see in our dataset, and small for those (word, context) we do not see in our dataset. &lt;/p&gt;
+
+&lt;h2&gt;Enhancement&lt;/h2&gt;
+
+&lt;p&gt;The final method used is a bit more complicated, with tricks that make it work better, for example&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Instead of sampling one negative context per [word, context] pair uniformly, it samples \(m\) context words with probability distribution proportional to how often each context word is in the dataset.&lt;br&gt;&lt;/li&gt;
+&lt;li&gt;Instead of using a fix \( k\) window around each word, the window is uniformly distributed from \( 1,2, ..., K \)&lt;/li&gt;
+&lt;li&gt;Treat all rare words as an &amp;quot;UNK&amp;quot; token, and downsampling most common words. &lt;/li&gt;
+&lt;li&gt;The method we mention so far is called the Skip-Gram Negative Sampling, the original paper also mentions the Continuous Bag of Words, where it models the probability of word given context.  The authors claim that the skip-gram negative sampling works better for bigger dataset (see more in the TensorFlow example). &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2&gt;Extra&lt;/h2&gt;
+
+&lt;p&gt;This word representation, finding the two vector (matrix) representation \( V _w\) and \( V _c\) can be thought of as factorizing an implicit matrix \( M = V _w \cdot V _c ^ T \), where each element of \( M, M _{ij}\) reflect the strength of association between word \( i \) and context \( j\). More specifically, it is found that 
+$$ M _{ij} = v _w \cdot v _c = PMI(w _i, c _j) - \log k$$, 
+for PMI is the pointwise mutual information, defined as 
+$$PMI(w _i, c _j) = \log \left( \frac { N(w,c) |\mathcal{D}|}{ N(w) N(c) } \right)$$, 
+for \( N(w)\) counts the number of occurance of \(w  \) in \( \mathcal{D}\)&lt;/p&gt;
+
+&lt;h2&gt;Testing out&lt;/h2&gt;
+
+&lt;p&gt;The official website of word2vec has a very fast code in C++, where one can test things out pretty easily. Head over there, training the model should take five minutes. It even has the option of download pre-trained models. Here I&amp;#39;m using there pre-trained model on Google News words, and find similar words to a word (think of this like a Thesaurus)&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Word: eminem  Position in vocabulary: 566691&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;        Word       Cosine distance
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;hr&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;       jay_z      0.732697
+   rick_ross      0.731509
+       kanye      0.715282
+        shyt      0.705407
+ chris_brown      0.697447
+       i_luv      0.694622
+   lady_gaga      0.690142
+  john_mayer      0.686606
+        ozzy      0.678592
+  soulja_boy      0.671136
+     rihanna      0.670854
+        juss      0.670568
+   lil_wayne      0.669848
+     beyonce      0.667990
+       cuz_u      0.664925
+      mariah      0.664813
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;jonas&lt;em&gt;brothers      0.664232
+            akon      0.658498
+            jayz      0.656809
+    adam&lt;/em&gt;lambert      0.650885
+       radiohead      0.650324
+  kim&lt;em&gt;kardashian      0.650262
+         britney      0.649744
+    taylor&lt;/em&gt;swift      0.648627
+          bieber      0.645617
+         whitney      0.645454
+   avril&lt;em&gt;lavigne      0.643974
+carrie&lt;/em&gt;underwood      0.643186
+ michael_jackson      0.641698
+         ritchie      0.641504&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+        <pubDate>Mon, 19 Oct 2015 18:28:27 -0700</pubDate>
+        <link>http://hduongtrong.github.io/2015/10/19/word2vec/</link>
+        <guid isPermaLink="true">http://hduongtrong.github.io/2015/10/19/word2vec/</guid>
+        
+        
+      </item>
     
       <item>
         <title>How to make a blog like this</title>
