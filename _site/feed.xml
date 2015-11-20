@@ -5,8 +5,8 @@
     <description>Learning Machine Learning</description>
     <link>http://hduongtrong.github.io/</link>
     <atom:link href="http://hduongtrong.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Fri, 20 Nov 2015 15:11:36 -0800</pubDate>
-    <lastBuildDate>Fri, 20 Nov 2015 15:11:36 -0800</lastBuildDate>
+    <pubDate>Fri, 20 Nov 2015 15:13:32 -0800</pubDate>
+    <lastBuildDate>Fri, 20 Nov 2015 15:13:32 -0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
@@ -160,102 +160,6 @@ learning, and so on. Its application are numerous.&lt;/p&gt;
         <link>http://hduongtrong.github.io/2015/10/19/deep-reinforcement-learning/</link>
         <guid isPermaLink="true">http://hduongtrong.github.io/2015/10/19/deep-reinforcement-learning/</guid>
         
-        
-      </item>
-    
-      <item>
-        <title>How to make a blog like this</title>
-        <description>&lt;h2&gt;Motivation&lt;/h2&gt;
-
-&lt;p&gt;I have been seeing beautiful blog posts coupled with great contents such as &lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&quot;http://blog.mrtz.org/2013/09/07/the-zen-of-gradient-descent.html&quot;&gt;The Zen of Gradient Descent&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;http://karpathy.github.io/2015/05/21/rnn-effectiveness/&quot;&gt;The Unreasonable Effectiveness of Recurrent Neural Networks&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;http://colah.github.io/posts/2015-08-Understanding-LSTMs/&quot;&gt;Understanding LSTM Networks&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;My definition of being &amp;quot;beautiful&amp;quot; is just text and no distraction, look
-good both on mobile and on desktop, and display Latex. My definition of &amp;quot;great
-content&amp;quot; often involve machine learning, optimization, and related topics. &lt;/p&gt;
-
-&lt;h2&gt;Setting up&lt;/h2&gt;
-
-&lt;p&gt;So without being further ado, let&amp;#39;s start with how to make a blog like those
-three mentioned above blog. You will need a couple components:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&quot;http://jekyllrb.com&quot;&gt;Jekyll&lt;/a&gt;: Pretty easy to install on Mac, just follow the
-link&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;https://pages.gith%E2%80%A6&quot;&gt;Github Pages&lt;/a&gt;: Also pretty easy to setup. Create a
-github account if you haven&amp;#39;t got one, then follow the link.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;After spending some good hours and failing at setting up the various 
-requirements, here is the trick I found: just clone the blog of the people
-above. In particular, I clone Karpathy blog into mine. Many thanks to Andre
-Karpathy for this, and my apology if my blog accidentally contains some stuffs
-from yours. Ok now open &lt;strong&gt;Terminal&lt;/strong&gt; in Mac:&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;mkdir MyBlog
-# Downloading sample github page from Andre Karpathy
-git clone https://github.com/karpathy/karpathy.github.io.git
-# Downloading your own github page blog. Replacing username with your github
-# user name
-git clone https://github.com/username/username.github.io.git
-cp ./karpathy.github.io/* ./username.github.io/
-# Removing stuff associated with the original owner
-rm nntutorial.md
-rm _posts/* # Hist posts
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;You will need to change a few more information. Open &lt;code&gt;_config.yaml&lt;/code&gt;_ and change
-all the detail in there to your username. Change things in &lt;code&gt;about.md&lt;/code&gt; as well. 
-Also in &lt;code&gt;_layouts/post.html&lt;/code&gt; and
-&lt;code&gt;_layouts/page.html&lt;/code&gt;, there is a part with &amp;quot;karpathy&amp;quot;, change that to your
-username. Basically, search for all text with the original owner&amp;#39;s name and
-replace them with your name. You might also want to delete everything in i
-&lt;code&gt;assets&lt;/code&gt;, as those are the picture that the original owner uses.  &lt;/p&gt;
-
-&lt;p&gt;And voila, you are done.&lt;/p&gt;
-
-&lt;h2&gt;Hello World&lt;/h2&gt;
-
-&lt;p&gt;To create your first blog post, again copy over a sample post say from&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;cp ./karpathy.github.io/_posts/2015-05-21-rnn-effectiveness.markdown
-   ./username.github.io/_posts/
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;And you can start changing things in there. Then do this &lt;code&gt;jekyll serve&lt;/code&gt; inside
-your &lt;code&gt;username.github.io&lt;/code&gt; folder. You should see something like this if
-successful &lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;Configuration file: /Users/hd/Documents/Blog/hduongtrong.github.io/_config.yml
-            Source: /Users/hd/Documents/Blog/hduongtrong.github.io
-       Destination: /Users/hd/Documents/Blog/hduongtrong.github.io/_site
-      Generating... 
-     Build Warning: Layout &amp;#39;none&amp;#39; requested in feed.xml does not exist.
-                    done.
- Auto-regeneration: enabled for &amp;#39;/Users/hd/Documents/Blog/hduongtrong.github.io&amp;#39;
-Configuration file: /Users/hd/Documents/Blog/hduongtrong.github.io/_config.yml
-    Server address: http://127.0.0.1:4000/
-  Server running... press ctrl-c to stop.
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Open your web browser, and go to &lt;code&gt;http://127.0.0.1:4000/&lt;/code&gt;, you will see your
-post there. &lt;/p&gt;
-
-&lt;p&gt;Now to push this online, just &lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;cd username.github.io/
-git add .
-git commit -m &amp;quot;First blog&amp;quot;
-git push origin master
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;And go to &lt;code&gt;username.github.io&lt;/code&gt;.&lt;/p&gt;
-</description>
-        <pubDate>Mon, 19 Oct 2015 09:46:27 -0700</pubDate>
-        <link>http://hduongtrong.github.io/jekyll/update/2015/10/19/welcome-to-jekyll/</link>
-        <guid isPermaLink="true">http://hduongtrong.github.io/jekyll/update/2015/10/19/welcome-to-jekyll/</guid>
-        
-        
-        <category>jekyll</category>
-        
-        <category>update</category>
         
       </item>
     
