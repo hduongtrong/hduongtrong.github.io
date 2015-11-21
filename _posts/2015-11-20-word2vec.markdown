@@ -32,29 +32,27 @@ Given a sentence:
 
 > You used to call me on my cell phone. 
 
-and a window k (consider k = 1 for simplicity), we define the context of a word as its k neighbor words. Word2vec defines a positive dataset \\( \mathcal{D} \\) of 
+and a window k (consider k = 1 for simplicity), we define the context of a word as its k neighbor words. Word2vec defines the positive dataset \\( \mathcal{D} \\) of 
 
-> [word, context] pairs: 
 
-> [you, used]
-
-> [used, you]
-
-> [used, to]
-
-> [to, used]
-
-> ... 
+| word 	 | context |
+| -------| ------- |
+| you    | used    |
+| used   | you     |
+| used   | to      |
+| to     | used    |
+| to     | call    |
+ 
 
 Each of these pair did appear in the dataset, so we associate them with a label 1. We now define the negative word pairs dataset \\( \mathcal{D'} \\) 
 
-> [word, not_context] pairs: 
+| word 	 | non_context  |
+| -------| ------------ |
+| you    | random_word1 |
+| used   | random_word2 |
+| to	 | random_word3 |
+| call   | random_word4 |
 
-> [you, someRandomWord] 
-
-> [used, someOtherRandomWord]
-
-> ... 
 
 and label these pair as 0 (Note that when we pick one random word from the vocabulary, there is some tiny chance that the picked word is actually a valid context, but it is very small that we consider it 0).  
 

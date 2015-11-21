@@ -81,22 +81,22 @@ Deep Reinforcement Learning is an exciting new field that encompasses many
 different fields: computer science, optimal control, statistics, machine
 learning, and so on. Its application are numerous.</p>
 
-<h2>Policy Gradient</h2>
+<h2 id="policy-gradient">Policy Gradient</h2>
 
 <p><strong>Definition</strong> A Markov Decision Process contains</p>
 
 <ul>
 <li>\( \pi : \mathcal{S} \rightarrow \Delta(\mathcal(A)) \), the stochastic policy. </li>
-<li>\( \eta(\pi) = \mathbb{E} \left[ R_0 + \gamma R_1 + \gamma^2 R_2 +<br>
+<li>\( \eta(\pi) = \mathbb{E} \left[ R_0 + \gamma R_1 + \gamma<sup>2</sup> R_2 +<br>
 ... \right] \)</li>
 <li>\( p: \mathcal{S} \times \mathcal{A} \times \mathcal{S} \rightarrow \mathbb{R} \), the state transition probability</li>
 <li>\( \mu : \mathcal{S} \rightarrow \mathbb{R} \), the probability distribution over the initial state, \( s_0 \)</li>
-<li>\( \theta \in \mathbb{R}^n \), a vector of parameter that parameterizes the stochastic policy \(\pi\)</li>
+<li>\( \theta \in \mathbb{R}<sup>n</sup> \), a vector of parameter that parameterizes the stochastic policy \(\pi\)</li>
 </ul>
 
 <p>A policy gradient algorithm then calculate \( \nabla_ {\theta} \eta (\theta) \), and make proceed as a standard gradient ascent algorithm. We approximate the gradient using Monte Carlo estimation, since we don&#39;t have access to the underlying probability distribution. </p>
 
-<p><strong>Theorem</strong> Monte Carlo estimation. Let \( X : \Omega \rightarrow \mathbb{R} ^ n \) be a random variable with probability distribution \(q\), and \(f : \mathbb {R}^n \rightarrow \mathbb{R} \). Then 
+<p><strong>Theorem</strong> Monte Carlo estimation. Let \( X : \Omega \rightarrow \mathbb{R} ^ n \) be a random variable with probability distribution \(q\), and \(f : \mathbb {R}<sup>n</sup> \rightarrow \mathbb{R} \). Then 
     $$ \frac{\partial}{\partial \theta } \mathbb {E} \left[ f(X) \right] = 
         \mathbb{E} \left[ f(X) \frac{\partial}{\partial \theta } 
         \log q(X;\theta) \right]$$</p>
