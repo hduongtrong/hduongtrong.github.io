@@ -79,7 +79,8 @@ The convergence rate is not as good, since we are in a more general case. We say
 We quickly mention the (Nesterov) momentum method here, basically, each iteration, instead of updating \\( x _ k \\) along the direction of gradient, it updates along the weighted average of all the gradient computed so far, with more weight to the recent gradients. I don't think it's quite like that but it is the idea, using the previous computed gradients. 
 
 **Algorithm** [**_Nesterov Momentum_**] The update rule for Nesterov method, for constant stepsize \\( \alpha \\) and momentum rate \\( \beta \\) is 
-$$x _ {k + 1} = x _ k - \alpha \nabla f ( x _ k + \beta (x _ k - x _ { k - 1} ) + \beta ( x _ k - x _ { k - 1})$$
+$$x _ {k + 1} = x _ k - \alpha \nabla f ( x _ k + \beta (x _ k - x _ { k - 1} ) + $$ 
+$$+ \beta ( x _ k - x _ { k - 1})$$
 
 If we were to be careful with the analysis before, for L-Lipschitz gradient and strongly convex function with parameter \\( m \\), we have the rate of convergence is \\( O \left( \frac{L}{m} \log \frac{1}{\epsilon} \right)\\). With the Nesterov method, we get an improvement to \\( O \left( \sqrt{\frac{L}{m}} \log \frac{1}{\epsilon} \right)\\). Similarly, for L-Lipschitz gradient, the error rate before was \\( O \left( \frac{L}{\epsilon} \right)\\), now with Nesterov momentum method, we have \\( O \left( \sqrt{\frac{L}{\epsilon}}\right)\\). 
 So Nesteve momentum method gives a bit better rate for very little computational cost. 
