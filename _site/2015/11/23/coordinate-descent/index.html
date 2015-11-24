@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Gradient Descent and Variants - Convergence Rate Summary</title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="Learning Machine Learning">
+    <link rel="canonical" href="http://hduongtrong.github.io/2015/11/23/coordinate-descent/">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+
+    <!-- Google Analytics -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      ga('create', 'UA-3698471-23', 'auto');
+      ga('send', 'pageview');
+    </script>
+
+</head>
+
+
+    <body>
+
+    <header class="site-header">
+
+  <div class="wrap">
+
+    <!div style="float:left; margin-top:10px; margin-right:10px;">
+    <!a href="/feed.xml">
+      <!img src="/assets/rssicon.svg" width="40">
+    <!/a>
+    <!/div>
+
+    <a class="site-title" href="/">Hoang Duong blog</a>
+    
+    <nav class="site-nav">
+      <a href="#" class="menu-icon">
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+           viewBox="0 0 18 15" enable-background="new 0 0 18 15" xml:space="preserve">
+          <path fill="#505050" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0
+            h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#505050" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484
+            h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#505050" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0
+            c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+      </a>
+      <div class="trigger">
+        
+          <a class="page-link" href="/about/">About</a>
+        
+          
+        
+          
+        
+      </div>
+    </nav>
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrap">
+      <div class="post">
+
+  <header class="post-header">
+    <h1>Gradient Descent and Variants - Convergence Rate Summary</h1>
+    <p class="meta">Nov 23, 2015</p>
+  </header>
+
+  <article class="post-content">
+  <h4 id="credits">Credits</h4>
+
+<ul>
+<li>Ben Retch - Berkeley EE227C Convex Optimization Spring 2015</li>
+<li>Moritz Hardt - <a href="http://mrtzh.github.io/2013/09/07/the-zen-of-gradient-descent.html">The Zen of Gradient Descent</a></li>
+<li>Yu. Nesterov - <a href="http://www.optimization-online.org/DB_FILE/2010/01/2527.pdf">Efficiency of coordinate descent methods on huge-scale optimization problems</a></li>
+<li>Peter Richtarik, Martin Takac - <a href="http://arxiv.org/abs/1107.2848">Iteration Complexity of Randomized Block-Coordinate Descent Methods for Minimizing a Composite Function</a></li>
+</ul>
+
+<h4 id="goals">Goals</h4>
+
+<p>Summary the convergence rate of various gradient descent variants.</p>
+
+<ul>
+<li>Gradient Descent</li>
+<li>Gradient Descent with Momentum</li>
+<li>Stochastic Gradient Descent</li>
+<li>Coordinate Gradient Descent</li>
+</ul>
+
+<p>with a focus on the last one.</p>
+
+<h2 id="1-gradient-descent"><strong>1. Gradient Descent</strong></h2>
+
+<h4 id="1-1-defining-algorithm">1.1. Defining Algorithm</h4>
+
+<p>The goal here is to minimize a convex function \( f: \mathbb{R} ^ n \rightarrow \mathbb{R} \) without constraint. </p>
+
+<p><strong>Definition</strong> [<strong><em>Convex function</em></strong>] A function \( f : \mathbb{R} ^ n \rightarrow \mathbb{R} \) is convex if its domain of \( f \) is a convex set, and \( \forall x, y \in \rm{dom}(f)\), we have 
+$$f(\theta x + (1 - \theta) y) \le \theta f(x) + (1 - \theta) f(y)$$</p>
+
+<p>Graphically, it means if we connect two points in the graph of the function to create a linear line, that linear line lies above the function (for those points in between). We often work with a nicer definition of convex function, when it is differentiable, as in </p>
+
+<p><strong>Theorem</strong> [<strong><em>First Order Condition</em></strong>] Suppose \( f \) is differentiable. Then \( f \) is convex iff its domain is convex and 
+$$ f(y) \ge f(x) + \nabla f(x) ^ T (y - x) , \forall x, y$$</p>
+
+<p>Graphically, it means the tangent line lies below the function at any point. Finally, we state the second-order condition for completeness.</p>
+
+<p><strong>Theorem</strong> [<strong><em>Second Order Condition</em></strong>] Assume that \( f \) is twice differentiable, that is, its Hessian exists at each point in the domain of f, which is open. Then \( f \) is convex iff its Hessian is positive semidefinite. </p>
+
+<p>Working with general convex function turns out to be very hard, we instead need the following condition</p>
+
+<p><strong>Definition</strong> [<strong><em>L-Lipschitz Gradient</em></strong>] \( f \) is said to has L-Lipschitz gradient iff 
+$$ \left | \nabla f(x) - \nabla f(y) \right | \le L || x - y || $$ 
+$$ \Leftrightarrow f(y) \le f(x) + \nabla f(x) ^ T (y - x) + \frac{L}{2} || y - x || ^ 2 $$</p>
+
+<p>Graphically, it means the function is not too convex, it is upperbounded by a quadratic function. Having this condition is necessary in most of the convergence result in gradient descent. Having an additional condition will make life even easier, this condition is stated in </p>
+
+<p><strong>Definition</strong> [<strong><em>m Strongly Convex</em></strong>] \( f \) is strongly convex with constant \( m \) iff 
+$$ f(y) \ge f(x) + \nabla f(x) ^ T (y - x) + \frac{m}{2} || y - x || ^ 2 $$</p>
+
+<p>Basically, it is the opposite of L-Lipschitz gradient, it means the function is not too flat, it is lowerbounded by some quadratic function. We know that at the minimum, a function \( f \) has derivative equal to 0. As such the two L-Lipschitz can be thought of as establishing an upperbound of the change in function values in term of input values. The strongly convex can be thought of as establishing a lowerbound of the change in function values in term of input values. </p>
+
+<p>We are now ready to define the Gradient Descent algorithm: </p>
+
+<p><strong>Algorithm</strong> [<strong><em>Gradient Descent</em></strong>] 
+For a stepsize \( \alpha \) chosen before hand</p>
+
+<ul>
+<li>Initialize \( x _ 0 \)</li>
+<li>For \( k = 1,2,...\), compute \( x _ {k + 1} = x _ k - \alpha \nabla f(x _ k )\)</li>
+</ul>
+
+<p>Basically, it adjust the \( x _ k \) a little bit in the direction where \( f \) decreases the most (the negative gradient direction). In practice, one often choose a variable \( \alpha \) instead of a constant \( \alpha \). </p>
+
+<h4 id="1-2-convergence-rate">1.2. Convergence Rate</h4>
+
+<p><strong>Theorem</strong> [<strong><em>Rate for L-Lipschitz and m Strongly Convex</em></strong>]. If \( f \) is L-Lipschitz and strongly convex with constant \( m \), then the Gradient Descent algorithm converges to the right solution, and picking the stepsize \( \alpha = 1 / L \) we have 
+$$ f(x _ {k + 1}) - f(x _ \star) \le \left( 1 - \frac{m}{L} \right) (f(x _ k) - f(x _ \star))$$
+$$ \Rightarrow f(x _ {k + 1} - f(x _ \star) \le \left( 1 - \frac{m}{L} \right) ^ k (f ( x _ k) - f(x _ \star))$$</p>
+
+<p>We say the function values converges linearly to the optimal value. Also, since we have the relation between function values and input values, we have \( || x _ k - x _ \star ||\) converges linearly to 0. Here \( x _ \star \) denotes the solution to the optimization problem. For an error threshold of \( \epsilon \), we would need number of iteration in the order of \log \frac{1}{\epsilon} to find a solution within that error threshold. </p>
+
+<p><strong>Theorem</strong> [<strong><em>Rate for L-Lipschizt</em></strong>] If f has L-Lipschitz gradient, then 
+$$ f(x _ k) - f(x _ \star) \le \frac{2L}{k + 1} || x _ 0 - x _ \star|| ^ 2 $$</p>
+
+<p>The convergence rate is not as good, since we are in a more general case. We say the function values converges in log. For an error threshold of \( \epsilon \), we now need in the order of \( \frac{1}{\epsilon} \) iteraions to find a solution within that error threshold. Note that this is much worse than the previous result. </p>
+
+<p>We quickly mention the (Nesterov) momentum method here, basically, each iteration, instead of updating \( x _ k \) along the direction of gradient, it updates along the weighted average of all the gradient computed so far, with more weight to the recent gradients. I don&#39;t think it&#39;s quite like that but it is the idea, using the previous computed gradients. </p>
+
+<p><strong>Algorithm</strong> [<strong><em>Nesterov Momentum</em></strong>] The update rule for Nesterov method, for constant stepsize \( \alpha \) and momentum rate \( \beta \) is 
+$$x _ {k + 1} = x _ k - \alpha \nabla f ( x _ k + \beta (x _ k - x _ { k - 1} ) + \beta ( x _ k - x _ { k - 1})$$</p>
+
+<p>If we were to be careful with the analysis before, for L-Lipschitz gradient and strongly convex function with parameter \( m \), we have the rate of convergence is \( O \left( \frac{L}{m} \log \frac{1}{\epsilon} \right)\). With the Nesterov method, we get an improvement to \( O \left( \sqrt{\frac{L}{m}} \log \frac{1}{\epsilon} \right)\). Similarly, for L-Lipschitz gradient, the error rate before was \( O \left( \frac{L}{\epsilon} \right)\), now with Nesterov momentum method, we have \( O \left( \sqrt{\frac{L}{\epsilon}}\right)\). 
+So Nesteve momentum method gives a bit better rate for very little computational cost. </p>
+
+<h2 id="2-coordinate-descent"><strong>2. Coordinate Descent</strong></h2>
+
+<h4 id="2-1-defining-algorithm">2.1. Defining Algorithm</h4>
+
+<p>In Machine Learning, we sometimes work with the case where the dimension is too big, or there is too many datapoint. Consider a data matrix \( X \in \mathbb{R} ^ {m \times n}\), if \( m \) is too big, one can do Stochastic (Batch) Gradient Descent, which instead of calculating the gradient on all \( m \) data points, it approximate the gradient with only \( b \) data points, for \( b \) is the batch size (for example \( b = 128\), while \( m \approx 1000000 \)). On the other hand, if \( n\) is big, we can upgrade a few of coordinate per iteration, instead of updating the whole \( n \) dimension. This is Coordinate descent.</p>
+
+<p>For those problem where calculating coordinate gradient (i.e. partial derivative) is simple, it turns out the the rate for coordinate descent is as good as for typical gradient descent. First let&#39;s define the L-Lipschitz condition coordinatewise</p>
+
+<p><strong>Definition</strong> [<strong><em>Coordinate-wise Lipschitz gradient</em></strong>] \( f \) is L-Lipschitz coordinate-wise with constant \( L _ i\) at coordinate \( i \) iff
+$$ \left\lVert \nabla f (x + h _ i) - \nabla f (x) \right\rVert \le L _ i \left\lVert h _ i \right\rVert$$
+for \( h_i \) is zero everywhere except at coordinate \( i \). </p>
+
+<p>We assume our function \( f \) is L-Lipschitz coordinate wise with constant \( L _ i, i = 1,2,...,n \). Then the Randomized Coordinate Descent Method is defined as followed:</p>
+
+<p><strong>Algorithm</strong> [<strong><em>Randomized Coordinate Descent</em></strong>] </p>
+
+<ul>
+<li>Pick an initial point \( x _ 0\)</li>
+<li>For \( k = 1,2,... \) 
+
+<ul>
+<li>pick coordinate \( i \) randomly with uniform probability</li>
+<li>compute \( x _ {k + 1} = x _ k - \frac{1}{L _ i} \nabla f (x)[i]\).</li>
+</ul></li>
+</ul>
+
+<p>Here we introduce the notation \( \nabla f(x)[i]\) from array notation to say take the \( i ^ {th} \) element of vector \( \nabla f(x) \). A lot of things can be relaxed from this, for example, the probability can be general not uniform. Instead of doing single coordinate-wise, one can do block coordinate-wise. One can also add a regularization term like \( \ell _ 1 \) (Lasso) or \( \ell _ 2\) Ridge. See paper by Peter Richtarik and Martin Takac for details. Once can also work with more general norm (in the L-Lipschitz condition). We just state this simple case for simplicity. </p>
+
+<h4 id="2-2-convergence-in-expectation">2.2. Convergence in Expectation</h4>
+
+<p><strong>Theorem</strong> [<strong><em>Rate Coordinate Descent with Lipschitz</em></strong>] If we run the above algorithm for coordinate-wise L-Lipschitz gradient, we have
+$$\mathbb{E} _ {k - 1} f(x _ k) - f ^ \star \le \frac{2n}{k + 4}  R ^ 2 (x _ 0),$$
+for \( R(x _ 0) = \max _ x \left[ \max _ { x _ {\star} \in X _ {\star}} \left\lVert x - x _ \star \right\rVert _ 1  \right] : f(x) \le f(x _ 0) \).</p>
+
+<p>So basically, we have the log-convergence rate in expectation, very similar to Gradient Descent. Analogously, the result for strongly convex (globally, not coordinate-wise) is stated in </p>
+
+<p><strong>Theorem</strong> [<strong><em>Rate Coordinate Descent with Lipschitz and Strongly Convex m</em></strong>] If we run the above algorithm, we have 
+$$ \mathbb{E} _ {k - 1} f(x _ k) - f ^ \star \le \left( 1 - \frac{m}{n} \right) ^ k (f(x _ 0) - f ^ \star)$$.</p>
+
+<p>Note that here \( m \) is the strongly convex parameter, not the number of observation as we used it before. For those of you who are curious, this result and the previous theorem are in Nesterov paper (his Theorem 1 and Theorem 2), applying for the case \( \alpha = 0\), which then imply \( S _ \alpha (f) = n\). </p>
+
+<p>So basically, we get that for Strongly convex and L-Lipschitz gradient, we also get linear convergence rate in the expectation for Coordinate Descent.</p>
+
+<h4 id="2-3-high-probability-statement">2.3. High Probability Statement</h4>
+
+<p>One might also wonder that maybe it works on average, but we only run it once, what is the probability that the result we get from that one time is good. It turns out that our result is good with high probability, as seen in Peter Richtarik, Martin Takac paper. The idea is to used Markov inequality to convert a statement in expectation to a high probability statement. To summary, for a fix confidence interval \( \rho \in (0,1) \), if we pick 
+$$ k \ge O \left( \frac{2n}{\epsilon} \log \frac{f(x _ 0) - f(x _ \star)}{\epsilon \rho} \right), $$ 
+we have \( \mathbb{P} [f (x _ k) - f (x _ \star) \le \epsilon ] \ge 1 - \rho \), if the function is coordinate-wise L-Lipschitz gradient. </p>
+
+<p>If in addition, we have strongly convex, then the number of iteration needed is only 
+$$ k \ge O \left ( n \log \left( \frac{f(x _ 0) - f(x _ \star)}{\rho \epsilon} \right)\right).$$</p>
+
+<p>Staring at these high-probability result, we see that the number of iteration needed is almost identical to the case of vanilla Gradient Descent. We have \( 1 / \epsilon \) rate for Lipschitz gradient, and \( \log (1 / \epsilon)\) if we have strongly convexity in addition. The rate is however \( n \) times slower, because each iteration of Coordinate Descent is approximately \( n \) times faster than Gradient Descent (calculating gradient along one coordinate vs calculating gradient along all coordinate). The minor difference is the cost of \( \log {1}{\epsilon} \) for the case of only L-Lipschitz can in fact be removed. It is only there when we are optimizing an objective with regularization term (L1 or L2 regularization).</p>
+
+<p>Finally, on a note about momentum for Coordinate Descent, it seems Nesterov recommends not using it, because of the computation complexity for getting the momentum.  </p>
+
+<h2 id="3-stochastic-gradient-descent"><strong>3. Stochastic Gradient Descent</strong></h2>
+
+<p>It is quite surprised for me that analyzing Stochastic Gradient Descent is much harder than Coordinate Descent. The two algorithms sounds very similar, it is just the former one is vertical, while the later one is horizontal. SGD in fact works very well in practice, it is just proving convergence result is harder. For strongly convex, it seems we only get log convergence rate (as compared to linear in Gradient Descent), as seen in <a href="http://research.microsoft.com/en-us/um/cambridge/events/mls2013/downloads/stochastic_gradient.pdf">SGD for Machine Learning</a>. For non-strongly convex, we get half the rate. Why??? What is the rate of SGD? To be discovered and written. If you have some ideas please comment. </p>
+
+  </article>
+
+  <!-- mathjax -->
+  
+  <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+  
+  <!-- disqus comments -->
+ 
+ <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+      var disqus_shortname = 'HoangDT Blog'; // required: replace example with your forum shortname
+
+      /* * * DON'T EDIT BELOW THIS LINE * * */
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+  
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'andersonvom'; // required: replace example with your forum shortname
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrap">
+
+    <!-- <h2 class="footer-heading">Hoang Duong blog</h2> -->
+
+    <div class="footer-col-1 column">
+      <ul>
+        <li>Hoang Duong blog</li>
+        <!-- <li><a href="mailto:hduong@berkeley.edu">hduong@berkeley.edu</a></li> -->
+      </ul>
+    </div>
+
+    <div class="footer-col-2 column">
+      <ul>
+        <li>
+          <a href="https://github.com/hduongtrong">
+            <span class="icon github">
+              <svg version="1.1" class="github-icon-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                 viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+                <path fill-rule="evenodd" clip-rule="evenodd" fill="#C2C2C2" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761
+                c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32
+                c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472
+                c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037
+                C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65
+                c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261
+                c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082
+                c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129
+                c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/>
+              </svg>
+            </span>
+            <span class="username">hduongtrong</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://twitter.com/hduongtrong">
+            <span class="icon twitter">
+              <svg version="1.1" class="twitter-icon-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                 viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+                <path fill="#C2C2C2" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809
+                c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27
+                c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767
+                c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206
+                C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271
+                c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469
+                c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/>
+              </svg>
+            </span>
+            <span class="username">hduongtrong</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="footer-col-3 column">
+      <p class="text">Learning Machine Learning</p>
+    </div>
+
+  </div>
+
+</footer>
+
+
+    </body>
+</html>
