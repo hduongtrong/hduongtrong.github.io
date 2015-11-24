@@ -5,8 +5,8 @@
     <description>Learning Machine Learning</description>
     <link>http://hduongtrong.github.io/</link>
     <atom:link href="http://hduongtrong.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Mon, 23 Nov 2015 17:14:16 -0800</pubDate>
-    <lastBuildDate>Mon, 23 Nov 2015 17:14:16 -0800</lastBuildDate>
+    <pubDate>Mon, 23 Nov 2015 17:17:55 -0800</pubDate>
+    <lastBuildDate>Mon, 23 Nov 2015 17:17:55 -0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
@@ -129,12 +129,12 @@ for \( h_i \) is zero everywhere except at coordinate \( i \). &lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Theorem&lt;/strong&gt; [&lt;strong&gt;&lt;em&gt;Rate Coordinate Descent with Lipschitz&lt;/em&gt;&lt;/strong&gt;] If we run the above algorithm for coordinate-wise L-Lipschitz gradient, we have
 $$\mathbb{E} _ {k - 1} f(x _ k) - f ^ \star \le \frac{2n}{k + 4}  R ^ 2 (x _ 0),$$
-for \( R(x _ 0) = \max _ x \left[ \max _ { x _ {\star} \in X _ {\star}} \left\lVert x - x _ \star \right\rVert _ 1  \right] : f(x) \le f(x _ 0) \).&lt;/p&gt;
+for $$ R(x _ 0) = \max _ x \left[ \max _ { x _ {\star} \in X _ {\star}} \left\lVert x - x _ \star \right\rVert _ 1  \right] : f(x) \le f(x _ 0) $$&lt;/p&gt;
 
 &lt;p&gt;So basically, we have the log-convergence rate in expectation, very similar to Gradient Descent. Analogously, the result for strongly convex (globally, not coordinate-wise) is stated in &lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Theorem&lt;/strong&gt; [&lt;strong&gt;&lt;em&gt;Rate Coordinate Descent with Lipschitz and Strongly Convex m&lt;/em&gt;&lt;/strong&gt;] If we run the above algorithm, we have 
-$$ \mathbb{E} _ {k - 1} f(x _ k) - f ^ \star \le \left( 1 - \frac{m}{n} \right) ^ k (f(x _ 0) - f ^ \star)$$.&lt;/p&gt;
+$$ \mathbb{E} _ {k - 1} f(x _ k) - f ^ \star \le \left( 1 - \frac{m}{n} \right) ^ k (f(x _ 0) - f ^ \star)$$&lt;/p&gt;
 
 &lt;p&gt;Note that here \( m \) is the strongly convex parameter, not the number of observation as we used it before. For those of you who are curious, this result and the previous theorem are in Nesterov paper (his Theorem 1 and Theorem 2), applying for the case \( \alpha = 0\), which then imply \( S _ \alpha (f) = n\). &lt;/p&gt;
 

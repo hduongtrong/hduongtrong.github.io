@@ -109,12 +109,12 @@ Here we introduce the notation \\( \nabla f(x)[i]\\) from array notation to say 
 
 **Theorem** [**_Rate Coordinate Descent with Lipschitz_**] If we run the above algorithm for coordinate-wise L-Lipschitz gradient, we have
 $$\mathbb{E} _ {k - 1} f(x _ k) - f ^ \star \le \frac{2n}{k + 4}  R ^ 2 (x _ 0),$$
-for \\( R(x _ 0) = \max _ x \left[ \max _ { x _ {\star} \in X _ {\star}} \left\lVert x - x _ \star \right\rVert _ 1  \right] : f(x) \le f(x _ 0) \\).
+for $$ R(x _ 0) = \max _ x \left[ \max _ { x _ {\star} \in X _ {\star}} \left\lVert x - x _ \star \right\rVert _ 1  \right] : f(x) \le f(x _ 0) $$
 
 So basically, we have the log-convergence rate in expectation, very similar to Gradient Descent. Analogously, the result for strongly convex (globally, not coordinate-wise) is stated in 
 
 **Theorem** [**_Rate Coordinate Descent with Lipschitz and Strongly Convex m_**] If we run the above algorithm, we have 
-$$ \mathbb{E} _ {k - 1} f(x _ k) - f ^ \star \le \left( 1 - \frac{m}{n} \right) ^ k (f(x _ 0) - f ^ \star)$$.
+$$ \mathbb{E} _ {k - 1} f(x _ k) - f ^ \star \le \left( 1 - \frac{m}{n} \right) ^ k (f(x _ 0) - f ^ \star)$$
 
 Note that here \\( m \\) is the strongly convex parameter, not the number of observation as we used it before. For those of you who are curious, this result and the previous theorem are in Nesterov paper (his Theorem 1 and Theorem 2), applying for the case \\( \alpha = 0\\), which then imply \\( S _ \alpha (f) = n\\). 
 
