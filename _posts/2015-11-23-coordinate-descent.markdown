@@ -100,7 +100,7 @@ So Nesteve momentum method gives a bit better rate for very little computational
 
 <div class="imgcap">
 <div>
-<img src="/assets/gradient_descent/coordinate_descent.gif" style="max-width:49%; height:400px;">
+<img src="/assets/gradient_descent/coordinate_descent.gif">
 </div>
 <div class="thecap">Coordinate Descent in 2D. Images Credit: Martin Takac</div>
 </div>
@@ -155,7 +155,7 @@ Finally, on a note about momentum for Coordinate Descent, it seems Nesterov reco
 
 <div class="imgcap">
 <div>
-<img src="/assets/gradient_descent/all.gif" style="max-width:49%; height:400px;">
+<img src="/assets/gradient_descent/all.gif">
 </div>
 <div class="thecap">Popular optimization algorithms. Images Credit: Daniel Nouri</div>
 </div>

@@ -5,8 +5,8 @@
     <description>Learning Machine Learning</description>
     <link>http://hduongtrong.github.io/</link>
     <atom:link href="http://hduongtrong.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Mon, 23 Nov 2015 22:15:26 -0800</pubDate>
-    <lastBuildDate>Mon, 23 Nov 2015 22:15:26 -0800</lastBuildDate>
+    <pubDate>Mon, 23 Nov 2015 22:16:42 -0800</pubDate>
+    <lastBuildDate>Mon, 23 Nov 2015 22:16:42 -0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
@@ -113,7 +113,7 @@ So Nesteve momentum method gives a bit better rate for very little computational
 
 &lt;div class=&quot;imgcap&quot;&gt;
 &lt;div&gt;
-&lt;img src=&quot;/assets/gradient_descent/coordinate_descent.gif&quot; style=&quot;max-width:49%; height:400px;&quot;&gt;
+&lt;img src=&quot;/assets/gradient_descent/coordinate_descent.gif&quot;&gt;
 &lt;/div&gt;
 
 &lt;div class=&quot;thecap&quot;&gt;Coordinate Descent in 2D. Images Credit: Martin Takac&lt;/div&gt;
@@ -176,7 +176,7 @@ $$ k \ge O \left ( n \log \left( \frac{f(x _ 0) - f(x _ \star)}{\rho \epsilon} \
 
 &lt;div class=&quot;imgcap&quot;&gt;
 &lt;div&gt;
-&lt;img src=&quot;/assets/gradient_descent/all.gif&quot; style=&quot;max-width:49%; height:400px;&quot;&gt;
+&lt;img src=&quot;/assets/gradient_descent/all.gif&quot;&gt;
 &lt;/div&gt;
 
 &lt;div class=&quot;thecap&quot;&gt;Popular optimization algorithms. Images Credit: Daniel Nouri&lt;/div&gt;
