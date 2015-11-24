@@ -24,8 +24,18 @@ Summary the convergence rate of various gradient descent variants.
 
 with a focus on the last one.
 
+
+
 ## **1. Gradient Descent**
 #### 1.1. Defining Algorithm
+
+<div class="imgcap">
+<div>
+<img src="/assets/gradient_descent/gradient_descent.gif" style="max-width:49%; height:400px;">
+</div>
+<div class="thecap">Gradient Descent in 2D. Images Credit: http://vis.supstat.com/2013/03/gradient-descent-algorithm-with-r/ </div>
+</div>
+
 The goal here is to minimize a convex function \\( f: \mathbb{R} ^ n \rightarrow \mathbb{R} \\) without constraint. 
 
 **Definition** [**_Convex function_**] A function \\( f : \mathbb{R} ^ n \rightarrow \mathbb{R} \\) is convex if its domain of \\( f \\) is a convex set, and \\( \forall x, y \in \rm{dom}(f)\\), we have 
@@ -87,6 +97,14 @@ So Nesteve momentum method gives a bit better rate for very little computational
 
 ## **2. Coordinate Descent**
 #### 2.1. Defining Algorithm
+
+<div class="imgcap">
+<div>
+<img src="/assets/gradient_descent/coordinate_descent.gif" style="max-width:49%; height:400px;">
+</div>
+<div class="thecap">Coordinate Descent in 2D. Images Credit: Martin Takac</div>
+</div>
+
 In Machine Learning, we sometimes work with the case where the dimension is too big, or there is too many datapoint. Consider a data matrix \\( X \in \mathbb{R} ^ {m \times n}\\), if \\( m \\) is too big, one can do Stochastic (Batch) Gradient Descent, which instead of calculating the gradient on all \\( m \\) data points, it approximate the gradient with only \\( b \\) data points, for \\( b \\) is the batch size (for example \\( b = 128\\), while \\( m \approx 1000000 \\)). On the other hand, if \\( n\\) is big, we can upgrade a few of coordinate per iteration, instead of updating the whole \\( n \\) dimension. This is Coordinate descent.
 
 For those problem where calculating coordinate gradient (i.e. partial derivative) is simple, it turns out the the rate for coordinate descent is as good as for typical gradient descent. First let's define the L-Lipschitz condition coordinatewise
@@ -134,4 +152,12 @@ Staring at these high-probability result, we see that the number of iteration ne
 Finally, on a note about momentum for Coordinate Descent, it seems Nesterov recommends not using it, because of the computation complexity for getting the momentum.  
 
 ## **3. Stochastic Gradient Descent**
+
+<div class="imgcap">
+<div>
+<img src="/assets/gradient_descent/all.gif" style="max-width:49%; height:400px;">
+</div>
+<div class="thecap">Popular optimization algorithms. Images Credit: Daniel Nouri</div>
+</div>
+
 It is quite surprised for me that analyzing Stochastic Gradient Descent is much harder than Coordinate Descent. The two algorithms sounds very similar, it is just the former one is vertical, while the later one is horizontal. SGD in fact works very well in practice, it is just proving convergence result is harder. For strongly convex, it seems we only get log convergence rate (as compared to linear in Gradient Descent), as seen in [SGD for Machine Learning](http://research.microsoft.com/en-us/um/cambridge/events/mls2013/downloads/stochastic_gradient.pdf). For non-strongly convex, we get half the rate. Why??? What is the rate of SGD? To be discovered and written. If you have some ideas please comment. 

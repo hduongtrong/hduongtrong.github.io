@@ -5,8 +5,8 @@
     <description>Learning Machine Learning</description>
     <link>http://hduongtrong.github.io/</link>
     <atom:link href="http://hduongtrong.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Mon, 23 Nov 2015 17:19:52 -0800</pubDate>
-    <lastBuildDate>Mon, 23 Nov 2015 17:19:52 -0800</lastBuildDate>
+    <pubDate>Mon, 23 Nov 2015 22:12:47 -0800</pubDate>
+    <lastBuildDate>Mon, 23 Nov 2015 22:12:47 -0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
@@ -36,6 +36,15 @@
 &lt;h2 id=&quot;1-gradient-descent&quot;&gt;&lt;strong&gt;1. Gradient Descent&lt;/strong&gt;&lt;/h2&gt;
 
 &lt;h4 id=&quot;1-1-defining-algorithm&quot;&gt;1.1. Defining Algorithm&lt;/h4&gt;
+
+&lt;div class=&quot;imgcap&quot;&gt;
+&lt;div&gt;
+&lt;img src=&quot;/assets/gradient_descent/gradient_descent.gif&quot; style=&quot;max-width:49%; height:400px;&quot;&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;thecap&quot;&gt;Gradient Descent in 2D. Images Credit: http://vis.supstat.com/2013/03/gradient-descent-algorithm-with-r/ &lt;/div&gt;
+
+&lt;p&gt;&lt;/div&gt;&lt;/p&gt;
 
 &lt;p&gt;The goal here is to minimize a convex function \( f: \mathbb{R} ^ n \rightarrow \mathbb{R} \) without constraint. &lt;/p&gt;
 
@@ -102,6 +111,15 @@ So Nesteve momentum method gives a bit better rate for very little computational
 
 &lt;h4 id=&quot;2-1-defining-algorithm&quot;&gt;2.1. Defining Algorithm&lt;/h4&gt;
 
+&lt;div class=&quot;imgcap&quot;&gt;
+&lt;div&gt;
+&lt;img src=&quot;/assets/gradient_descent/coordinate_descent.gif&quot; style=&quot;max-width:49%; height:400px;&quot;&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;thecap&quot;&gt;Coordinate Descent in 2D. Images Credit: Martin Takac&lt;/div&gt;
+
+&lt;p&gt;&lt;/div&gt;&lt;/p&gt;
+
 &lt;p&gt;In Machine Learning, we sometimes work with the case where the dimension is too big, or there is too many datapoint. Consider a data matrix \( X \in \mathbb{R} ^ {m \times n}\), if \( m \) is too big, one can do Stochastic (Batch) Gradient Descent, which instead of calculating the gradient on all \( m \) data points, it approximate the gradient with only \( b \) data points, for \( b \) is the batch size (for example \( b = 128\), while \( m \approx 1000000 \)). On the other hand, if \( n\) is big, we can upgrade a few of coordinate per iteration, instead of updating the whole \( n \) dimension. This is Coordinate descent.&lt;/p&gt;
 
 &lt;p&gt;For those problem where calculating coordinate gradient (i.e. partial derivative) is simple, it turns out the the rate for coordinate descent is as good as for typical gradient descent. First let&amp;#39;s define the L-Lipschitz condition coordinatewise&lt;/p&gt;
@@ -155,6 +173,15 @@ $$ k \ge O \left ( n \log \left( \frac{f(x _ 0) - f(x _ \star)}{\rho \epsilon} \
 &lt;p&gt;Finally, on a note about momentum for Coordinate Descent, it seems Nesterov recommends not using it, because of the computation complexity for getting the momentum.  &lt;/p&gt;
 
 &lt;h2 id=&quot;3-stochastic-gradient-descent&quot;&gt;&lt;strong&gt;3. Stochastic Gradient Descent&lt;/strong&gt;&lt;/h2&gt;
+
+&lt;div class=&quot;imgcap&quot;&gt;
+&lt;div&gt;
+&lt;img src=&quot;/assets/gradient_descent/all.gif&quot; style=&quot;max-width:49%; height:400px;&quot;&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;thecap&quot;&gt;Popular optimization algorithms. Images Credit: Daniel Nouri&lt;/div&gt;
+
+&lt;p&gt;&lt;/div&gt;&lt;/p&gt;
 
 &lt;p&gt;It is quite surprised for me that analyzing Stochastic Gradient Descent is much harder than Coordinate Descent. The two algorithms sounds very similar, it is just the former one is vertical, while the later one is horizontal. SGD in fact works very well in practice, it is just proving convergence result is harder. For strongly convex, it seems we only get log convergence rate (as compared to linear in Gradient Descent), as seen in &lt;a href=&quot;http://research.microsoft.com/en-us/um/cambridge/events/mls2013/downloads/stochastic_gradient.pdf&quot;&gt;SGD for Machine Learning&lt;/a&gt;. For non-strongly convex, we get half the rate. Why??? What is the rate of SGD? To be discovered and written. If you have some ideas please comment. &lt;/p&gt;
 </description>

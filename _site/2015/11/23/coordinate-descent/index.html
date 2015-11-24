@@ -102,6 +102,15 @@
 
 <h4 id="1-1-defining-algorithm">1.1. Defining Algorithm</h4>
 
+<div class="imgcap">
+<div>
+<img src="/assets/gradient_descent/gradient_descent.gif" style="max-width:49%; height:400px;">
+</div>
+
+<div class="thecap">Gradient Descent in 2D. Images Credit: http://vis.supstat.com/2013/03/gradient-descent-algorithm-with-r/ </div>
+
+<p></div></p>
+
 <p>The goal here is to minimize a convex function \( f: \mathbb{R} ^ n \rightarrow \mathbb{R} \) without constraint. </p>
 
 <p><strong>Definition</strong> [<strong><em>Convex function</em></strong>] A function \( f : \mathbb{R} ^ n \rightarrow \mathbb{R} \) is convex if its domain of \( f \) is a convex set, and \( \forall x, y \in \rm{dom}(f)\), we have 
@@ -167,6 +176,15 @@ So Nesteve momentum method gives a bit better rate for very little computational
 
 <h4 id="2-1-defining-algorithm">2.1. Defining Algorithm</h4>
 
+<div class="imgcap">
+<div>
+<img src="/assets/gradient_descent/coordinate_descent.gif" style="max-width:49%; height:400px;">
+</div>
+
+<div class="thecap">Coordinate Descent in 2D. Images Credit: Martin Takac</div>
+
+<p></div></p>
+
 <p>In Machine Learning, we sometimes work with the case where the dimension is too big, or there is too many datapoint. Consider a data matrix \( X \in \mathbb{R} ^ {m \times n}\), if \( m \) is too big, one can do Stochastic (Batch) Gradient Descent, which instead of calculating the gradient on all \( m \) data points, it approximate the gradient with only \( b \) data points, for \( b \) is the batch size (for example \( b = 128\), while \( m \approx 1000000 \)). On the other hand, if \( n\) is big, we can upgrade a few of coordinate per iteration, instead of updating the whole \( n \) dimension. This is Coordinate descent.</p>
 
 <p>For those problem where calculating coordinate gradient (i.e. partial derivative) is simple, it turns out the the rate for coordinate descent is as good as for typical gradient descent. First let&#39;s define the L-Lipschitz condition coordinatewise</p>
@@ -220,6 +238,15 @@ $$ k \ge O \left ( n \log \left( \frac{f(x _ 0) - f(x _ \star)}{\rho \epsilon} \
 <p>Finally, on a note about momentum for Coordinate Descent, it seems Nesterov recommends not using it, because of the computation complexity for getting the momentum.  </p>
 
 <h2 id="3-stochastic-gradient-descent"><strong>3. Stochastic Gradient Descent</strong></h2>
+
+<div class="imgcap">
+<div>
+<img src="/assets/gradient_descent/all.gif" style="max-width:49%; height:400px;">
+</div>
+
+<div class="thecap">Popular optimization algorithms. Images Credit: Daniel Nouri</div>
+
+<p></div></p>
 
 <p>It is quite surprised for me that analyzing Stochastic Gradient Descent is much harder than Coordinate Descent. The two algorithms sounds very similar, it is just the former one is vertical, while the later one is horizontal. SGD in fact works very well in practice, it is just proving convergence result is harder. For strongly convex, it seems we only get log convergence rate (as compared to linear in Gradient Descent), as seen in <a href="http://research.microsoft.com/en-us/um/cambridge/events/mls2013/downloads/stochastic_gradient.pdf">SGD for Machine Learning</a>. For non-strongly convex, we get half the rate. Why??? What is the rate of SGD? To be discovered and written. If you have some ideas please comment. </p>
 
