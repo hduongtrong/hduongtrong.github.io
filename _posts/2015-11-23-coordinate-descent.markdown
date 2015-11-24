@@ -31,7 +31,7 @@ with a focus on the last one.
 
 <div class="imgcap">
 <div>
-<img src="/assets/gradient_descent/gradient_descent.gif" style="max-width:49%; height:400px;">
+<img src="/assets/gradient_descent/gradient_descent.gif">
 </div>
 <div class="thecap">Gradient Descent in 2D. Images Credit: http://vis.supstat.com/2013/03/gradient-descent-algorithm-with-r/ </div>
 </div>
