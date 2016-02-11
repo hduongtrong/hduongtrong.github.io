@@ -1,9 +1,9 @@
 ---
 layout: post
 comments: true
-title:  PCA, Kernel PCA, MDS, K-Means, K-Medoids, Hierarchical Clustering
+title:  Classical Dimension Reduction and Clustering
 date:   2016-02-10 18:44:27
-excerpt: Summary of Spectral Clustering
+excerpt: PCA, Kernel PCA, MDS, K-Means, K-Medoids, Hierarchical Clustering 
 mathjax: true
 ---
 

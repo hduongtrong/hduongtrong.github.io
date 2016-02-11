@@ -5,8 +5,8 @@
     <description>Learning Machine Learning</description>
     <link>http://hduongtrong.github.io/</link>
     <atom:link href="http://hduongtrong.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Wed, 10 Feb 2016 22:45:20 -0800</pubDate>
-    <lastBuildDate>Wed, 10 Feb 2016 22:45:20 -0800</lastBuildDate>
+    <pubDate>Wed, 10 Feb 2016 22:49:57 -0800</pubDate>
+    <lastBuildDate>Wed, 10 Feb 2016 22:49:57 -0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
@@ -64,6 +64,15 @@ containing the vector as columns&lt;/p&gt;&lt;/li&gt;
 
 &lt;h2 id=&quot;variants&quot;&gt;Variants&lt;/h2&gt;
 
+&lt;div class=&quot;imgcap&quot;&gt;
+&lt;div&gt;
+&lt;img src=&quot;/assets/spectral_clustering/lena.png&quot;&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;thecap&quot;&gt;Spectral Clustering is good for image segmentation. - Credit: Scikit-Learn &lt;/div&gt;
+
+&lt;p&gt;&lt;/div&gt;&lt;/p&gt;
+
 &lt;p&gt;Following are some popular variants of the spectral clustering algorithm. Each variant has a different computational or theoretical aspect. &lt;/p&gt;
 
 &lt;ol&gt;
@@ -119,7 +128,7 @@ Learning.&lt;/a&gt;&lt;/li&gt;
       </item>
     
       <item>
-        <title>PCA, Kernel PCA, MDS, K-Means, K-Medoids, Hierarchical Clustering</title>
+        <title>Classical Dimension Reduction and Clustering</title>
         <description>&lt;h2 id=&quot;1-pca&quot;&gt;1. PCA&lt;/h2&gt;
 
 &lt;div class=&quot;imgcap&quot;&gt;

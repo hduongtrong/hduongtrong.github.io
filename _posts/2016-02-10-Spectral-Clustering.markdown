@@ -58,6 +58,14 @@ containing the vector as columns
 5. Performing k-Means on V. The cluster obtained from here is the result. 
 
 ## Variants
+
+<div class="imgcap">
+<div>
+<img src="/assets/spectral_clustering/lena.png">
+</div>
+<div class="thecap">Spectral Clustering is good for image segmentation. - Credit: Scikit-Learn </div>
+</div>
+
 Following are some popular variants of the spectral clustering algorithm. Each variant has a different computational or theoretical aspect. 
 
 1. Affinity Matrix: all of these affinity matrix try to make the
@@ -85,6 +93,8 @@ same. If degree are spread out, then use \\(L=I-D ^ {-1}W\\) is recommended.
 (1 point vs rest), or fail to converge as \\( n\rightarrow\infty.\\) Both
 normalized version converge under mild condition. To avoid trivial
 solution, make sure \\( \lambda\_{k}\ll\min d\_{j}.\\)
+
+
 
 ## Reference
 * Ulrike von Luxburg. [A Tutorial on Spectral Clustering.](http://www.stat.berkeley.edu/~hhuang/STAT141/SpectralClustering.pdf)
