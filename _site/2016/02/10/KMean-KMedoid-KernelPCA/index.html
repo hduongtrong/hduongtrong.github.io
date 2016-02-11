@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>PCA, Kernel PCA, MDS, K-Means, K-Medoids, Hierarchical Clustering</title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="Learning Machine Learning">
+    <link rel="canonical" href="http://hduongtrong.github.io/2016/02/10/KMean-KMedoid-KernelPCA/">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+
+    <!-- Google Analytics -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      ga('create', 'UA-3698471-23', 'auto');
+      ga('send', 'pageview');
+    </script>
+
+</head>
+
+
+    <body>
+
+    <header class="site-header">
+
+  <div class="wrap">
+
+    <!div style="float:left; margin-top:10px; margin-right:10px;">
+    <!a href="/feed.xml">
+      <!img src="/assets/rssicon.svg" width="40">
+    <!/a>
+    <!/div>
+
+    <a class="site-title" href="/">Hoang Duong blog</a>
+    
+    <nav class="site-nav">
+      <a href="#" class="menu-icon">
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+           viewBox="0 0 18 15" enable-background="new 0 0 18 15" xml:space="preserve">
+          <path fill="#505050" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0
+            h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#505050" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484
+            h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#505050" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0
+            c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+      </a>
+      <div class="trigger">
+        
+          <a class="page-link" href="/about/">About</a>
+        
+          
+        
+          
+        
+      </div>
+    </nav>
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrap">
+      <div class="post">
+
+  <header class="post-header">
+    <h1>PCA, Kernel PCA, MDS, K-Means, K-Medoids, Hierarchical Clustering</h1>
+    <p class="meta">Feb 10, 2016</p>
+  </header>
+
+  <article class="post-content">
+  <h2 id="1-pca">1. PCA</h2>
+
+<div class="imgcap">
+<div>
+<img src="/assets/unsupervised_learning/fig_pca_principal_component_analysis.png">
+</div>
+
+<div class="thecap">PCA illustration. Image Credit: Google Image </div>
+
+<p></div></p>
+
+<h3 id="1-1-the-algorithm">1.1. The algorithm</h3>
+
+<p>Given data \( X \in \mathbb{R} ^ {n \times p} \), PCA process is as followed (the SVD version)</p>
+
+<ol>
+<li>Center and rescale \( X \) to have zero mean, standard deviation one</li>
+<li>Perform SVD \( X = UDV ^ T \), where \( U \in \mathbb{R} ^ {n \times p}\), \( D\) is a diagonal matrix of size \( (p \times p ) \), and V is a orthogonal matrix size \( p \times p \)</li>
+<li>The projected data is \( X _ {pca} = UD \) for as many column of U as the dimension we want to project </li>
+</ol>
+
+<p>U is called the loadings. UD is called the scores (projected X). U is also called the principle components. It is the eigenvectors of the covariance matrix. </p>
+
+<p>An analogous version of PCA (the eigen-decomposition version)</p>
+
+<ol>
+<li>Center and rescale \( X \)</li>
+<li>Construct covariance matrix \( C = \frac{1}{n} X ^ T X \)</li>
+<li>Perform eigen-decomposition \( C = V \Lambda V ^ T \)</li>
+<li>The projected data is \( X _ {pca} = X U \) for as many column of U as the dimension we want to project </li>
+</ol>
+
+<p>To see while they are equivalent, note that the \( U \) from SVD and eigen-decomposition are the same, and that \( \Lambda = D ^ 2\). A such \( X_ {pca} = XU = UDV V ^ T = UD \). </p>
+
+<h3 id="1-2-interpretation-of-pca">1.2. Interpretation of PCA</h3>
+
+<ul>
+<li>The first component \( w ^ T X \) is the dimension that maximize the variance, i.e.
+$$\max _ {\| w \| = 1} Var (w ^ T X ) = \max _  {\| w \| = 1} \frac{1}{n} w ^ T X ^ T X w .$$
+And the above expression is maximized when w is the largest eigenvector of \( X ^ T X\). At that value, the expression is equal to the eigenvalue of the covariance matrix. </li>
+<li>The PCA projection is a set of points in lower dimension that best preserve the pair-wise distances. </li>
+<li>PCA can also be interpreted in the sense compressing data, i.e. we post-multiplying matrix \(X \) with some vector \( U \)) to lower dimension for compression, then to obtain an approximate of the original data, we multiply this lower dimension projection with \( U ^ {-1}\). Then out of all the linear projection, PCA is the one that best preserve the original dataset when going back to the original space from the compressed data. For example images data. </li>
+</ul>
+
+<h3 id="1-3-properties">1.3. Properties</h3>
+
+<ul>
+<li>It is fast. In the case of tall matrix, \( p &lt; n\), the algorithm is \( O(np ^ 2)\). It scales well with the number of dimention</li>
+<li>The prefer way to do PCA is through SVD</li>
+<li>There is efficient library (ARPACK) to get the first few eigenvalues and eigenvectors. </li>
+<li>Just like Linear Regression, one can also do Sparse PCA, Kernel PCA, Ridge PCA. </li>
+<li>It is often used to reduce the dimension then run some clustering algorithm on the data </li>
+</ul>
+
+<h2 id="2-kernel-pca">2. Kernel PCA</h2>
+
+<div class="imgcap">
+<div>
+<img src="/assets/unsupervised_learning/KernelPCA.png">
+</div>
+
+<div class="thecap">Kernel PCA illustration. Image Credit: Google Image </div>
+
+<p></div></p>
+
+<h3 id="1-1-the-algorithm">1.1. The Algorithm</h3>
+
+<ol>
+<li>Given a Kernel, i.e. the Radial Basis kernel 
+$$ K (x, y) = \exp \left( - \frac {\| x - y\| ^ 2 }{\sigma ^ 2 } \right) $$, we construct the \( n \times n \) Kernel matrix \( K\), where \( K_{ij} = K(x_i, x_j)\)</li>
+<li>Double centering matrix \( K\) to have column mean and row mean zero 
+$$ \tilde{K}  = K - 1 _ n ^ T K - K 1 _ n + 1 _ n ^ T  K 1 _ n$$, for \( 1 _ N \) is the vector of all 1. </li>
+<li>Solve for eigenvector and eigenvalues of \( \tilde{K} / n\)
+$$ \frac{1}{N} \tilde{K} a_k = \lambda _ k a_ k $$</li>
+<li>The projected dataset is \( X _ {kpca} = \sum _ {i = 1} ^ {n} a _ {ki} K(x, x_i)\)</li>
+</ol>
+
+<h3 id="1-2-interpretation">1.2. Interpretation</h3>
+
+<ol>
+<li>Linear Kernel PCA is equivalent to PCA as expected</li>
+<li>Similar to other Kernel method, Kernel PCA can be thought of equivalent to doing PCA on a higher dimension feature space, with the same number of parameters (\(p\)). For example if we use the quadratic polynomial, the kernel function is just \( K(x, y) = (x ^ T y + c) ^ 2\)it is similar to feature engineer the dataset into \( x_1 ^ 2, x_2 ^ 2, x_1 x_2, x_1, x_2 \), then do PCA up here with the constraint on the weight (so the weight on this new space can&#39;t be freely chosen, but only have 2 degree of freedom, i.e. the weight for the quadratic term must be the square the weight of the linear term). So it effectively performs PCA on a subspace of a higher dimension space, where the rank of the subspace is equal to \( p \).</li>
+</ol>
+
+<h3 id="1-3-propreties">1.3. Propreties</h3>
+
+<ol>
+<li>Its memory requirement is quadratic in \(n \), that is expensive. The computation complexity is also (at least) \( O (n ^ 2)\). </li>
+<li>It is more flexible than linear PCA in the sence non-linear model is more flexible than linear regression</li>
+</ol>
+
+<h2 id="3-multidimensional-scaling">3. Multidimensional Scaling</h2>
+
+<div class="imgcap">
+<div>
+<img src="/assets/unsupervised_learning/mds.gif">
+</div>
+
+<div class="thecap">From distance matrix of cities, reconstruct their location with MDS. Image Credit: Google Image </div>
+
+<p></div></p>
+
+<h3 id="3-1-overview">3.1. Overview</h3>
+
+<p>It is very similar to PCA, or specifically Kernel PCA, so it is worth noting the fundamental difference. In Kernel PCA, one start with a data matrix \( X \), one then construct the kernel matrix, \( XX ^ T\) in case of linear kernel, then get get the projected dataset from the eigen-decomposition of this dataset. 
+In MDS, the original dataset is unknown, we only know the distance matrix, now one wish to get a projected dataset that also best preserve the original unknown dataset, in the sense that the pairwise distances of the new dataset match the known distance matrix. </p>
+
+<p>One example when this might arise is in socialogy. We have ancient towns in England, where now we don&#39;t know exactly their location. But we have some measure of pairwise distance between two towns, based on how many married couples are between these two towns. From this measure of similarity, one wish to reconstruct the original location of the town. Of course this can only be done up to a translation and rotation (since doing these does not change the distances). </p>
+
+<h3 id="3-2-the-algorithm">3.2. The algorithm</h3>
+
+<p>From the distance matrix \( D \in \mathbb{R ^ {n \times p}}\) of some unknown data \( Z \) living in unknown dimension space \( \mathbb{R} ^ p\), one wish to construct \( X \) that takes \( D \) as its distance matrix. If the unknown data \( Z \) is of rank p, then a theorem state that we can get \( X \) uniquely up to a rotation and translation in \( \mathbb{R} ^ p \) as well. In higher dimension, of course there are infinitely many solution. In lower dimension, we can&#39;t get the exact distance matrix, but only wish to get data that best preserve the distance matrix. We can assume that \( X,Z \) have column mean zero. </p>
+
+<ol>
+<li>Double-centering \( D ^ 2\) to obtain \( S = -\frac{1}{2} H D ^ 2 H\),  for \(H = I _ n - \frac{1}{n} 11 ^ T\). Theorem 1: \( S = XX ^ T = ZZ ^ T\)</li>
+<li>Diagonalize \( S = U \Lambda U ^ T\)</li>
+<li>Using the first \(p\) eigenvalues, eigenvectors (in decreasing order), and obtain \( X = U \Lambda ^ {1/2}\). We can already see handwavingly that \( XX ^ T = U \Lambda U ^ T = S\) if we construct \( X \) this way. Theorem: X takes D as its distance matrix.</li>
+<li>(Optional) If we only use the first \( k\) eigenvalue, eigenvector pair to construct \(X\), then Theorem: this X best preserves the original distance matrix \(D\), in the sense of minimizing sum of square of error. </li>
+</ol>
+
+<h3 id="3-3-properties">3.3. Properties</h3>
+
+<ol>
+<li>It is \( O(n ^ 2)\). </li>
+<li>If D is obtained from some known dataset \( Z \), then doing the above MDS is exactly equivalent to linear Kernel PCA</li>
+<li>In practice, one construct the distance matrix using some non-Euclidean distance, then do MDS on this distance matrix. </li>
+<li>To emphasize close distance, we can do the same trick as in Spectral Clustering (see  Spectral Clustering post), transforming the distance to similarity matrix such that closer distance stay roughly as 1, while faraway distance are effectively 0. </li>
+</ol>
+
+<h2 id="4-k-means">4. K-Means</h2>
+
+<div class="imgcap">
+<div>
+<img src="/assets/unsupervised_learning/kmeans.png">
+</div>
+
+<div class="thecap">K-Means obtains convex cluster. Image Credit: Google Image </div>
+
+<p></div></p>
+
+<h3 id="4-1-algorithm">4.1. Algorithm</h3>
+
+<p>Objective 
+$$\min _ {z,u} J(z, u) = \sum _ {i = 1} ^ n \sum _ {j = 1} ^ k z _ i \| x _ i - \mu _ j\| ^ 2$$</p>
+
+<p>This algorithm will result in a local solution to the above objective. The cost to obtain the global solution is NP. </p>
+
+<ol>
+<li>Given \(k\) the number of cluster, pick \( k\) points randomly from the dataset to be the center</li>
+<li>Update \( z _ i\): associate each of n points with the closest center</li>
+<li>Update \( \mu _ j\): recalculate the center as the mean of the points in that cluster</li>
+<li>Repeat 2 and 3 until convergence</li>
+<li>(Optional) Do the above procedues for different initial starting points and pick the best configuration in term of the objective </li>
+</ol>
+
+<h3 id="4-2-interpretation">4.2. Interpretation</h3>
+
+<ol>
+<li>K-Means basically minimize the sum of square Euclidean distance from each point in the cluster to the center. The cluster will always be convex. </li>
+<li>It works well when the cluster are convex and somewhat separable </li>
+<li>The objective is minimized in a alternative minimization manner: we fix one coordinate, optimize the function along the other coordinate, then we fix the other coordinate and optimize along this coordinate. This approach is used in many non-convex optimization problem, and is very similar to EM algorithm. </li>
+</ol>
+
+<h3 id="4-3-properties">4.3. Properties</h3>
+
+<ol>
+<li>Its complexity is O(nkip) for i is the number of iteration we run. So it is fast. </li>
+<li>K-Mean kinda only work for Euclidean distance, since we take advantage of the cheap &quot;finding center&quot; part. For Euclidean distance, the new center that minimizes the sum of square distance between the center and its members is just the mean of all members. It is hard for other distance metrics. </li>
+<li>It suffer from outlier as Linear Regression suffers from outlier, or PCA suffer from outliers. They are all minimizing the sum of square errors. </li>
+</ol>
+
+<h2 id="5-k-medoids">5. K-Medoids</h2>
+
+<div class="imgcap">
+<div>
+<img src="/assets/unsupervised_learning/kmedoids.gif">
+</div>
+
+<div class="thecap">Difference between K-Medoids and K-Means. Image Credit: Google Image </div>
+
+<p></div></p>
+
+<h3 id="5-1-overview">5.1. Overview</h3>
+
+<p>K-medoids at first sight look like K-Means with a different distance metrics. It is not quite that. The first difference is that where the center of K-Means can be any point in the space, the center of K-medoid must be one in the dataset. Secondly, K-medoid will works only with the distance matrix, K-means will need the exact location of each point to calculate the distance from that point to any arbitrary center. </p>
+
+<h3 id="5-2-the-algorithm">5.2. The Algorithm,</h3>
+
+<ol>
+<li>Given \(k\) the number of cluster, pick \( k\) points randomly from the dataset to be the center</li>
+<li>Update \( z _ i\): associate each of n points with the closest center</li>
+<li>Update \( \mu _ j\): for each cluster j&#39;th, for each member in that cluster, swap the current center with that member and calculate the sum of distance from all member in the cluster to that new center. Pick the member that after swapping with the current center, have the smallest sum of distances. </li>
+<li>Repeat step 2 and step 3 until convergence </li>
+</ol>
+
+<h3 id="5-3-properties">5.3. Properties</h3>
+
+<ol>
+<li>It is \( O (n<sup>2)\)</sup> in complexity, since it needs to calculate all the pairwise distances. So it is (much) slower than K-Means. </li>
+<li>It works naturally with any distance metrics. </li>
+<li>Note again that the center (medoid) must be one of the point in the dataset, unlike K-Means which can be anywhere </li>
+<li>It is more robust to outlier than K-Means</li>
+</ol>
+
+<h2 id="6-hierarchical-clustering">6. Hierarchical Clustering</h2>
+
+<div class="imgcap">
+<div>
+<img src="/assets/unsupervised_learning/hc.png">
+</div>
+
+<div class="thecap">Illustration of Hierarchical Clustering. Image Credit: Wikipedia </div>
+
+<p></div></p>
+
+<h3 id="6-1-algorithm">6.1. Algorithm</h3>
+
+<p>We present here the bottom-up approach. One can form a tree along the process. </p>
+
+<ol>
+<li>Define a notion of distance between a cluster and another cluster, for example use the minimum distance between any a point from this cluster to another point from the other cluster. </li>
+<li>Starts with \( n\) clusters where each point is its own cluster</li>
+<li>Repeat \( n - 1\) times : pick two clusters that are closest to each other and merge them.<br></li>
+</ol>
+
+<h3 id="6-2-properties">6.2. Properties</h3>
+
+<ol>
+<li>It is very slow \( O (n ^ 3)\) with the naive implementation. It can be reduced to \( O (n ^ 2)\)</li>
+<li>The top-down approach, where one starts with one cluster and gradually breaking down cluster, have exponential complexity. </li>
+<li>It is useful for visualizing and interpreting features when doing supervise learning. One can produce a dendogram of the features to see which one are correlated. </li>
+<li>It perform clustering for all \( k \) - number of cluster - at the same time. </li>
+</ol>
+
+<h2 id="6-gaussian-mixture-models">6. Gaussian Mixture Models</h2>
+
+<p>GMM can be thought of as a soft version of K-Means. In K-Means each point either belong to this cluster or some other cluster. In GMM, each point has a probability \( \pi _i \) of being to cluster \( i\)&#39;th. GMM can be solved somewhat similarly to K-Means. We won&#39;t go into detail GMM here, and will cover it when we talk about Bayseian models, graphical models. </p>
+
+  </article>
+
+  <!-- mathjax -->
+  
+  <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+  
+  <!-- disqus comments -->
+ 
+ <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+      var disqus_shortname = 'HoangDT Blog'; // required: replace example with your forum shortname
+
+      /* * * DON'T EDIT BELOW THIS LINE * * */
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+  
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'andersonvom'; // required: replace example with your forum shortname
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrap">
+
+    <!-- <h2 class="footer-heading">Hoang Duong blog</h2> -->
+
+    <div class="footer-col-1 column">
+      <ul>
+        <li>Hoang Duong blog</li>
+        <!-- <li><a href="mailto:hduong@berkeley.edu">hduong@berkeley.edu</a></li> -->
+      </ul>
+    </div>
+
+    <div class="footer-col-2 column">
+      <ul>
+        <li>
+          <a href="https://github.com/hduongtrong">
+            <span class="icon github">
+              <svg version="1.1" class="github-icon-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                 viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+                <path fill-rule="evenodd" clip-rule="evenodd" fill="#C2C2C2" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761
+                c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32
+                c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472
+                c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037
+                C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65
+                c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261
+                c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082
+                c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129
+                c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/>
+              </svg>
+            </span>
+            <span class="username">hduongtrong</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://twitter.com/hduongtrong">
+            <span class="icon twitter">
+              <svg version="1.1" class="twitter-icon-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                 viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+                <path fill="#C2C2C2" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809
+                c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27
+                c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767
+                c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206
+                C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271
+                c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469
+                c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/>
+              </svg>
+            </span>
+            <span class="username">hduongtrong</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="footer-col-3 column">
+      <p class="text">Learning Machine Learning</p>
+    </div>
+
+  </div>
+
+</footer>
+
+
+    </body>
+</html>

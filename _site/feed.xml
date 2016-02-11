@@ -5,8 +5,8 @@
     <description>Learning Machine Learning</description>
     <link>http://hduongtrong.github.io/</link>
     <atom:link href="http://hduongtrong.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Wed, 10 Feb 2016 21:00:06 -0800</pubDate>
-    <lastBuildDate>Wed, 10 Feb 2016 21:00:06 -0800</lastBuildDate>
+    <pubDate>Wed, 10 Feb 2016 22:45:20 -0800</pubDate>
+    <lastBuildDate>Wed, 10 Feb 2016 22:45:20 -0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
@@ -112,8 +112,255 @@ Learning.&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
         <pubDate>Wed, 10 Feb 2016 10:44:27 -0800</pubDate>
-        <link>http://hduongtrong.github.io/2016/02/10/MDS-Spectral-Clustering/</link>
-        <guid isPermaLink="true">http://hduongtrong.github.io/2016/02/10/MDS-Spectral-Clustering/</guid>
+        <link>http://hduongtrong.github.io/2016/02/10/Spectral-Clustering/</link>
+        <guid isPermaLink="true">http://hduongtrong.github.io/2016/02/10/Spectral-Clustering/</guid>
+        
+        
+      </item>
+    
+      <item>
+        <title>PCA, Kernel PCA, MDS, K-Means, K-Medoids, Hierarchical Clustering</title>
+        <description>&lt;h2 id=&quot;1-pca&quot;&gt;1. PCA&lt;/h2&gt;
+
+&lt;div class=&quot;imgcap&quot;&gt;
+&lt;div&gt;
+&lt;img src=&quot;/assets/unsupervised_learning/fig_pca_principal_component_analysis.png&quot;&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;thecap&quot;&gt;PCA illustration. Image Credit: Google Image &lt;/div&gt;
+
+&lt;p&gt;&lt;/div&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;1-1-the-algorithm&quot;&gt;1.1. The algorithm&lt;/h3&gt;
+
+&lt;p&gt;Given data \( X \in \mathbb{R} ^ {n \times p} \), PCA process is as followed (the SVD version)&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Center and rescale \( X \) to have zero mean, standard deviation one&lt;/li&gt;
+&lt;li&gt;Perform SVD \( X = UDV ^ T \), where \( U \in \mathbb{R} ^ {n \times p}\), \( D\) is a diagonal matrix of size \( (p \times p ) \), and V is a orthogonal matrix size \( p \times p \)&lt;/li&gt;
+&lt;li&gt;The projected data is \( X _ {pca} = UD \) for as many column of U as the dimension we want to project &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;U is called the loadings. UD is called the scores (projected X). U is also called the principle components. It is the eigenvectors of the covariance matrix. &lt;/p&gt;
+
+&lt;p&gt;An analogous version of PCA (the eigen-decomposition version)&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Center and rescale \( X \)&lt;/li&gt;
+&lt;li&gt;Construct covariance matrix \( C = \frac{1}{n} X ^ T X \)&lt;/li&gt;
+&lt;li&gt;Perform eigen-decomposition \( C = V \Lambda V ^ T \)&lt;/li&gt;
+&lt;li&gt;The projected data is \( X _ {pca} = X U \) for as many column of U as the dimension we want to project &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;To see while they are equivalent, note that the \( U \) from SVD and eigen-decomposition are the same, and that \( \Lambda = D ^ 2\). A such \( X_ {pca} = XU = UDV V ^ T = UD \). &lt;/p&gt;
+
+&lt;h3 id=&quot;1-2-interpretation-of-pca&quot;&gt;1.2. Interpretation of PCA&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;The first component \( w ^ T X \) is the dimension that maximize the variance, i.e.
+$$\max _ {\| w \| = 1} Var (w ^ T X ) = \max _  {\| w \| = 1} \frac{1}{n} w ^ T X ^ T X w .$$
+And the above expression is maximized when w is the largest eigenvector of \( X ^ T X\). At that value, the expression is equal to the eigenvalue of the covariance matrix. &lt;/li&gt;
+&lt;li&gt;The PCA projection is a set of points in lower dimension that best preserve the pair-wise distances. &lt;/li&gt;
+&lt;li&gt;PCA can also be interpreted in the sense compressing data, i.e. we post-multiplying matrix \(X \) with some vector \( U \)) to lower dimension for compression, then to obtain an approximate of the original data, we multiply this lower dimension projection with \( U ^ {-1}\). Then out of all the linear projection, PCA is the one that best preserve the original dataset when going back to the original space from the compressed data. For example images data. &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;1-3-properties&quot;&gt;1.3. Properties&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;It is fast. In the case of tall matrix, \( p &amp;lt; n\), the algorithm is \( O(np ^ 2)\). It scales well with the number of dimention&lt;/li&gt;
+&lt;li&gt;The prefer way to do PCA is through SVD&lt;/li&gt;
+&lt;li&gt;There is efficient library (ARPACK) to get the first few eigenvalues and eigenvectors. &lt;/li&gt;
+&lt;li&gt;Just like Linear Regression, one can also do Sparse PCA, Kernel PCA, Ridge PCA. &lt;/li&gt;
+&lt;li&gt;It is often used to reduce the dimension then run some clustering algorithm on the data &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;2-kernel-pca&quot;&gt;2. Kernel PCA&lt;/h2&gt;
+
+&lt;div class=&quot;imgcap&quot;&gt;
+&lt;div&gt;
+&lt;img src=&quot;/assets/unsupervised_learning/KernelPCA.png&quot;&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;thecap&quot;&gt;Kernel PCA illustration. Image Credit: Google Image &lt;/div&gt;
+
+&lt;p&gt;&lt;/div&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;1-1-the-algorithm&quot;&gt;1.1. The Algorithm&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Given a Kernel, i.e. the Radial Basis kernel 
+$$ K (x, y) = \exp \left( - \frac {\| x - y\| ^ 2 }{\sigma ^ 2 } \right) $$, we construct the \( n \times n \) Kernel matrix \( K\), where \( K_{ij} = K(x_i, x_j)\)&lt;/li&gt;
+&lt;li&gt;Double centering matrix \( K\) to have column mean and row mean zero 
+$$ \tilde{K}  = K - 1 _ n ^ T K - K 1 _ n + 1 _ n ^ T  K 1 _ n$$, for \( 1 _ N \) is the vector of all 1. &lt;/li&gt;
+&lt;li&gt;Solve for eigenvector and eigenvalues of \( \tilde{K} / n\)
+$$ \frac{1}{N} \tilde{K} a_k = \lambda _ k a_ k $$&lt;/li&gt;
+&lt;li&gt;The projected dataset is \( X _ {kpca} = \sum _ {i = 1} ^ {n} a _ {ki} K(x, x_i)\)&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;1-2-interpretation&quot;&gt;1.2. Interpretation&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Linear Kernel PCA is equivalent to PCA as expected&lt;/li&gt;
+&lt;li&gt;Similar to other Kernel method, Kernel PCA can be thought of equivalent to doing PCA on a higher dimension feature space, with the same number of parameters (\(p\)). For example if we use the quadratic polynomial, the kernel function is just \( K(x, y) = (x ^ T y + c) ^ 2\)it is similar to feature engineer the dataset into \( x_1 ^ 2, x_2 ^ 2, x_1 x_2, x_1, x_2 \), then do PCA up here with the constraint on the weight (so the weight on this new space can&amp;#39;t be freely chosen, but only have 2 degree of freedom, i.e. the weight for the quadratic term must be the square the weight of the linear term). So it effectively performs PCA on a subspace of a higher dimension space, where the rank of the subspace is equal to \( p \).&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;1-3-propreties&quot;&gt;1.3. Propreties&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Its memory requirement is quadratic in \(n \), that is expensive. The computation complexity is also (at least) \( O (n ^ 2)\). &lt;/li&gt;
+&lt;li&gt;It is more flexible than linear PCA in the sence non-linear model is more flexible than linear regression&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;3-multidimensional-scaling&quot;&gt;3. Multidimensional Scaling&lt;/h2&gt;
+
+&lt;div class=&quot;imgcap&quot;&gt;
+&lt;div&gt;
+&lt;img src=&quot;/assets/unsupervised_learning/mds.gif&quot;&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;thecap&quot;&gt;From distance matrix of cities, reconstruct their location with MDS. Image Credit: Google Image &lt;/div&gt;
+
+&lt;p&gt;&lt;/div&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;3-1-overview&quot;&gt;3.1. Overview&lt;/h3&gt;
+
+&lt;p&gt;It is very similar to PCA, or specifically Kernel PCA, so it is worth noting the fundamental difference. In Kernel PCA, one start with a data matrix \( X \), one then construct the kernel matrix, \( XX ^ T\) in case of linear kernel, then get get the projected dataset from the eigen-decomposition of this dataset. 
+In MDS, the original dataset is unknown, we only know the distance matrix, now one wish to get a projected dataset that also best preserve the original unknown dataset, in the sense that the pairwise distances of the new dataset match the known distance matrix. &lt;/p&gt;
+
+&lt;p&gt;One example when this might arise is in socialogy. We have ancient towns in England, where now we don&amp;#39;t know exactly their location. But we have some measure of pairwise distance between two towns, based on how many married couples are between these two towns. From this measure of similarity, one wish to reconstruct the original location of the town. Of course this can only be done up to a translation and rotation (since doing these does not change the distances). &lt;/p&gt;
+
+&lt;h3 id=&quot;3-2-the-algorithm&quot;&gt;3.2. The algorithm&lt;/h3&gt;
+
+&lt;p&gt;From the distance matrix \( D \in \mathbb{R ^ {n \times p}}\) of some unknown data \( Z \) living in unknown dimension space \( \mathbb{R} ^ p\), one wish to construct \( X \) that takes \( D \) as its distance matrix. If the unknown data \( Z \) is of rank p, then a theorem state that we can get \( X \) uniquely up to a rotation and translation in \( \mathbb{R} ^ p \) as well. In higher dimension, of course there are infinitely many solution. In lower dimension, we can&amp;#39;t get the exact distance matrix, but only wish to get data that best preserve the distance matrix. We can assume that \( X,Z \) have column mean zero. &lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Double-centering \( D ^ 2\) to obtain \( S = -\frac{1}{2} H D ^ 2 H\),  for \(H = I _ n - \frac{1}{n} 11 ^ T\). Theorem 1: \( S = XX ^ T = ZZ ^ T\)&lt;/li&gt;
+&lt;li&gt;Diagonalize \( S = U \Lambda U ^ T\)&lt;/li&gt;
+&lt;li&gt;Using the first \(p\) eigenvalues, eigenvectors (in decreasing order), and obtain \( X = U \Lambda ^ {1/2}\). We can already see handwavingly that \( XX ^ T = U \Lambda U ^ T = S\) if we construct \( X \) this way. Theorem: X takes D as its distance matrix.&lt;/li&gt;
+&lt;li&gt;(Optional) If we only use the first \( k\) eigenvalue, eigenvector pair to construct \(X\), then Theorem: this X best preserves the original distance matrix \(D\), in the sense of minimizing sum of square of error. &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;3-3-properties&quot;&gt;3.3. Properties&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;It is \( O(n ^ 2)\). &lt;/li&gt;
+&lt;li&gt;If D is obtained from some known dataset \( Z \), then doing the above MDS is exactly equivalent to linear Kernel PCA&lt;/li&gt;
+&lt;li&gt;In practice, one construct the distance matrix using some non-Euclidean distance, then do MDS on this distance matrix. &lt;/li&gt;
+&lt;li&gt;To emphasize close distance, we can do the same trick as in Spectral Clustering (see  Spectral Clustering post), transforming the distance to similarity matrix such that closer distance stay roughly as 1, while faraway distance are effectively 0. &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;4-k-means&quot;&gt;4. K-Means&lt;/h2&gt;
+
+&lt;div class=&quot;imgcap&quot;&gt;
+&lt;div&gt;
+&lt;img src=&quot;/assets/unsupervised_learning/kmeans.png&quot;&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;thecap&quot;&gt;K-Means obtains convex cluster. Image Credit: Google Image &lt;/div&gt;
+
+&lt;p&gt;&lt;/div&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;4-1-algorithm&quot;&gt;4.1. Algorithm&lt;/h3&gt;
+
+&lt;p&gt;Objective 
+$$\min _ {z,u} J(z, u) = \sum _ {i = 1} ^ n \sum _ {j = 1} ^ k z _ i \| x _ i - \mu _ j\| ^ 2$$&lt;/p&gt;
+
+&lt;p&gt;This algorithm will result in a local solution to the above objective. The cost to obtain the global solution is NP. &lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Given \(k\) the number of cluster, pick \( k\) points randomly from the dataset to be the center&lt;/li&gt;
+&lt;li&gt;Update \( z _ i\): associate each of n points with the closest center&lt;/li&gt;
+&lt;li&gt;Update \( \mu _ j\): recalculate the center as the mean of the points in that cluster&lt;/li&gt;
+&lt;li&gt;Repeat 2 and 3 until convergence&lt;/li&gt;
+&lt;li&gt;(Optional) Do the above procedues for different initial starting points and pick the best configuration in term of the objective &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;4-2-interpretation&quot;&gt;4.2. Interpretation&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;K-Means basically minimize the sum of square Euclidean distance from each point in the cluster to the center. The cluster will always be convex. &lt;/li&gt;
+&lt;li&gt;It works well when the cluster are convex and somewhat separable &lt;/li&gt;
+&lt;li&gt;The objective is minimized in a alternative minimization manner: we fix one coordinate, optimize the function along the other coordinate, then we fix the other coordinate and optimize along this coordinate. This approach is used in many non-convex optimization problem, and is very similar to EM algorithm. &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;4-3-properties&quot;&gt;4.3. Properties&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Its complexity is O(nkip) for i is the number of iteration we run. So it is fast. &lt;/li&gt;
+&lt;li&gt;K-Mean kinda only work for Euclidean distance, since we take advantage of the cheap &amp;quot;finding center&amp;quot; part. For Euclidean distance, the new center that minimizes the sum of square distance between the center and its members is just the mean of all members. It is hard for other distance metrics. &lt;/li&gt;
+&lt;li&gt;It suffer from outlier as Linear Regression suffers from outlier, or PCA suffer from outliers. They are all minimizing the sum of square errors. &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;5-k-medoids&quot;&gt;5. K-Medoids&lt;/h2&gt;
+
+&lt;div class=&quot;imgcap&quot;&gt;
+&lt;div&gt;
+&lt;img src=&quot;/assets/unsupervised_learning/kmedoids.gif&quot;&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;thecap&quot;&gt;Difference between K-Medoids and K-Means. Image Credit: Google Image &lt;/div&gt;
+
+&lt;p&gt;&lt;/div&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;5-1-overview&quot;&gt;5.1. Overview&lt;/h3&gt;
+
+&lt;p&gt;K-medoids at first sight look like K-Means with a different distance metrics. It is not quite that. The first difference is that where the center of K-Means can be any point in the space, the center of K-medoid must be one in the dataset. Secondly, K-medoid will works only with the distance matrix, K-means will need the exact location of each point to calculate the distance from that point to any arbitrary center. &lt;/p&gt;
+
+&lt;h3 id=&quot;5-2-the-algorithm&quot;&gt;5.2. The Algorithm,&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Given \(k\) the number of cluster, pick \( k\) points randomly from the dataset to be the center&lt;/li&gt;
+&lt;li&gt;Update \( z _ i\): associate each of n points with the closest center&lt;/li&gt;
+&lt;li&gt;Update \( \mu _ j\): for each cluster j&amp;#39;th, for each member in that cluster, swap the current center with that member and calculate the sum of distance from all member in the cluster to that new center. Pick the member that after swapping with the current center, have the smallest sum of distances. &lt;/li&gt;
+&lt;li&gt;Repeat step 2 and step 3 until convergence &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;5-3-properties&quot;&gt;5.3. Properties&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;It is \( O (n&lt;sup&gt;2)\)&lt;/sup&gt; in complexity, since it needs to calculate all the pairwise distances. So it is (much) slower than K-Means. &lt;/li&gt;
+&lt;li&gt;It works naturally with any distance metrics. &lt;/li&gt;
+&lt;li&gt;Note again that the center (medoid) must be one of the point in the dataset, unlike K-Means which can be anywhere &lt;/li&gt;
+&lt;li&gt;It is more robust to outlier than K-Means&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;6-hierarchical-clustering&quot;&gt;6. Hierarchical Clustering&lt;/h2&gt;
+
+&lt;div class=&quot;imgcap&quot;&gt;
+&lt;div&gt;
+&lt;img src=&quot;/assets/unsupervised_learning/hc.png&quot;&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;thecap&quot;&gt;Illustration of Hierarchical Clustering. Image Credit: Wikipedia &lt;/div&gt;
+
+&lt;p&gt;&lt;/div&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;6-1-algorithm&quot;&gt;6.1. Algorithm&lt;/h3&gt;
+
+&lt;p&gt;We present here the bottom-up approach. One can form a tree along the process. &lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Define a notion of distance between a cluster and another cluster, for example use the minimum distance between any a point from this cluster to another point from the other cluster. &lt;/li&gt;
+&lt;li&gt;Starts with \( n\) clusters where each point is its own cluster&lt;/li&gt;
+&lt;li&gt;Repeat \( n - 1\) times : pick two clusters that are closest to each other and merge them.&lt;br&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;6-2-properties&quot;&gt;6.2. Properties&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;It is very slow \( O (n ^ 3)\) with the naive implementation. It can be reduced to \( O (n ^ 2)\)&lt;/li&gt;
+&lt;li&gt;The top-down approach, where one starts with one cluster and gradually breaking down cluster, have exponential complexity. &lt;/li&gt;
+&lt;li&gt;It is useful for visualizing and interpreting features when doing supervise learning. One can produce a dendogram of the features to see which one are correlated. &lt;/li&gt;
+&lt;li&gt;It perform clustering for all \( k \) - number of cluster - at the same time. &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;6-gaussian-mixture-models&quot;&gt;6. Gaussian Mixture Models&lt;/h2&gt;
+
+&lt;p&gt;GMM can be thought of as a soft version of K-Means. In K-Means each point either belong to this cluster or some other cluster. In GMM, each point has a probability \( \pi _i \) of being to cluster \( i\)&amp;#39;th. GMM can be solved somewhat similarly to K-Means. We won&amp;#39;t go into detail GMM here, and will cover it when we talk about Bayseian models, graphical models. &lt;/p&gt;
+</description>
+        <pubDate>Wed, 10 Feb 2016 10:44:27 -0800</pubDate>
+        <link>http://hduongtrong.github.io/2016/02/10/KMean-KMedoid-KernelPCA/</link>
+        <guid isPermaLink="true">http://hduongtrong.github.io/2016/02/10/KMean-KMedoid-KernelPCA/</guid>
         
         
       </item>
