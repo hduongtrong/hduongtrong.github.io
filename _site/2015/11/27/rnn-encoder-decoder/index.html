@@ -4,10 +4,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Hoang Duong blog</title>
+    <title>RNN Encoder Decoder - Neural Translation Machine</title>
     <meta name="viewport" content="width=device-width">
     <meta name="description" content="Learning Machine Learning">
-    <link rel="canonical" href="http://hduongtrong.github.io/">
+    <link rel="canonical" href="http://hduongtrong.github.io/2015/11/27/rnn-encoder-decoder/">
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/css/main.css">
@@ -68,54 +68,66 @@
 
     <div class="page-content">
       <div class="wrap">
-      <div class="home">
-  
-  <ul class="posts">
-    
-      <li>
-        <span class="post-date">Feb 10, 2016</span>
-        <a class="post-link" href="/2016/02/10/MDS-Spectral-Clustering/">Spectral Clustering</a>
-        <br>
-        Summary of Spectral Clustering
-      </li>
-    
-      <li>
-        <span class="post-date">Nov 27, 2015</span>
-        <a class="post-link" href="/2015/11/27/rnn-encoder-decoder/">RNN Encoder Decoder - Neural Translation Machine</a>
-        <br>
-        Summary of RNN Encoder-Decoder approach. Neural Translation Machine
-      </li>
-    
-      <li>
-        <span class="post-date">Nov 23, 2015</span>
-        <a class="post-link" href="/2015/11/23/coordinate-descent/">Gradient Descent and Variants - Convergence Rate Summary</a>
-        <br>
-        Summary of Gradient Descent, Coordinate Descent. Stochastic Gradient Descent. Their Convergence Rate (Iteration Complexity).
-      </li>
-    
-      <li>
-        <span class="post-date">Nov 20, 2015</span>
-        <a class="post-link" href="/2015/11/20/word2vec/">Word Representation - Word2Vec</a>
-        <br>
-        Summary of Word2Vec method
-      </li>
-    
-      <li>
-        <span class="post-date">Oct 19, 2015</span>
-        <a class="post-link" href="/2015/10/19/deep-reinforcement-learning/">Deep Reinforcement Learning</a>
-        <br>
-        Summary of the UC Berkeley CS294 Deep Reinforcement Learning
-      </li>
-    
-      <li>
-        <span class="post-date">Oct 19, 2015</span>
-        <a class="post-link" href="/2015/10/19/how-setting-up-blog/">How to make a blog like this</a>
-        <br>
-        Guide to create pretty looking blog with jekyll and github pages
-      </li>
-    
-  </ul>
+      <div class="post">
 
+  <header class="post-header">
+    <h1>RNN Encoder Decoder - Neural Translation Machine</h1>
+    <p class="meta">Nov 27, 2015</p>
+  </header>
+
+  <article class="post-content">
+  <h2 id="credits">Credits</h2>
+
+<ul>
+<li><a href="http://arxiv.org/pdf/1406.1078v3.pdf">Learning Phrase Representations using RNN Encoder–Decoder for Statistical Machine Translation</a>. Kyunghyun Cho, Bart van Merrie ̈nboer Caglar Gulcehre, Dzmitry Bahdanau, Fethi Bougares Holger Schwenk, Yoshua Bengio. [1]</li>
+<li><a href="http://arxiv.org/pdf/1409.1259v2.pdf">On the Properties of Neural Machine Translation: Encoder–Decoder Approaches</a>. Kyunghyun Cho, Bart van Merrienboer, Dzmitry Bahdanau.</li>
+<li><a href="http://arxiv.org/pdf/1412.7449v3.pdf">Grammar as a Foreign Language</a>. Oriol Vinyals, Lukasz Kaiser, 
+Terry Koo, Slav Petrov, Ilya Sutskever. </li>
+<li><a href="http://arxiv.org/pdf/1409.0473v6.pdf">Neural Machine Translation by Jointly Learning to Align and Translate</a>. Dzmitry Bahdanau, KyungHyun Cho, Yoshua Bengio. </li>
+<li>Code Website: <a href="http://www.tensorflow.org/tutorials/seq2seq/index.html#sequence-to-sequence-models">Tensorflow seq2seq</a></li>
+</ul>
+
+<h2 id="rnn-encoder-decoder">RNN Encoder-Decoder</h2>
+
+<p>The paper [1] already has a succint explaination of this model. I copy most of stuff over here. </p>
+
+  </article>
+
+  <!-- mathjax -->
+  
+  <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+  
+  <!-- disqus comments -->
+ 
+ <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+      var disqus_shortname = 'HoangDT Blog'; // required: replace example with your forum shortname
+
+      /* * * DON'T EDIT BELOW THIS LINE * * */
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+  
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'andersonvom'; // required: replace example with your forum shortname
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  
 </div>
 
       </div>

@@ -5,9 +5,142 @@
     <description>Learning Machine Learning</description>
     <link>http://hduongtrong.github.io/</link>
     <atom:link href="http://hduongtrong.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Mon, 23 Nov 2015 22:16:42 -0800</pubDate>
-    <lastBuildDate>Mon, 23 Nov 2015 22:16:42 -0800</lastBuildDate>
+    <pubDate>Wed, 10 Feb 2016 21:00:06 -0800</pubDate>
+    <lastBuildDate>Wed, 10 Feb 2016 21:00:06 -0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
+    
+      <item>
+        <title>Spectral Clustering</title>
+        <description>&lt;h2 id=&quot;why-spectral-clustering&quot;&gt;Why Spectral Clustering&lt;/h2&gt;
+
+&lt;p&gt;K-mean is a very popular clustering algorithm. It is very fast to train (O(n)), and 
+it often gives reasonable results if the clusters are in separated convex shapes. 
+However, if the clusters are connected in a different form, for example the inner 
+circle and outer circle as seen in the image below, K-Mean will have trouble learning 
+the cluster.&lt;/p&gt;
+
+&lt;p&gt;This is the case because the way the loss function of K-Mean is defined. It attempts 
+to minimize the sum of distance between all points to a center. It is global in a sense.
+Spectral Clustering is different in that aspect, it only try to minimize the distance
+between a point and its closest neighbors. So within a cluster, for example the circle shape, 
+two points can be very far away, but as long as there is a sequence of points with in that 
+cluster that connect them, then that is fine. &lt;/p&gt;
+
+&lt;p&gt;So Spectral Clustering will work well with clusters that are connected, but can have 
+any shape (does not have to be convex). &lt;/p&gt;
+
+&lt;div class=&quot;imgcap&quot;&gt;
+&lt;div&gt;
+&lt;img src=&quot;/assets/spectral_clustering/plot_cluster_comparison_001.png&quot;&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;thecap&quot;&gt;Comparision of CLustering Algorithm - Credit: Scikit-Learn &lt;/div&gt;
+
+&lt;p&gt;&lt;/div&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;the-vanilla-spectral-clustering&quot;&gt;The Vanilla Spectral Clustering&lt;/h2&gt;
+
+&lt;p&gt;The Spectral Clustering is as followed: given a dataset \( X  \in \mathbb{R} ^ {n \times p}\)&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Compute the affinity matrix 
+$$&lt;br&gt;
+a_{ij} = \exp\left(-\frac{\|x_{i}-x_{j}\| ^ {2}}{2\sigma ^ {2}}\right)
+$$
+This has the effect of focusing on small distance, and making all
+big distance equal to 0. It emphasize local, connectedness. This matrix
+is symmetric. &lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Construct degree matrix 
+$$ D=   diag  \left( d_{1}, d_{2},...,d_{n}\right) $$
+$$ d_{i}=  \sum_{j=1} ^ {n}a_{ij} $$&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Construct Laplacian matrix
+$$ L=  D-A $$
+This matrix is symmetric, PSD&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Find \(m\) smallest eigenvalues and associated eigenvectors (possibly
+ignoring the first). Let \(V \in \mathbb{R} ^ {n \times k}\) be the matrix
+containing the vector as columns&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Performing k-Means on V. The cluster obtained from here is the result. &lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;variants&quot;&gt;Variants&lt;/h2&gt;
+
+&lt;p&gt;Following are some popular variants of the spectral clustering algorithm. Each variant has a different computational or theoretical aspect. &lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Affinity Matrix: all of these affinity matrix try to make the&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;The version we use is a fully connected version using Gaussian kernel transform. It is 
+fully connected because even though the distance which are far away is very close to zero,
+it is still non-zero. &lt;/li&gt;
+&lt;li&gt;\(\epsilon \)-neighborhood: make a graph where two points are connected if distance is less than \(  \epsilon \). This in effect is a hard threshold version of the Gaussian kernel. This is a sparse matrix, and is computationally cheaper than the fully connected version. &lt;/li&gt;
+&lt;li&gt;k-NN graph: two points ((i,j)) are connected if ((i)) is in ((k))-NN of ((j)) and vice versa. This is also a sparse matrix. &lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Graph Laplacian&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Unnormalized: \( L = D - A \)&lt;/li&gt;
+&lt;li&gt;Normalized \( L = I - D ^ {-1/2} A D ^ {-1/2}\)&lt;/li&gt;
+&lt;li&gt;Normalized \( L = I - D ^ {-1} A\)&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;properties&quot;&gt;Properties&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Spectral Clustering emphasize connectedness, close neighbor distances, while ignoring faraway observations. It is then a local method (not global like K-Means). &lt;/li&gt;
+&lt;li&gt;It is \( O(n ^ 3)\) in general and can be reduced to  \( O(n ^ 2)\). In practice it is quite slow with large dataset (i.e. &amp;gt; 5000 observations). One should use the sparse version of affinity matrix.&lt;br&gt;&lt;/li&gt;
+&lt;li&gt;There are many theoretical results on Spectral Clustering&lt;/li&gt;
+&lt;li&gt;Sensitive w.r.t. similarity graph&lt;/li&gt;
+&lt;li&gt;Choose \( k \) the number of cluster such that \( \lambda_1, ..., \lambda_k \) are small while \( \lambda_{k+1} \) is relatively large, i.e. there is a gape. &lt;/li&gt;
+&lt;li&gt;What Laplacian to use: if degree are similar, then they are all the
+same. If degree are spread out, then use \(L=I-D ^ {-1}W\) is recommended. &lt;/li&gt;
+&lt;li&gt;Consistency issues: the unnormalized might converge to trivial solution
+(1 point vs rest), or fail to converge as \( n\rightarrow\infty.\) Both
+normalized version converge under mild condition. To avoid trivial
+solution, make sure \( \lambda_{k}\ll\min d_{j}.\)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;reference&quot;&gt;Reference&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Ulrike von Luxburg. &lt;a href=&quot;http://www.stat.berkeley.edu/%7Ehhuang/STAT141/SpectralClustering.pdf&quot;&gt;A Tutorial on Spectral Clustering.&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Donghui Yan, Ling Huang, Michael I. Jordan. &lt;a href=&quot;http://www.cs.berkeley.edu/%7Ejordan/papers/yan-etal-long.pdf&quot;&gt;Fast Approximate Spectral
+Clustering.&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Trevor Hastie, Rob Tibshirani, Jerome Friedman. &lt;a href=&quot;http://statweb.stanford.edu/%7Etibs/ElemStatLearn/&quot;&gt;Element of Statistical
+Learning.&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Wed, 10 Feb 2016 10:44:27 -0800</pubDate>
+        <link>http://hduongtrong.github.io/2016/02/10/MDS-Spectral-Clustering/</link>
+        <guid isPermaLink="true">http://hduongtrong.github.io/2016/02/10/MDS-Spectral-Clustering/</guid>
+        
+        
+      </item>
+    
+      <item>
+        <title>RNN Encoder Decoder - Neural Translation Machine</title>
+        <description>&lt;h2 id=&quot;credits&quot;&gt;Credits&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;http://arxiv.org/pdf/1406.1078v3.pdf&quot;&gt;Learning Phrase Representations using RNN Encoder–Decoder for Statistical Machine Translation&lt;/a&gt;. Kyunghyun Cho, Bart van Merrie ̈nboer Caglar Gulcehre, Dzmitry Bahdanau, Fethi Bougares Holger Schwenk, Yoshua Bengio. [1]&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;http://arxiv.org/pdf/1409.1259v2.pdf&quot;&gt;On the Properties of Neural Machine Translation: Encoder–Decoder Approaches&lt;/a&gt;. Kyunghyun Cho, Bart van Merrienboer, Dzmitry Bahdanau.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;http://arxiv.org/pdf/1412.7449v3.pdf&quot;&gt;Grammar as a Foreign Language&lt;/a&gt;. Oriol Vinyals, Lukasz Kaiser, 
+Terry Koo, Slav Petrov, Ilya Sutskever. &lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;http://arxiv.org/pdf/1409.0473v6.pdf&quot;&gt;Neural Machine Translation by Jointly Learning to Align and Translate&lt;/a&gt;. Dzmitry Bahdanau, KyungHyun Cho, Yoshua Bengio. &lt;/li&gt;
+&lt;li&gt;Code Website: &lt;a href=&quot;http://www.tensorflow.org/tutorials/seq2seq/index.html#sequence-to-sequence-models&quot;&gt;Tensorflow seq2seq&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;rnn-encoder-decoder&quot;&gt;RNN Encoder-Decoder&lt;/h2&gt;
+
+&lt;p&gt;The paper [1] already has a succint explaination of this model. I copy most of stuff over here. &lt;/p&gt;
+</description>
+        <pubDate>Fri, 27 Nov 2015 00:00:00 -0800</pubDate>
+        <link>http://hduongtrong.github.io/2015/11/27/rnn-encoder-decoder/</link>
+        <guid isPermaLink="true">http://hduongtrong.github.io/2015/11/27/rnn-encoder-decoder/</guid>
+        
+        
+      </item>
     
       <item>
         <title>Gradient Descent and Variants - Convergence Rate Summary</title>
