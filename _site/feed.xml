@@ -5,8 +5,8 @@
     <description>Learning Machine Learning</description>
     <link>http://hduongtrong.github.io/</link>
     <atom:link href="http://hduongtrong.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Mon, 07 Mar 2016 19:55:53 -0800</pubDate>
-    <lastBuildDate>Mon, 07 Mar 2016 19:55:53 -0800</lastBuildDate>
+    <pubDate>Mon, 07 Mar 2016 21:13:49 -0800</pubDate>
+    <lastBuildDate>Mon, 07 Mar 2016 21:13:49 -0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
@@ -588,11 +588,11 @@ $$\min _ {z,u} J(z, u) = \sum _ {i = 1} ^ n \sum _ {j = 1} ^ k z _ i \| x _ i - 
       </item>
     
       <item>
-        <title>RNN Encoder Decoder - Neural Translation Machine</title>
+        <title>Sequence to Sequence Model</title>
         <description>&lt;h2 id=&quot;credits&quot;&gt;Credits&lt;/h2&gt;
 
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&quot;http://arxiv.org/pdf/1406.1078v3.pdf&quot;&gt;Learning Phrase Representations using RNN Encoder–Decoder for Statistical Machine Translation&lt;/a&gt;. Kyunghyun Cho, Bart van Merrie ̈nboer Caglar Gulcehre, Dzmitry Bahdanau, Fethi Bougares Holger Schwenk, Yoshua Bengio. [1]&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;http://arxiv.org/pdf/1406.1078v3.pdf&quot;&gt;Learning Phrase Representations using RNN Encoder–Decoder for Statistical Machine Translation&lt;/a&gt;. Kyunghyun Cho, Bart van Merrienboer Caglar Gulcehre, Dzmitry Bahdanau, Fethi Bougares Holger Schwenk, Yoshua Bengio. [1]&lt;/li&gt;
 &lt;li&gt;&lt;a href=&quot;http://arxiv.org/pdf/1409.1259v2.pdf&quot;&gt;On the Properties of Neural Machine Translation: Encoder–Decoder Approaches&lt;/a&gt;. Kyunghyun Cho, Bart van Merrienboer, Dzmitry Bahdanau.&lt;/li&gt;
 &lt;li&gt;&lt;a href=&quot;http://arxiv.org/pdf/1412.7449v3.pdf&quot;&gt;Grammar as a Foreign Language&lt;/a&gt;. Oriol Vinyals, Lukasz Kaiser, 
 Terry Koo, Slav Petrov, Ilya Sutskever. &lt;/li&gt;
@@ -600,9 +600,83 @@ Terry Koo, Slav Petrov, Ilya Sutskever. &lt;/li&gt;
 &lt;li&gt;Code Website: &lt;a href=&quot;http://www.tensorflow.org/tutorials/seq2seq/index.html#sequence-to-sequence-models&quot;&gt;Tensorflow seq2seq&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&quot;rnn-encoder-decoder&quot;&gt;RNN Encoder-Decoder&lt;/h2&gt;
+&lt;h2 id=&quot;the-core-model&quot;&gt;The Core Model&lt;/h2&gt;
 
-&lt;p&gt;The paper [1] already has a succint explaination of this model. I copy most of stuff over here. &lt;/p&gt;
+&lt;div class=&quot;imgcap&quot;&gt;
+&lt;div&gt;
+&lt;img src=&quot;/assets/seq2seq/seq2seq.png&quot; style=&quot;width: 500px;&quot;&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;thecap&quot;&gt; Sequence to Sequence Model &lt;/div&gt;
+
+&lt;p&gt;&lt;/div&gt;&lt;/p&gt;
+
+&lt;p&gt;First we define the data, which include encoder input, decoder input, decoder output, encoder hidden states, and decoder hidden states. Here \( S \) denotes the dummy START symbol. &lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Encoder input sequence \( X _ 1, X _ 2, X _ 3  \in \mathbb{R} ^ p \), &lt;/li&gt;
+&lt;li&gt;Encoder hidden states be \( H _ 0, H _ 1, H _ 2, H _ 3 \in \mathbb{R} ^ s, H _ 0 = 0 \). &lt;/li&gt;
+&lt;li&gt;Decoder input sequence \( S, Y _ 1, Y _ 2 \in \mathbb{R} ^ {q} \)&lt;/li&gt;
+&lt;li&gt;Decoder output sequence \( Y _ 1, Y _ 2, Y _ 3 \in \mathbb{R} ^ {q} \)&lt;/li&gt;
+&lt;li&gt;Decoder hidden states be \( K _ 0, K _ 1, K _ 2 \in \mathbb{R} ^ t \)&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Let \( \sigma \) be the sigmoid function, we now define the parameter for our model: &lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Weight matrix that connects encoder input to encoder hidden state be \( W _ x \in \mathbb{R} ^ {p \times s}\). &lt;/li&gt;
+&lt;li&gt;Weight matrix that connects this encoder hidden state to the next hidden state be \( W _ h \in \mathbb{R} ^ {s \times s}\). &lt;/li&gt;
+&lt;li&gt;Weight matrix that connects decoder input to decoder hidden state \( W _ y \in \mathbb{R} ^ {q \times }\)&lt;/li&gt;
+&lt;li&gt;Weight matrix that connects this decoder hidden state to the next hidden state \( W _ k \in \mathbb{R} ^ {t \times t}\)&lt;/li&gt;
+&lt;li&gt;Weight matrix that connects this decoder hidden state to the decoder hidden output \( W _ z \in \mathbb{R} ^ {t \times q}\)&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;We now model the probability of \( Y _ i\) as a function of \( X _ i &amp;#39;s\) through the intermediates \( H _ i &amp;#39;s , K _ i &amp;#39;s \)&lt;/p&gt;
+
+&lt;p&gt;$$
+    \begin{equation}
+    \begin{split}
+        H _ 1 &amp;amp;= \sigma (W _ x X _ 1 + W _ h H _ 0) \\
+        H _ 2 &amp;amp;= \sigma (W _ x X _ 2 + W _ h H _ 1) \\
+        H _ 3 &amp;amp;= \sigma (W _ x X _ 3 + W _ h H _ 2) \\
+        K _ 1 &amp;amp;= \sigma (W _ y S     + W _ k H _ 3) \\
+        K _ 2 &amp;amp;= \sigma (W _ y Y _ 1 + W _ k K _ 1) \\
+        K _ 3 &amp;amp;= \sigma (W _ y Y _ 2 + W _ k K _ 2) \\
+        \hat{Y} _ 1 &amp;amp;= \sigma (W _ z K _ 1)                 \\
+        \hat{Y} _ 2 &amp;amp;= \sigma (W _ z K _ 2)                 \\
+        \hat{Y} _ 3 &amp;amp;= \sigma (W _ z K _ 3)                 \\
+    \end{split}
+    \end{equation}
+$$&lt;/p&gt;
+
+&lt;p&gt;Now as we can see, \( Y _ 1\) is a function (composition of functions) of \(X _ 1, X _ 2, X _ 3\). \( Y _ 2 \) in addition also depends on \( Y _ 1\), and so on. The loss function in the case of classification, if we use the multinomial loss, is then just&lt;/p&gt;
+
+&lt;p&gt;$$
+    \begin{equation}
+    \begin{split}
+        L(W _ x, W _ h, W _ y, W _ k, W _ z) &amp;amp;= \sum _ {i = 1} ^ 3 f(Y _ i , \hat{Y _ i }) \\
+        f(Y, \hat{Y})                        &amp;amp;= \sum Y[j] \log \hat{Y}[j], \\
+    \end{split}
+    \end{equation}
+$$
+for in the last equation, we use array notation, \( Y[j]\) means the j&amp;#39;th element in vector \( Y \). &lt;/p&gt;
+
+&lt;p&gt;This loss function is only a function of the data and the 5 parameter matrix. We can calculate the gradient, and use gradient descent or mini-batch stochastic gradient descent to optimize it. &lt;/p&gt;
+
+&lt;h2 id=&quot;improvements&quot;&gt;Improvements&lt;/h2&gt;
+
+&lt;p&gt;Above is the core of a sequence to sequence model. In practice, we should use&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;LSTM cell instead of a vanilla RNN cell. What this means is instead of having \(H _ t = \sigma (W _ x \times X + W _ h H _ {t - 1})\), we have a more complicated function here. &lt;/li&gt;
+&lt;li&gt;Multiple layers instead of just one hidden layer as we have&lt;/li&gt;
+&lt;li&gt;Add a bias term in addition to the weight \( W \) term&lt;/li&gt;
+&lt;li&gt;For variable size output, we have an additional END symbol in addition to the START symbol. We cut the output when the model predict an END. &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Some implementation nodes&lt;/p&gt;
+
+&lt;p&gt;The code &lt;a href=&quot;https://github.com/hduongtrong/ScikitFlow/blob/master/seq2seq.py&quot;&gt;Seq2seq in Tensorflow&lt;/a&gt;&lt;/p&gt;
 </description>
         <pubDate>Fri, 27 Nov 2015 00:00:00 -0800</pubDate>
         <link>http://hduongtrong.github.io/2015/11/27/rnn-encoder-decoder/</link>
