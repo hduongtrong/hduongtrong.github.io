@@ -69,6 +69,7 @@ $$
 	\end{split}
 	\end{equation}
 $$
+
 for in the last equation, we use array notation, \\( Y[j]\\) means the j'th element in vector \\( Y \\). 
 
 This loss function is only a function of the data and the 5 parameter matrix. We can calculate the gradient, and use gradient descent or mini-batch stochastic gradient descent to optimize it. 

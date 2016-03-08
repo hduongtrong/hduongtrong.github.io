@@ -135,14 +135,15 @@ Terry Koo, Slav Petrov, Ilya Sutskever.</li>
 
 <p>Now as we can see, \( Y _ 1\) is a function (composition of functions) of \(X _ 1, X _ 2, X _ 3\). \( Y _ 2 \) in addition also depends on \( Y _ 1\), and so on. The loss function in the case of classification, if we use the multinomial loss, is then just</p>
 
-<p><script type="math/tex">% <![CDATA[
+<script type="math/tex; mode=display">% <![CDATA[
 \begin{equation}
 	\begin{split}
     	L(W _ x, W _ h, W _ y, W _ k, W _ z) &= \sum _ {i = 1} ^ 3 f(Y _ i , \hat{Y _ i }) \\\\
 		f(Y, \hat{Y}) 						 &= \sum Y[j] \log \hat{Y}[j], \\\\
 	\end{split}
 	\end{equation} %]]></script>
-for in the last equation, we use array notation, \( Y[j]\) means the j’th element in vector \( Y \).</p>
+
+<p>for in the last equation, we use array notation, \( Y[j]\) means the j’th element in vector \( Y \).</p>
 
 <p>This loss function is only a function of the data and the 5 parameter matrix. We can calculate the gradient, and use gradient descent or mini-batch stochastic gradient descent to optimize it.</p>
 
