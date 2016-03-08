@@ -5,216 +5,328 @@
     <description>Learning Machine Learning</description>
     <link>http://hduongtrong.github.io/</link>
     <atom:link href="http://hduongtrong.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Mon, 07 Mar 2016 21:19:40 -0800</pubDate>
-    <lastBuildDate>Mon, 07 Mar 2016 21:19:40 -0800</lastBuildDate>
+    <pubDate>Mon, 07 Mar 2016 21:29:01 -0800</pubDate>
+    <lastBuildDate>Mon, 07 Mar 2016 21:29:01 -0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
+    
+      <item>
+        <title>Sequence to Sequence Model</title>
+        <description>&lt;h2 id=&quot;credits&quot;&gt;Credits&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://arxiv.org/pdf/1406.1078v3.pdf&quot;&gt;Learning Phrase Representations using RNN Encoder–Decoder for Statistical Machine Translation&lt;/a&gt;. Kyunghyun Cho, Bart van Merrienboer Caglar Gulcehre, Dzmitry Bahdanau, Fethi Bougares Holger Schwenk, Yoshua Bengio. [1]&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://arxiv.org/pdf/1409.1259v2.pdf&quot;&gt;On the Properties of Neural Machine Translation: Encoder–Decoder Approaches&lt;/a&gt;. Kyunghyun Cho, Bart van Merrienboer, Dzmitry Bahdanau.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://arxiv.org/pdf/1412.7449v3.pdf&quot;&gt;Grammar as a Foreign Language&lt;/a&gt;. Oriol Vinyals, Lukasz Kaiser, 
+Terry Koo, Slav Petrov, Ilya Sutskever.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://arxiv.org/pdf/1409.0473v6.pdf&quot;&gt;Neural Machine Translation by Jointly Learning to Align and Translate&lt;/a&gt;. Dzmitry Bahdanau, KyungHyun Cho, Yoshua Bengio.&lt;/li&gt;
+  &lt;li&gt;Code Website: &lt;a href=&quot;http://www.tensorflow.org/tutorials/seq2seq/index.html#sequence-to-sequence-models&quot;&gt;Tensorflow seq2seq&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;the-core-model&quot;&gt;The Core Model&lt;/h2&gt;
+
+&lt;div class=&quot;imgcap&quot;&gt;
+&lt;div&gt;
+&lt;img src=&quot;/assets/seq2seq/seq2seq.png&quot; style=&quot;width: 500px;&quot; /&gt;
+&lt;/div&gt;
+&lt;div class=&quot;thecap&quot;&gt; Sequence to Sequence Model &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;First we define the data, which include encoder input, decoder input, decoder output, encoder hidden states, and decoder hidden states. Here \( S \) denotes the dummy START symbol.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Encoder input sequence \( X _ 1, X _ 2, X _ 3  \in \mathbb{R} ^ p \),&lt;/li&gt;
+  &lt;li&gt;Encoder hidden states be \( H _ 0, H _ 1, H _ 2, H _ 3 \in \mathbb{R} ^ s, H _ 0 = 0 \).&lt;/li&gt;
+  &lt;li&gt;Decoder input sequence \( S, Y _ 1, Y _ 2 \in \mathbb{R} ^ {q} \)&lt;/li&gt;
+  &lt;li&gt;Decoder output sequence \( Y _ 1, Y _ 2, Y _ 3 \in \mathbb{R} ^ {q} \)&lt;/li&gt;
+  &lt;li&gt;Decoder hidden states be \( K _ 0, K _ 1, K _ 2 \in \mathbb{R} ^ t \)&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Let \( \sigma \) be the sigmoid function, we now define the parameter for our model:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Weight matrix that connects encoder input to encoder hidden state be \( W _ x \in \mathbb{R} ^ {p \times s}\).&lt;/li&gt;
+  &lt;li&gt;Weight matrix that connects this encoder hidden state to the next hidden state be \( W _ h \in \mathbb{R} ^ {s \times s}\).&lt;/li&gt;
+  &lt;li&gt;Weight matrix that connects decoder input to decoder hidden state \( W _ y \in \mathbb{R} ^ {q \times }\)&lt;/li&gt;
+  &lt;li&gt;Weight matrix that connects this decoder hidden state to the next hidden state \( W _ k \in \mathbb{R} ^ {t \times t}\)&lt;/li&gt;
+  &lt;li&gt;Weight matrix that connects this decoder hidden state to the decoder hidden output \( W _ z \in \mathbb{R} ^ {t \times q}\)&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;We now model the probability of \( Y _ i\) as a function of \( X _ i ‘s\) through the intermediates \( H _ i ‘s , K _ i ‘s \)&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{equation}
+	\begin{split}
+	    H _ 1 &amp;= \sigma (W _ x X _ 1 + W _ h H _ 0) \\\\
+		H _ 2 &amp;= \sigma (W _ x X _ 2 + W _ h H _ 1) \\\\
+		H _ 3 &amp;= \sigma (W _ x X _ 3 + W _ h H _ 2) \\\\
+		K _ 1 &amp;= \sigma (W _ y S     + W _ k H _ 3) \\\\
+		K _ 2 &amp;= \sigma (W _ y Y _ 1 + W _ k K _ 1) \\\\
+		K _ 3 &amp;= \sigma (W _ y Y _ 2 + W _ k K _ 2) \\\\
+		\hat{Y} _ 1 &amp;= \sigma (W _ z K _ 1) 				\\\\
+		\hat{Y} _ 2 &amp;= \sigma (W _ z K _ 2) 				\\\\
+		\hat{Y} _ 3 &amp;= \sigma (W _ z K _ 3) 				\\\\
+	\end{split}
+	\end{equation} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;Now as we can see, \( Y _ 1\) is a function (composition of functions) of \(X _ 1, X _ 2, X _ 3\). \( Y _ 2 \) in addition also depends on \( Y _ 1\), and so on. The loss function in the case of classification, if we use the multinomial loss, is then just&lt;/p&gt;
+
+&lt;p&gt;&lt;script type=&quot;math/tex&quot;&gt;% &lt;![CDATA[
+\begin{equation}
+	\begin{split}
+    	L(W _ x, W _ h, W _ y, W _ k, W _ z) &amp;= \sum _ {i = 1} ^ 3 f(Y _ i , \hat{Y _ i }) \\\\
+		f(Y, \hat{Y}) 						 &amp;= \sum Y[j] \log \hat{Y}[j], \\\\
+	\end{split}
+	\end{equation} %]]&gt;&lt;/script&gt;
+for in the last equation, we use array notation, \( Y[j]\) means the j’th element in vector \( Y \).&lt;/p&gt;
+
+&lt;p&gt;This loss function is only a function of the data and the 5 parameter matrix. We can calculate the gradient, and use gradient descent or mini-batch stochastic gradient descent to optimize it.&lt;/p&gt;
+
+&lt;h2 id=&quot;improvements&quot;&gt;Improvements&lt;/h2&gt;
+
+&lt;p&gt;Above is the core of a sequence to sequence model. In practice, we should use&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;LSTM cell instead of a vanilla RNN cell. What this means is instead of having \(H _ t = \sigma (W _ x \times X + W _ h H _ {t - 1})\), we have a more complicated function here.&lt;/li&gt;
+  &lt;li&gt;Multiple layers instead of just one hidden layer as we have&lt;/li&gt;
+  &lt;li&gt;Add a bias term in addition to the weight \( W \) term&lt;/li&gt;
+  &lt;li&gt;For variable size output, we have an additional END symbol in addition to the START symbol. We cut the output when the model predict an END.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Some implementation nodes&lt;/p&gt;
+
+&lt;p&gt;The code &lt;a href=&quot;https://github.com/hduongtrong/ScikitFlow/blob/master/seq2seq.py&quot;&gt;Seq2seq in Tensorflow&lt;/a&gt;&lt;/p&gt;
+</description>
+        <pubDate>Mon, 07 Mar 2016 21:30:00 -0800</pubDate>
+        <link>http://hduongtrong.github.io/2016/03/07/rnn-encoder-decoder/</link>
+        <guid isPermaLink="true">http://hduongtrong.github.io/2016/03/07/rnn-encoder-decoder/</guid>
+        
+        
+      </item>
     
       <item>
         <title>Matrix Multiplication Benchmark</title>
         <description>&lt;h2 id=&quot;the-setting&quot;&gt;The setting&lt;/h2&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;numpy&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;np&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;time&lt;/span&gt;
 
-&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10000&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;randn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;```python
+import numpy as np
+import time&lt;/p&gt;
+
+&lt;p&gt;n = 10000
+x = np.random.randn(n,n)
+a = time.time(); x.dot(x); print time.time() - a
+```&lt;/p&gt;
+
 &lt;p&gt;The contestants&lt;/p&gt;
 
-&lt;table&gt;&lt;thead&gt;
-&lt;tr&gt;
-&lt;th style=&quot;text-align: right&quot;&gt;CPU&lt;/th&gt;
-&lt;th style=&quot;text-align: right&quot;&gt;Freq&lt;/th&gt;
-&lt;th style=&quot;text-align: right&quot;&gt;N_Cores&lt;/th&gt;
-&lt;th style=&quot;text-align: right&quot;&gt;L3_Cache&lt;/th&gt;
-&lt;th style=&quot;text-align: right&quot;&gt;Date&lt;/th&gt;
-&lt;th style=&quot;text-align: right&quot;&gt;Price&lt;/th&gt;
-&lt;th style=&quot;text-align: right&quot;&gt;Passmark&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;Intel Core i5-4260U&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;1.4GHz&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;3MB&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;Q2-14&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;315&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;3548&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;Intel Xeon E5-2643 v2&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;3.5GHz&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;2x6=12&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;2x25MB&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;Q3-13&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;2x1552&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;2x11735&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;AMD Opteron 8384&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;2.7GHz&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;8x4=32&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;8x6MB&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;Q4-08&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;8x2149&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;NA&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;AMD Opteron 8272&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;1.4Ghz&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;2x8=16&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;2x6MB&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;Q4-11&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;2x523&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;2x6748&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;&lt;/table&gt;
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;CPU&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;Freq&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;N_Cores&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;L3_Cache&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;Date&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;Price&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;Passmark&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;Intel Core i5-4260U&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.4GHz&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3MB&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;Q2-14&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;315&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3548&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;Intel Xeon E5-2643 v2&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3.5GHz&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2x6=12&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2x25MB&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;Q3-13&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2x1552&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2x11735&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;AMD Opteron 8384&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2.7GHz&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;8x4=32&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;8x6MB&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;Q4-08&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;8x2149&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;NA&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;AMD Opteron 8272&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.4Ghz&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2x8=16&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2x6MB&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;Q4-11&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2x523&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2x6748&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
 
 &lt;h2 id=&quot;mkl-vs-openblas&quot;&gt;MKL vs OpenBlas&lt;/h2&gt;
 
-&lt;p&gt;Here are the running time in seconds. The number in () are roughly the fluctuation of running time. For the GPU result, Tesla K80 is a dual GPU, and this is only using one of them, which is equivalent to Tasla K40. In addition, calculation is carried out with float64, which GPU is bad at. Note for non-mkl, we use the default Blas library on OS X El Capitan. For the other, they are Openblas. MKL in general gives more variable results, but slightly better than the non-MKL on Intel CPUs. &lt;/p&gt;
+&lt;p&gt;Here are the running time in seconds. The number in () are roughly the fluctuation of running time. For the GPU result, Tesla K80 is a dual GPU, and this is only using one of them, which is equivalent to Tasla K40. In addition, calculation is carried out with float64, which GPU is bad at. Note for non-mkl, we use the default Blas library on OS X El Capitan. For the other, they are Openblas. MKL in general gives more variable results, but slightly better than the non-MKL on Intel CPUs.&lt;/p&gt;
 
-&lt;table&gt;&lt;thead&gt;
-&lt;tr&gt;
-&lt;th style=&quot;text-align: right&quot;&gt;CPU&lt;/th&gt;
-&lt;th style=&quot;text-align: right&quot;&gt;Non-MKL&lt;/th&gt;
-&lt;th style=&quot;text-align: right&quot;&gt;MKL&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;Intel Core i5-4260U&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;43&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;32&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;Intel Xeon E5-2643 v2&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;15.6&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;10.4 (3)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;AMD Opteron 8384&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;15.4 (2)&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;12.3 (1)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;AMD Opteron 8272&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;17.3&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;22 (5)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;Tesla K-80&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;16.3&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;&lt;/table&gt;
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;CPU&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;Non-MKL&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;MKL&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;Intel Core i5-4260U&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;43&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;32&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;Intel Xeon E5-2643 v2&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;15.6&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;10.4 (3)&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;AMD Opteron 8384&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;15.4 (2)&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;12.3 (1)&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;AMD Opteron 8272&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;17.3&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;22 (5)&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;Tesla K-80&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;16.3&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
 
 &lt;h2 id=&quot;cpu-vs-gpu&quot;&gt;CPU vs GPU&lt;/h2&gt;
 
 &lt;p&gt;To really see the power of GPU, we use float32 instead.&lt;/p&gt;
 
-&lt;table&gt;&lt;thead&gt;
-&lt;tr&gt;
-&lt;th style=&quot;text-align: right&quot;&gt;Matrix dim&lt;/th&gt;
-&lt;th style=&quot;text-align: right&quot;&gt;CPU&lt;/th&gt;
-&lt;th style=&quot;text-align: right&quot;&gt;GPU Tensorflow&lt;/th&gt;
-&lt;th style=&quot;text-align: right&quot;&gt;GPU Skcuda&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;10000&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;6.3&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;2.3&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;1.3&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;15000&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;17&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;6.8&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;3.7&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;20000&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;39&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;10.8&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;8.32&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;30000&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;122&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;NA&lt;/td&gt;
-&lt;td style=&quot;text-align: right&quot;&gt;27.0&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;&lt;/table&gt;
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;Matrix dim&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;CPU&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;GPU Tensorflow&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;GPU Skcuda&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;10000&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;6.3&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2.3&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.3&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;15000&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;17&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;6.8&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3.7&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;20000&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;39&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;10.8&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;8.32&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;30000&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;122&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;NA&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;27.0&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
 
-&lt;p&gt;GPU only provides a speed up of around 4-5 times. The GPU 1 is done by Tensorflow, which might not be very efficient. The GPU 2 is done by Scikit-cuda, which is a wrapper for pycuda. For the later one, we also see a breakdown of communication time between CPU and GPU. It spends around 15% of the time copying data in and out of GPU. &lt;/p&gt;
+&lt;p&gt;GPU only provides a speed up of around 4-5 times. The GPU 1 is done by Tensorflow, which might not be very efficient. The GPU 2 is done by Scikit-cuda, which is a wrapper for pycuda. For the later one, we also see a breakdown of communication time between CPU and GPU. It spends around 15% of the time copying data in and out of GPU.&lt;/p&gt;
 
-&lt;p&gt;Tools for doing linear algebra on GPU.  &lt;/p&gt;
+&lt;p&gt;Tools for doing linear algebra on GPU.&lt;/p&gt;
 
 &lt;ol&gt;
-&lt;li&gt;Pycuda: this is the lowest level, a wrapper of CUDA for Python&lt;/li&gt;
-&lt;li&gt;Scikit-cuda: a wrapper over pycuda&lt;/li&gt;
-&lt;li&gt;Cula: provide LAPACK type of matrix multiplication for CUDA&lt;/li&gt;
-&lt;li&gt;Numbapro / accelerate: from Anaconda&lt;/li&gt;
-&lt;li&gt;Theano / Tensorflow&lt;/li&gt;
+  &lt;li&gt;Pycuda: this is the lowest level, a wrapper of CUDA for Python&lt;/li&gt;
+  &lt;li&gt;Scikit-cuda: a wrapper over pycuda&lt;/li&gt;
+  &lt;li&gt;Cula: provide LAPACK type of matrix multiplication for CUDA&lt;/li&gt;
+  &lt;li&gt;Numbapro / accelerate: from Anaconda&lt;/li&gt;
+  &lt;li&gt;Theano / Tensorflow&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;h2 id=&quot;codes&quot;&gt;Codes&lt;/h2&gt;
+&lt;p&gt;#### Skcuda + Pycuda&lt;/p&gt;
 
-&lt;h4 id=&quot;skcuda-pycuda&quot;&gt;Skcuda + Pycuda&lt;/h4&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;pycuda.gpuarray&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;gpuarray&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;pycuda.autoinit&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;numpy&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;time&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;skcuda.linalg&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;culinalg&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;skcuda&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;culinalg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;p&gt;```python
+import pycuda.gpuarray as gpuarray
+import pycuda.autoinit
+import numpy as np, time
+import skcuda.linalg as culinalg
+import skcuda
+culinalg.init()&lt;/p&gt;
 
-&lt;span class=&quot;n&quot;&gt;dim&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;30000&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;rnd&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RandomState&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rnd&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rand&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dim&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dim&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;astype&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;float32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;p&gt;dim = 30000
+rnd = np.random.RandomState(0)
+a = rnd.rand(dim, dim).astype(np.float32)&lt;/p&gt;
 
-&lt;span class=&quot;n&quot;&gt;start&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;a_gpu&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;gpuarray&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;to_gpu&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;#39;Copy in&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;start&lt;/span&gt;
+&lt;p&gt;start = time.time()
+a_gpu = gpuarray.to_gpu(a)
+print ‘Copy in’, time.time() - start&lt;/p&gt;
 
-&lt;span class=&quot;n&quot;&gt;start&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;rescpu&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;#39;CPU:&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;start&lt;/span&gt;
+&lt;p&gt;start = time.time()
+rescpu = np.dot(a, b)
+print ‘CPU:’, time.time() - start&lt;/p&gt;
 
-&lt;span class=&quot;n&quot;&gt;start&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;resgpu&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;culinalg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a_gpu&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a_gpu&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;skcuda&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;misc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;resgpu&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;#39;GPU:&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;start&lt;/span&gt;
+&lt;p&gt;start = time.time()
+resgpu = culinalg.dot(a_gpu, a_gpu)
+print skcuda.misc.sum(resgpu)
+print ‘GPU:’, time.time() - start&lt;/p&gt;
 
-&lt;span class=&quot;n&quot;&gt;start&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;resgpu&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;resgpu&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;#39;Copy out&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;start&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;allclose&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rescpu&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;resgpu&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;allclose&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;resgpu&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rescpu&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;start = time.time()
+resgpu = resgpu.get()
+print ‘Copy out’, time.time() - start
+print np.allclose(rescpu, resgpu)
+print np.allclose(resgpu, rescpu)
+```&lt;/p&gt;
+
 &lt;h4 id=&quot;tensorflow&quot;&gt;Tensorflow&lt;/h4&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;numpy&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;np&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;tensorflow&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;tf&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;time&lt;/span&gt;
+&lt;p&gt;```python
+import numpy as np
+import tensorflow as tf
+import time&lt;/p&gt;
 
-&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;constant&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;randn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;20000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;20000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dtype&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;float32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dtype&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;float32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;Y&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;matmul&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;transpose&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;p&gt;X = tf.constant(np.array(np.random.randn(20000,20000), dtype = np.float32), dtype = tf.float32)
+Y = tf.matmul(X, tf.transpose(X))&lt;/p&gt;
 
-&lt;span class=&quot;n&quot;&gt;init&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;initialize_all_variables&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;sess&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Session&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;sess&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;p&gt;init = tf.initialize_all_variables()
+sess = tf.Session()
+sess.run(init)&lt;/p&gt;
 
-&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;sess&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;a = time.time()
+sess.run(Y)
+print time.time() - a
+```&lt;/p&gt;
+
 &lt;h4 id=&quot;cpu-both-openblas-and-mkl&quot;&gt;CPU (both OpenBLAS and MKL)&lt;/h4&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;numpy&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;np&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;time&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;seed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;30000&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;randn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dtype&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;float32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+&lt;p&gt;&lt;code&gt;python
+import numpy as np
+import time
+np.random.seed(1)
+n = 30000
+x = np.array(np.random.randn(n,n), dtype = np.float32)
+a = time.time(); x.dot(x); print time.time() - a
+&lt;/code&gt;&lt;/p&gt;
+</description>
         <pubDate>Mon, 07 Mar 2016 05:06:27 -0800</pubDate>
         <link>http://hduongtrong.github.io/2016/03/07/Matrix-Multiplication-Benchmark/</link>
         <guid isPermaLink="true">http://hduongtrong.github.io/2016/03/07/Matrix-Multiplication-Benchmark/</guid>
@@ -237,99 +349,101 @@ to minimize the sum of distance between all points to a center. It is global in 
 Spectral Clustering is different in that aspect, it only try to minimize the distance
 between a point and its closest neighbors. So within a cluster, for example the circle shape, 
 two points can be very far away, but as long as there is a sequence of points with in that 
-cluster that connect them, then that is fine. &lt;/p&gt;
+cluster that connect them, then that is fine.&lt;/p&gt;
 
 &lt;p&gt;So Spectral Clustering will work well with clusters that are connected, but can have 
-any shape (does not have to be convex). &lt;/p&gt;
+any shape (does not have to be convex).&lt;/p&gt;
 
 &lt;div class=&quot;imgcap&quot;&gt;
 &lt;div&gt;
-&lt;img src=&quot;/assets/spectral_clustering/plot_cluster_comparison_001.png&quot;&gt;
+&lt;img src=&quot;/assets/spectral_clustering/plot_cluster_comparison_001.png&quot; /&gt;
+&lt;/div&gt;
+&lt;div class=&quot;thecap&quot;&gt;Comparision of CLustering Algorithm - Credit: Scikit-Learn &lt;/div&gt;
 &lt;/div&gt;
 
-&lt;div class=&quot;thecap&quot;&gt;Comparision of CLustering Algorithm - Credit: Scikit-Learn &lt;/div&gt;
-
-&lt;p&gt;&lt;/div&gt;&lt;/p&gt;
-
 &lt;h2 id=&quot;the-vanilla-spectral-clustering&quot;&gt;The Vanilla Spectral Clustering&lt;/h2&gt;
-
 &lt;p&gt;The Spectral Clustering is as followed: given a dataset \( X  \in \mathbb{R} ^ {n \times p}\)&lt;/p&gt;
 
 &lt;ol&gt;
-&lt;li&gt;&lt;p&gt;Compute the affinity matrix 
-$$&lt;br&gt;
-a_{ij} = \exp\left(-\frac{\|x_{i}-x_{j}\| ^ {2}}{2\sigma ^ {2}}\right)
-$$
+  &lt;li&gt;
+    &lt;p&gt;Compute the affinity matrix 
+&lt;script type=&quot;math/tex&quot;&gt;a\_{ij} = \exp\left(-\frac{\\|x\_{i}-x\_{j}\\| ^ {2}}{2\sigma ^ {2}}\right)&lt;/script&gt;
 This has the effect of focusing on small distance, and making all
 big distance equal to 0. It emphasize local, connectedness. This matrix
-is symmetric. &lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Construct degree matrix 
-$$ D=   diag  \left( d_{1}, d_{2},...,d_{n}\right) $$
-$$ d_{i}=  \sum_{j=1} ^ {n}a_{ij} $$&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Construct Laplacian matrix
-$$ L=  D-A $$
-This matrix is symmetric, PSD&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Find \(m\) smallest eigenvalues and associated eigenvectors (possibly
+is symmetric.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Construct degree matrix 
+&lt;script type=&quot;math/tex&quot;&gt;D=   diag  \left( d\_{1}, d\_{2},...,d\_{n}\right)&lt;/script&gt;
+&lt;script type=&quot;math/tex&quot;&gt;d\_{i}=  \sum\_{j=1} ^ {n}a_{ij}&lt;/script&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Construct Laplacian matrix
+&lt;script type=&quot;math/tex&quot;&gt;L=  D-A&lt;/script&gt;
+This matrix is symmetric, PSD&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Find \(m\) smallest eigenvalues and associated eigenvectors (possibly
 ignoring the first). Let \(V \in \mathbb{R} ^ {n \times k}\) be the matrix
-containing the vector as columns&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Performing k-Means on V. The cluster obtained from here is the result. &lt;/p&gt;&lt;/li&gt;
+containing the vector as columns&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Performing k-Means on V. The cluster obtained from here is the result.&lt;/p&gt;
+  &lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;h2 id=&quot;variants&quot;&gt;Variants&lt;/h2&gt;
 
 &lt;div class=&quot;imgcap&quot;&gt;
 &lt;div&gt;
-&lt;img src=&quot;/assets/spectral_clustering/lena.png&quot;&gt;
+&lt;img src=&quot;/assets/spectral_clustering/lena.png&quot; /&gt;
+&lt;/div&gt;
+&lt;div class=&quot;thecap&quot;&gt;Spectral Clustering is good for image segmentation. - Credit: Scikit-Learn &lt;/div&gt;
 &lt;/div&gt;
 
-&lt;div class=&quot;thecap&quot;&gt;Spectral Clustering is good for image segmentation. - Credit: Scikit-Learn &lt;/div&gt;
-
-&lt;p&gt;&lt;/div&gt;&lt;/p&gt;
-
-&lt;p&gt;Following are some popular variants of the spectral clustering algorithm. Each variant has a different computational or theoretical aspect. &lt;/p&gt;
+&lt;p&gt;Following are some popular variants of the spectral clustering algorithm. Each variant has a different computational or theoretical aspect.&lt;/p&gt;
 
 &lt;ol&gt;
-&lt;li&gt;&lt;p&gt;Affinity Matrix: all of these affinity matrix try to make the&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;The version we use is a fully connected version using Gaussian kernel transform. It is 
+  &lt;li&gt;Affinity Matrix: all of these affinity matrix try to make the
+    &lt;ul&gt;
+      &lt;li&gt;The version we use is a fully connected version using Gaussian kernel transform. It is 
 fully connected because even though the distance which are far away is very close to zero,
-it is still non-zero. &lt;/li&gt;
-&lt;li&gt;\(\epsilon \)-neighborhood: make a graph where two points are connected if distance is less than \(  \epsilon \). This in effect is a hard threshold version of the Gaussian kernel. This is a sparse matrix, and is computationally cheaper than the fully connected version. &lt;/li&gt;
-&lt;li&gt;k-NN graph: two points ((i,j)) are connected if ((i)) is in ((k))-NN of ((j)) and vice versa. This is also a sparse matrix. &lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Graph Laplacian&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Unnormalized: \( L = D - A \)&lt;/li&gt;
-&lt;li&gt;Normalized \( L = I - D ^ {-1/2} A D ^ {-1/2}\)&lt;/li&gt;
-&lt;li&gt;Normalized \( L = I - D ^ {-1} A\)&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
+it is still non-zero.&lt;/li&gt;
+      &lt;li&gt;\(\epsilon \)-neighborhood: make a graph where two points are connected if distance is less than \(  \epsilon \). This in effect is a hard threshold version of the Gaussian kernel. This is a sparse matrix, and is computationally cheaper than the fully connected version.&lt;/li&gt;
+      &lt;li&gt;k-NN graph: two points ((i,j)) are connected if ((i)) is in ((k))-NN of ((j)) and vice versa. This is also a sparse matrix.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Graph Laplacian
+    &lt;ul&gt;
+      &lt;li&gt;Unnormalized: \( L = D - A \)&lt;/li&gt;
+      &lt;li&gt;Normalized \( L = I - D ^ {-1/2} A D ^ {-1/2}\)&lt;/li&gt;
+      &lt;li&gt;Normalized \( L = I - D ^ {-1} A\)&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;h2 id=&quot;properties&quot;&gt;Properties&lt;/h2&gt;
 
 &lt;ul&gt;
-&lt;li&gt;Spectral Clustering emphasize connectedness, close neighbor distances, while ignoring faraway observations. It is then a local method (not global like K-Means). &lt;/li&gt;
-&lt;li&gt;It is \( O(n ^ 3)\) in general and can be reduced to  \( O(n ^ 2)\). In practice it is quite slow with large dataset (i.e. &amp;gt; 5000 observations). One should use the sparse version of affinity matrix.&lt;br&gt;&lt;/li&gt;
-&lt;li&gt;There are many theoretical results on Spectral Clustering&lt;/li&gt;
-&lt;li&gt;Sensitive w.r.t. similarity graph&lt;/li&gt;
-&lt;li&gt;Choose \( k \) the number of cluster such that \( \lambda_1, ..., \lambda_k \) are small while \( \lambda_{k+1} \) is relatively large, i.e. there is a gape. &lt;/li&gt;
-&lt;li&gt;What Laplacian to use: if degree are similar, then they are all the
-same. If degree are spread out, then use \(L=I-D ^ {-1}W\) is recommended. &lt;/li&gt;
-&lt;li&gt;Consistency issues: the unnormalized might converge to trivial solution
+  &lt;li&gt;Spectral Clustering emphasize connectedness, close neighbor distances, while ignoring faraway observations. It is then a local method (not global like K-Means).&lt;/li&gt;
+  &lt;li&gt;It is \( O(n ^ 3)\) in general and can be reduced to  \( O(n ^ 2)\). In practice it is quite slow with large dataset (i.e. &amp;gt; 5000 observations). One should use the sparse version of affinity matrix.&lt;/li&gt;
+  &lt;li&gt;There are many theoretical results on Spectral Clustering&lt;/li&gt;
+  &lt;li&gt;Sensitive w.r.t. similarity graph&lt;/li&gt;
+  &lt;li&gt;Choose \( k \) the number of cluster such that \( \lambda_1, …, \lambda_k \) are small while \( \lambda_{k+1} \) is relatively large, i.e. there is a gape.&lt;/li&gt;
+  &lt;li&gt;What Laplacian to use: if degree are similar, then they are all the
+same. If degree are spread out, then use \(L=I-D ^ {-1}W\) is recommended.&lt;/li&gt;
+  &lt;li&gt;Consistency issues: the unnormalized might converge to trivial solution
 (1 point vs rest), or fail to converge as \( n\rightarrow\infty.\) Both
 normalized version converge under mild condition. To avoid trivial
 solution, make sure \( \lambda_{k}\ll\min d_{j}.\)&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h2 id=&quot;reference&quot;&gt;Reference&lt;/h2&gt;
-
 &lt;ul&gt;
-&lt;li&gt;Ulrike von Luxburg. &lt;a href=&quot;http://www.stat.berkeley.edu/%7Ehhuang/STAT141/SpectralClustering.pdf&quot;&gt;A Tutorial on Spectral Clustering.&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Donghui Yan, Ling Huang, Michael I. Jordan. &lt;a href=&quot;http://www.cs.berkeley.edu/%7Ejordan/papers/yan-etal-long.pdf&quot;&gt;Fast Approximate Spectral
+  &lt;li&gt;Ulrike von Luxburg. &lt;a href=&quot;http://www.stat.berkeley.edu/~hhuang/STAT141/SpectralClustering.pdf&quot;&gt;A Tutorial on Spectral Clustering.&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Donghui Yan, Ling Huang, Michael I. Jordan. &lt;a href=&quot;http://www.cs.berkeley.edu/~jordan/papers/yan-etal-long.pdf&quot;&gt;Fast Approximate Spectral
 Clustering.&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Trevor Hastie, Rob Tibshirani, Jerome Friedman. &lt;a href=&quot;http://statweb.stanford.edu/%7Etibs/ElemStatLearn/&quot;&gt;Element of Statistical
+  &lt;li&gt;Trevor Hastie, Rob Tibshirani, Jerome Friedman. &lt;a href=&quot;http://statweb.stanford.edu/~tibs/ElemStatLearn/&quot;&gt;Element of Statistical
 Learning.&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
@@ -342,243 +456,212 @@ Learning.&lt;/a&gt;&lt;/li&gt;
     
       <item>
         <title>Classical Dimension Reduction and Clustering</title>
-        <description>&lt;h2 id=&quot;1-pca&quot;&gt;1. PCA&lt;/h2&gt;
+        <description>&lt;h2 id=&quot;pca&quot;&gt;1. PCA&lt;/h2&gt;
 
 &lt;div class=&quot;imgcap&quot;&gt;
 &lt;div&gt;
-&lt;img src=&quot;/assets/unsupervised_learning/fig_pca_principal_component_analysis.png&quot;&gt;
+&lt;img src=&quot;/assets/unsupervised_learning/fig_pca_principal_component_analysis.png&quot; /&gt;
+&lt;/div&gt;
+&lt;div class=&quot;thecap&quot;&gt;PCA illustration. Image Credit: Google Image &lt;/div&gt;
 &lt;/div&gt;
 
-&lt;div class=&quot;thecap&quot;&gt;PCA illustration. Image Credit: Google Image &lt;/div&gt;
-
-&lt;p&gt;&lt;/div&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;1-1-the-algorithm&quot;&gt;1.1. The algorithm&lt;/h3&gt;
-
+&lt;h3 id=&quot;the-algorithm&quot;&gt;1.1. The algorithm&lt;/h3&gt;
 &lt;p&gt;Given data \( X \in \mathbb{R} ^ {n \times p} \), PCA process is as followed (the SVD version)&lt;/p&gt;
 
 &lt;ol&gt;
-&lt;li&gt;Center and rescale \( X \) to have zero mean, standard deviation one&lt;/li&gt;
-&lt;li&gt;Perform SVD \( X = UDV ^ T \), where \( U \in \mathbb{R} ^ {n \times p}\), \( D\) is a diagonal matrix of size \( (p \times p ) \), and V is a orthogonal matrix size \( p \times p \)&lt;/li&gt;
-&lt;li&gt;The projected data is \( X _ {pca} = UD \) for as many column of U as the dimension we want to project &lt;/li&gt;
+  &lt;li&gt;Center and rescale \( X \) to have zero mean, standard deviation one&lt;/li&gt;
+  &lt;li&gt;Perform SVD \( X = UDV ^ T \), where \( U \in \mathbb{R} ^ {n \times p}\), \( D\) is a diagonal matrix of size \( (p \times p ) \), and V is a orthogonal matrix size \( p \times p \)&lt;/li&gt;
+  &lt;li&gt;The projected data is \( X _ {pca} = UD \) for as many column of U as the dimension we want to project&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;U is called the loadings. UD is called the scores (projected X). U is also called the principle components. It is the eigenvectors of the covariance matrix. &lt;/p&gt;
+&lt;p&gt;U is called the loadings. UD is called the scores (projected X). U is also called the principle components. It is the eigenvectors of the covariance matrix.&lt;/p&gt;
 
 &lt;p&gt;An analogous version of PCA (the eigen-decomposition version)&lt;/p&gt;
 
 &lt;ol&gt;
-&lt;li&gt;Center and rescale \( X \)&lt;/li&gt;
-&lt;li&gt;Construct covariance matrix \( C = \frac{1}{n} X ^ T X \)&lt;/li&gt;
-&lt;li&gt;Perform eigen-decomposition \( C = V \Lambda V ^ T \)&lt;/li&gt;
-&lt;li&gt;The projected data is \( X _ {pca} = X U \) for as many column of U as the dimension we want to project &lt;/li&gt;
+  &lt;li&gt;Center and rescale \( X \)&lt;/li&gt;
+  &lt;li&gt;Construct covariance matrix \( C = \frac{1}{n} X ^ T X \)&lt;/li&gt;
+  &lt;li&gt;Perform eigen-decomposition \( C = V \Lambda V ^ T \)&lt;/li&gt;
+  &lt;li&gt;The projected data is \( X _ {pca} = X U \) for as many column of U as the dimension we want to project&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;To see while they are equivalent, note that the \( U \) from SVD and eigen-decomposition are the same, and that \( \Lambda = D ^ 2\). A such \( X_ {pca} = XU = UDV V ^ T = UD \). &lt;/p&gt;
+&lt;p&gt;To see while they are equivalent, note that the \( U \) from SVD and eigen-decomposition are the same, and that \( \Lambda = D ^ 2\). A such \( X_ {pca} = XU = UDV V ^ T = UD \).&lt;/p&gt;
 
-&lt;h3 id=&quot;1-2-interpretation-of-pca&quot;&gt;1.2. Interpretation of PCA&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;The first component \( w ^ T X \) is the dimension that maximize the variance, i.e.
-$$\max _ {\| w \| = 1} Var (w ^ T X ) = \max _  {\| w \| = 1} \frac{1}{n} w ^ T X ^ T X w .$$
-And the above expression is maximized when w is the largest eigenvector of \( X ^ T X\). At that value, the expression is equal to the eigenvalue of the covariance matrix. &lt;/li&gt;
-&lt;li&gt;The PCA projection is a set of points in lower dimension that best preserve the pair-wise distances. &lt;/li&gt;
-&lt;li&gt;PCA can also be interpreted in the sense compressing data, i.e. we post-multiplying matrix \(X \) with some vector \( U \)) to lower dimension for compression, then to obtain an approximate of the original data, we multiply this lower dimension projection with \( U ^ {-1}\). Then out of all the linear projection, PCA is the one that best preserve the original dataset when going back to the original space from the compressed data. For example images data. &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;1-3-properties&quot;&gt;1.3. Properties&lt;/h3&gt;
+&lt;h3 id=&quot;interpretation-of-pca&quot;&gt;1.2. Interpretation of PCA&lt;/h3&gt;
 
 &lt;ul&gt;
-&lt;li&gt;It is fast. In the case of tall matrix, \( p &amp;lt; n\), the algorithm is \( O(np ^ 2)\). It scales well with the number of dimention&lt;/li&gt;
-&lt;li&gt;The prefer way to do PCA is through SVD&lt;/li&gt;
-&lt;li&gt;There is efficient library (ARPACK) to get the first few eigenvalues and eigenvectors. &lt;/li&gt;
-&lt;li&gt;Just like Linear Regression, one can also do Sparse PCA, Kernel PCA, Ridge PCA. &lt;/li&gt;
-&lt;li&gt;It is often used to reduce the dimension then run some clustering algorithm on the data &lt;/li&gt;
+  &lt;li&gt;The first component \( w ^ T X \) is the dimension that maximize the variance, i.e.
+&lt;script type=&quot;math/tex&quot;&gt;\max \_ {\\| w \\| = 1} Var (w ^ T X ) = \max \_  {\\| w \\| = 1} \frac{1}{n} w ^ T X ^ T X w .&lt;/script&gt;
+And the above expression is maximized when w is the largest eigenvector of \( X ^ T X\). At that value, the expression is equal to the eigenvalue of the covariance matrix.&lt;/li&gt;
+  &lt;li&gt;The PCA projection is a set of points in lower dimension that best preserve the pair-wise distances.&lt;/li&gt;
+  &lt;li&gt;PCA can also be interpreted in the sense compressing data, i.e. we post-multiplying matrix \(X \) with some vector \( U \)) to lower dimension for compression, then to obtain an approximate of the original data, we multiply this lower dimension projection with \( U ^ {-1}\). Then out of all the linear projection, PCA is the one that best preserve the original dataset when going back to the original space from the compressed data. For example images data.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&quot;2-kernel-pca&quot;&gt;2. Kernel PCA&lt;/h2&gt;
+&lt;h3 id=&quot;properties&quot;&gt;1.3. Properties&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;It is fast. In the case of tall matrix, \( p &amp;lt; n\), the algorithm is \( O(np ^ 2)\). It scales well with the number of dimention&lt;/li&gt;
+  &lt;li&gt;The prefer way to do PCA is through SVD&lt;/li&gt;
+  &lt;li&gt;There is efficient library (ARPACK) to get the first few eigenvalues and eigenvectors.&lt;/li&gt;
+  &lt;li&gt;Just like Linear Regression, one can also do Sparse PCA, Kernel PCA, Ridge PCA.&lt;/li&gt;
+  &lt;li&gt;It is often used to reduce the dimension then run some clustering algorithm on the data&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;kernel-pca&quot;&gt;2. Kernel PCA&lt;/h2&gt;
 
 &lt;div class=&quot;imgcap&quot;&gt;
 &lt;div&gt;
-&lt;img src=&quot;/assets/unsupervised_learning/KernelPCA.png&quot;&gt;
+&lt;img src=&quot;/assets/unsupervised_learning/KernelPCA.png&quot; /&gt;
 &lt;/div&gt;
-
 &lt;div class=&quot;thecap&quot;&gt;Kernel PCA illustration. Image Credit: Google Image &lt;/div&gt;
-
-&lt;p&gt;&lt;/div&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;1-1-the-algorithm&quot;&gt;1.1. The Algorithm&lt;/h3&gt;
+&lt;/div&gt;
+&lt;p&gt;### 1.1. The Algorithm&lt;/p&gt;
 
 &lt;ol&gt;
-&lt;li&gt;Given a Kernel, i.e. the Radial Basis kernel 
-$$ K (x, y) = \exp \left( - \frac {\| x - y\| ^ 2 }{\sigma ^ 2 } \right) $$, we construct the \( n \times n \) Kernel matrix \( K\), where \( K_{ij} = K(x_i, x_j)\)&lt;/li&gt;
-&lt;li&gt;Double centering matrix \( K\) to have column mean and row mean zero 
-$$ \tilde{K}  = K - 1 _ n ^ T K - K 1 _ n + 1 _ n ^ T  K 1 _ n$$, for \( 1 _ N \) is the vector of all 1. &lt;/li&gt;
-&lt;li&gt;Solve for eigenvector and eigenvalues of \( \tilde{K} / n\)
-$$ \frac{1}{N} \tilde{K} a_k = \lambda _ k a_ k $$&lt;/li&gt;
-&lt;li&gt;The projected dataset is \( X _ {kpca} = \sum _ {i = 1} ^ {n} a _ {ki} K(x, x_i)\)&lt;/li&gt;
+  &lt;li&gt;Given a Kernel, i.e. the Radial Basis kernel 
+&lt;script type=&quot;math/tex&quot;&gt;K (x, y) = \exp \left( - \frac {\\| x - y\\| ^ 2 }{\sigma ^ 2 } \right)&lt;/script&gt;, we construct the \( n \times n \) Kernel matrix \( K\), where \( K_{ij} = K(x_i, x_j)\)&lt;/li&gt;
+  &lt;li&gt;Double centering matrix \( K\) to have column mean and row mean zero 
+&lt;script type=&quot;math/tex&quot;&gt;\tilde{K}  = K - 1 _ n ^ T K - K 1 _ n + 1 _ n ^ T  K 1 _ n&lt;/script&gt;, for \( 1 _ N \) is the vector of all 1.&lt;/li&gt;
+  &lt;li&gt;Solve for eigenvector and eigenvalues of \( \tilde{K} / n\)
+&lt;script type=&quot;math/tex&quot;&gt;\frac{1}{N} \tilde{K} a\_k = \lambda \_ k a\_ k&lt;/script&gt;&lt;/li&gt;
+  &lt;li&gt;The projected dataset is \( X _ {kpca} = \sum _ {i = 1} ^ {n} a _ {ki} K(x, x_i)\)&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h3 id=&quot;1-2-interpretation&quot;&gt;1.2. Interpretation&lt;/h3&gt;
+&lt;h3 id=&quot;interpretation&quot;&gt;1.2. Interpretation&lt;/h3&gt;
 
 &lt;ol&gt;
-&lt;li&gt;Linear Kernel PCA is equivalent to PCA as expected&lt;/li&gt;
-&lt;li&gt;Similar to other Kernel method, Kernel PCA can be thought of equivalent to doing PCA on a higher dimension feature space, with the same number of parameters (\(p\)). For example if we use the quadratic polynomial, the kernel function is just \( K(x, y) = (x ^ T y + c) ^ 2\)it is similar to feature engineer the dataset into \( x_1 ^ 2, x_2 ^ 2, x_1 x_2, x_1, x_2 \), then do PCA up here with the constraint on the weight (so the weight on this new space can&amp;#39;t be freely chosen, but only have 2 degree of freedom, i.e. the weight for the quadratic term must be the square the weight of the linear term). So it effectively performs PCA on a subspace of a higher dimension space, where the rank of the subspace is equal to \( p \).&lt;/li&gt;
+  &lt;li&gt;Linear Kernel PCA is equivalent to PCA as expected&lt;/li&gt;
+  &lt;li&gt;Similar to other Kernel method, Kernel PCA can be thought of equivalent to doing PCA on a higher dimension feature space, with the same number of parameters (\(p\)). For example if we use the quadratic polynomial, the kernel function is just \( K(x, y) = (x ^ T y + c) ^ 2\)it is similar to feature engineer the dataset into \( x_1 ^ 2, x_2 ^ 2, x_1 x_2, x_1, x_2 \), then do PCA up here with the constraint on the weight (so the weight on this new space can’t be freely chosen, but only have 2 degree of freedom, i.e. the weight for the quadratic term must be the square the weight of the linear term). So it effectively performs PCA on a subspace of a higher dimension space, where the rank of the subspace is equal to \( p \).&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h3 id=&quot;1-3-propreties&quot;&gt;1.3. Propreties&lt;/h3&gt;
-
+&lt;h3 id=&quot;propreties&quot;&gt;1.3. Propreties&lt;/h3&gt;
 &lt;ol&gt;
-&lt;li&gt;Its memory requirement is quadratic in \(n \), that is expensive. The computation complexity is also (at least) \( O (n ^ 2)\). &lt;/li&gt;
-&lt;li&gt;It is more flexible than linear PCA in the sence non-linear model is more flexible than linear regression&lt;/li&gt;
+  &lt;li&gt;Its memory requirement is quadratic in \(n \), that is expensive. The computation complexity is also (at least) \( O (n ^ 2)\).&lt;/li&gt;
+  &lt;li&gt;It is more flexible than linear PCA in the sence non-linear model is more flexible than linear regression&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h2 id=&quot;3-multidimensional-scaling&quot;&gt;3. Multidimensional Scaling&lt;/h2&gt;
+&lt;h2 id=&quot;multidimensional-scaling&quot;&gt;3. Multidimensional Scaling&lt;/h2&gt;
 
 &lt;div class=&quot;imgcap&quot;&gt;
 &lt;div&gt;
-&lt;img src=&quot;/assets/unsupervised_learning/mds.gif&quot;&gt;
+&lt;img src=&quot;/assets/unsupervised_learning/mds.gif&quot; /&gt;
 &lt;/div&gt;
-
 &lt;div class=&quot;thecap&quot;&gt;From distance matrix of cities, reconstruct their location with MDS. Image Credit: Google Image &lt;/div&gt;
+&lt;/div&gt;
 
-&lt;p&gt;&lt;/div&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;3-1-overview&quot;&gt;3.1. Overview&lt;/h3&gt;
-
+&lt;h3 id=&quot;overview&quot;&gt;3.1. Overview&lt;/h3&gt;
 &lt;p&gt;It is very similar to PCA, or specifically Kernel PCA, so it is worth noting the fundamental difference. In Kernel PCA, one start with a data matrix \( X \), one then construct the kernel matrix, \( XX ^ T\) in case of linear kernel, then get get the projected dataset from the eigen-decomposition of this dataset. 
-In MDS, the original dataset is unknown, we only know the distance matrix, now one wish to get a projected dataset that also best preserve the original unknown dataset, in the sense that the pairwise distances of the new dataset match the known distance matrix. &lt;/p&gt;
+In MDS, the original dataset is unknown, we only know the distance matrix, now one wish to get a projected dataset that also best preserve the original unknown dataset, in the sense that the pairwise distances of the new dataset match the known distance matrix.&lt;/p&gt;
 
-&lt;p&gt;One example when this might arise is in socialogy. We have ancient towns in England, where now we don&amp;#39;t know exactly their location. But we have some measure of pairwise distance between two towns, based on how many married couples are between these two towns. From this measure of similarity, one wish to reconstruct the original location of the town. Of course this can only be done up to a translation and rotation (since doing these does not change the distances). &lt;/p&gt;
+&lt;p&gt;One example when this might arise is in socialogy. We have ancient towns in England, where now we don’t know exactly their location. But we have some measure of pairwise distance between two towns, based on how many married couples are between these two towns. From this measure of similarity, one wish to reconstruct the original location of the town. Of course this can only be done up to a translation and rotation (since doing these does not change the distances).&lt;/p&gt;
 
-&lt;h3 id=&quot;3-2-the-algorithm&quot;&gt;3.2. The algorithm&lt;/h3&gt;
-
-&lt;p&gt;From the distance matrix \( D \in \mathbb{R ^ {n \times p}}\) of some unknown data \( Z \) living in unknown dimension space \( \mathbb{R} ^ p\), one wish to construct \( X \) that takes \( D \) as its distance matrix. If the unknown data \( Z \) is of rank p, then a theorem state that we can get \( X \) uniquely up to a rotation and translation in \( \mathbb{R} ^ p \) as well. In higher dimension, of course there are infinitely many solution. In lower dimension, we can&amp;#39;t get the exact distance matrix, but only wish to get data that best preserve the distance matrix. We can assume that \( X,Z \) have column mean zero. &lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;Double-centering \( D ^ 2\) to obtain \( S = -\frac{1}{2} H D ^ 2 H\),  for \(H = I _ n - \frac{1}{n} 11 ^ T\). Theorem 1: \( S = XX ^ T = ZZ ^ T\)&lt;/li&gt;
-&lt;li&gt;Diagonalize \( S = U \Lambda U ^ T\)&lt;/li&gt;
-&lt;li&gt;Using the first \(p\) eigenvalues, eigenvectors (in decreasing order), and obtain \( X = U \Lambda ^ {1/2}\). We can already see handwavingly that \( XX ^ T = U \Lambda U ^ T = S\) if we construct \( X \) this way. Theorem: X takes D as its distance matrix.&lt;/li&gt;
-&lt;li&gt;(Optional) If we only use the first \( k\) eigenvalue, eigenvector pair to construct \(X\), then Theorem: this X best preserves the original distance matrix \(D\), in the sense of minimizing sum of square of error. &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&quot;3-3-properties&quot;&gt;3.3. Properties&lt;/h3&gt;
+&lt;h3 id=&quot;the-algorithm-1&quot;&gt;3.2. The algorithm&lt;/h3&gt;
+&lt;p&gt;From the distance matrix \( D \in \mathbb{R ^ {n \times p}}\) of some unknown data \( Z \) living in unknown dimension space \( \mathbb{R} ^ p\), one wish to construct \( X \) that takes \( D \) as its distance matrix. If the unknown data \( Z \) is of rank p, then a theorem state that we can get \( X \) uniquely up to a rotation and translation in \( \mathbb{R} ^ p \) as well. In higher dimension, of course there are infinitely many solution. In lower dimension, we can’t get the exact distance matrix, but only wish to get data that best preserve the distance matrix. We can assume that \( X,Z \) have column mean zero.&lt;/p&gt;
 
 &lt;ol&gt;
-&lt;li&gt;It is \( O(n ^ 2)\). &lt;/li&gt;
-&lt;li&gt;If D is obtained from some known dataset \( Z \), then doing the above MDS is exactly equivalent to linear Kernel PCA&lt;/li&gt;
-&lt;li&gt;In practice, one construct the distance matrix using some non-Euclidean distance, then do MDS on this distance matrix. &lt;/li&gt;
-&lt;li&gt;To emphasize close distance, we can do the same trick as in Spectral Clustering (see  Spectral Clustering post), transforming the distance to similarity matrix such that closer distance stay roughly as 1, while faraway distance are effectively 0. &lt;/li&gt;
+  &lt;li&gt;Double-centering \( D ^ 2\) to obtain \( S = -\frac{1}{2} H D ^ 2 H\),  for \(H = I _ n - \frac{1}{n} 11 ^ T\). Theorem 1: \( S = XX ^ T = ZZ ^ T\)&lt;/li&gt;
+  &lt;li&gt;Diagonalize \( S = U \Lambda U ^ T\)&lt;/li&gt;
+  &lt;li&gt;Using the first \(p\) eigenvalues, eigenvectors (in decreasing order), and obtain \( X = U \Lambda ^ {1/2}\). We can already see handwavingly that \( XX ^ T = U \Lambda U ^ T = S\) if we construct \( X \) this way. Theorem: X takes D as its distance matrix.&lt;/li&gt;
+  &lt;li&gt;(Optional) If we only use the first \( k\) eigenvalue, eigenvector pair to construct \(X\), then Theorem: this X best preserves the original distance matrix \(D\), in the sense of minimizing sum of square of error.&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h2 id=&quot;4-k-means&quot;&gt;4. K-Means&lt;/h2&gt;
+&lt;h3 id=&quot;properties-1&quot;&gt;3.3. Properties&lt;/h3&gt;
+&lt;ol&gt;
+  &lt;li&gt;It is \( O(n ^ 2)\).&lt;/li&gt;
+  &lt;li&gt;If D is obtained from some known dataset \( Z \), then doing the above MDS is exactly equivalent to linear Kernel PCA&lt;/li&gt;
+  &lt;li&gt;In practice, one construct the distance matrix using some non-Euclidean distance, then do MDS on this distance matrix.&lt;/li&gt;
+  &lt;li&gt;To emphasize close distance, we can do the same trick as in Spectral Clustering (see  Spectral Clustering post), transforming the distance to similarity matrix such that closer distance stay roughly as 1, while faraway distance are effectively 0.&lt;/li&gt;
+&lt;/ol&gt;
 
+&lt;h2 id=&quot;k-means&quot;&gt;4. K-Means&lt;/h2&gt;
 &lt;div class=&quot;imgcap&quot;&gt;
 &lt;div&gt;
-&lt;img src=&quot;/assets/unsupervised_learning/kmeans.png&quot;&gt;
+&lt;img src=&quot;/assets/unsupervised_learning/kmeans.png&quot; /&gt;
 &lt;/div&gt;
-
 &lt;div class=&quot;thecap&quot;&gt;K-Means obtains convex cluster. Image Credit: Google Image &lt;/div&gt;
+&lt;/div&gt;
 
-&lt;p&gt;&lt;/div&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;4-1-algorithm&quot;&gt;4.1. Algorithm&lt;/h3&gt;
-
+&lt;h3 id=&quot;algorithm&quot;&gt;4.1. Algorithm&lt;/h3&gt;
 &lt;p&gt;Objective 
-$$\min _ {z,u} J(z, u) = \sum _ {i = 1} ^ n \sum _ {j = 1} ^ k z _ i \| x _ i - \mu _ j\| ^ 2$$&lt;/p&gt;
+&lt;script type=&quot;math/tex&quot;&gt;\min _ {z,u} J(z, u) = \sum _ {i = 1} ^ n \sum _ {j = 1} ^ k z _ i \\| x _ i - \mu _ j\\| ^ 2&lt;/script&gt;&lt;/p&gt;
 
-&lt;p&gt;This algorithm will result in a local solution to the above objective. The cost to obtain the global solution is NP. &lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;Given \(k\) the number of cluster, pick \( k\) points randomly from the dataset to be the center&lt;/li&gt;
-&lt;li&gt;Update \( z _ i\): associate each of n points with the closest center&lt;/li&gt;
-&lt;li&gt;Update \( \mu _ j\): recalculate the center as the mean of the points in that cluster&lt;/li&gt;
-&lt;li&gt;Repeat 2 and 3 until convergence&lt;/li&gt;
-&lt;li&gt;(Optional) Do the above procedues for different initial starting points and pick the best configuration in term of the objective &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&quot;4-2-interpretation&quot;&gt;4.2. Interpretation&lt;/h3&gt;
+&lt;p&gt;This algorithm will result in a local solution to the above objective. The cost to obtain the global solution is NP.&lt;/p&gt;
 
 &lt;ol&gt;
-&lt;li&gt;K-Means basically minimize the sum of square Euclidean distance from each point in the cluster to the center. The cluster will always be convex. &lt;/li&gt;
-&lt;li&gt;It works well when the cluster are convex and somewhat separable &lt;/li&gt;
-&lt;li&gt;The objective is minimized in a alternative minimization manner: we fix one coordinate, optimize the function along the other coordinate, then we fix the other coordinate and optimize along this coordinate. This approach is used in many non-convex optimization problem, and is very similar to EM algorithm. &lt;/li&gt;
+  &lt;li&gt;Given \(k\) the number of cluster, pick \( k\) points randomly from the dataset to be the center&lt;/li&gt;
+  &lt;li&gt;Update \( z _ i\): associate each of n points with the closest center&lt;/li&gt;
+  &lt;li&gt;Update \( \mu _ j\): recalculate the center as the mean of the points in that cluster&lt;/li&gt;
+  &lt;li&gt;Repeat 2 and 3 until convergence&lt;/li&gt;
+  &lt;li&gt;(Optional) Do the above procedues for different initial starting points and pick the best configuration in term of the objective&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h3 id=&quot;4-3-properties&quot;&gt;4.3. Properties&lt;/h3&gt;
-
+&lt;h3 id=&quot;interpretation-1&quot;&gt;4.2. Interpretation&lt;/h3&gt;
 &lt;ol&gt;
-&lt;li&gt;Its complexity is O(nkip) for i is the number of iteration we run. So it is fast. &lt;/li&gt;
-&lt;li&gt;K-Mean kinda only work for Euclidean distance, since we take advantage of the cheap &amp;quot;finding center&amp;quot; part. For Euclidean distance, the new center that minimizes the sum of square distance between the center and its members is just the mean of all members. It is hard for other distance metrics. &lt;/li&gt;
-&lt;li&gt;It suffer from outlier as Linear Regression suffers from outlier, or PCA suffer from outliers. They are all minimizing the sum of square errors. &lt;/li&gt;
+  &lt;li&gt;K-Means basically minimize the sum of square Euclidean distance from each point in the cluster to the center. The cluster will always be convex.&lt;/li&gt;
+  &lt;li&gt;It works well when the cluster are convex and somewhat separable&lt;/li&gt;
+  &lt;li&gt;The objective is minimized in a alternative minimization manner: we fix one coordinate, optimize the function along the other coordinate, then we fix the other coordinate and optimize along this coordinate. This approach is used in many non-convex optimization problem, and is very similar to EM algorithm.&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h2 id=&quot;5-k-medoids&quot;&gt;5. K-Medoids&lt;/h2&gt;
+&lt;h3 id=&quot;properties-2&quot;&gt;4.3. Properties&lt;/h3&gt;
+&lt;ol&gt;
+  &lt;li&gt;Its complexity is O(nkip) for i is the number of iteration we run. So it is fast.&lt;/li&gt;
+  &lt;li&gt;K-Mean kinda only work for Euclidean distance, since we take advantage of the cheap “finding center” part. For Euclidean distance, the new center that minimizes the sum of square distance between the center and its members is just the mean of all members. It is hard for other distance metrics.&lt;/li&gt;
+  &lt;li&gt;It suffer from outlier as Linear Regression suffers from outlier, or PCA suffer from outliers. They are all minimizing the sum of square errors.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;k-medoids&quot;&gt;5. K-Medoids&lt;/h2&gt;
 
 &lt;div class=&quot;imgcap&quot;&gt;
 &lt;div&gt;
-&lt;img src=&quot;/assets/unsupervised_learning/kmedoids.gif&quot;&gt;
+&lt;img src=&quot;/assets/unsupervised_learning/kmedoids.gif&quot; /&gt;
 &lt;/div&gt;
-
 &lt;div class=&quot;thecap&quot;&gt;Difference between K-Medoids and K-Means. Image Credit: Google Image &lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;### 5.1. Overview
+K-medoids at first sight look like K-Means with a different distance metrics. It is not quite that. The first difference is that where the center of K-Means can be any point in the space, the center of K-medoid must be one in the dataset. Secondly, K-medoid will works only with the distance matrix, K-means will need the exact location of each point to calculate the distance from that point to any arbitrary center.&lt;/p&gt;
 
-&lt;p&gt;&lt;/div&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;5-1-overview&quot;&gt;5.1. Overview&lt;/h3&gt;
-
-&lt;p&gt;K-medoids at first sight look like K-Means with a different distance metrics. It is not quite that. The first difference is that where the center of K-Means can be any point in the space, the center of K-medoid must be one in the dataset. Secondly, K-medoid will works only with the distance matrix, K-means will need the exact location of each point to calculate the distance from that point to any arbitrary center. &lt;/p&gt;
-
-&lt;h3 id=&quot;5-2-the-algorithm&quot;&gt;5.2. The Algorithm,&lt;/h3&gt;
+&lt;h3 id=&quot;the-algorithm-2&quot;&gt;5.2. The Algorithm,&lt;/h3&gt;
 
 &lt;ol&gt;
-&lt;li&gt;Given \(k\) the number of cluster, pick \( k\) points randomly from the dataset to be the center&lt;/li&gt;
-&lt;li&gt;Update \( z _ i\): associate each of n points with the closest center&lt;/li&gt;
-&lt;li&gt;Update \( \mu _ j\): for each cluster j&amp;#39;th, for each member in that cluster, swap the current center with that member and calculate the sum of distance from all member in the cluster to that new center. Pick the member that after swapping with the current center, have the smallest sum of distances. &lt;/li&gt;
-&lt;li&gt;Repeat step 2 and step 3 until convergence &lt;/li&gt;
+  &lt;li&gt;Given \(k\) the number of cluster, pick \( k\) points randomly from the dataset to be the center&lt;/li&gt;
+  &lt;li&gt;Update \( z _ i\): associate each of n points with the closest center&lt;/li&gt;
+  &lt;li&gt;Update \( \mu _ j\): for each cluster j’th, for each member in that cluster, swap the current center with that member and calculate the sum of distance from all member in the cluster to that new center. Pick the member that after swapping with the current center, have the smallest sum of distances.&lt;/li&gt;
+  &lt;li&gt;Repeat step 2 and step 3 until convergence&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h3 id=&quot;5-3-properties&quot;&gt;5.3. Properties&lt;/h3&gt;
-
+&lt;h3 id=&quot;properties-3&quot;&gt;5.3. Properties&lt;/h3&gt;
 &lt;ol&gt;
-&lt;li&gt;It is \( O (n&lt;sup&gt;2)\)&lt;/sup&gt; in complexity, since it needs to calculate all the pairwise distances. So it is (much) slower than K-Means. &lt;/li&gt;
-&lt;li&gt;It works naturally with any distance metrics. &lt;/li&gt;
-&lt;li&gt;Note again that the center (medoid) must be one of the point in the dataset, unlike K-Means which can be anywhere &lt;/li&gt;
-&lt;li&gt;It is more robust to outlier than K-Means&lt;/li&gt;
+  &lt;li&gt;It is \( O (n^2)\) in complexity, since it needs to calculate all the pairwise distances. So it is (much) slower than K-Means.&lt;/li&gt;
+  &lt;li&gt;It works naturally with any distance metrics.&lt;/li&gt;
+  &lt;li&gt;Note again that the center (medoid) must be one of the point in the dataset, unlike K-Means which can be anywhere&lt;/li&gt;
+  &lt;li&gt;It is more robust to outlier than K-Means&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h2 id=&quot;6-hierarchical-clustering&quot;&gt;6. Hierarchical Clustering&lt;/h2&gt;
-
+&lt;h2 id=&quot;hierarchical-clustering&quot;&gt;6. Hierarchical Clustering&lt;/h2&gt;
 &lt;div class=&quot;imgcap&quot;&gt;
 &lt;div&gt;
-&lt;img src=&quot;/assets/unsupervised_learning/hc.png&quot;&gt;
+&lt;img src=&quot;/assets/unsupervised_learning/hc.png&quot; /&gt;
 &lt;/div&gt;
-
 &lt;div class=&quot;thecap&quot;&gt;Illustration of Hierarchical Clustering. Image Credit: Wikipedia &lt;/div&gt;
-
-&lt;p&gt;&lt;/div&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;6-1-algorithm&quot;&gt;6.1. Algorithm&lt;/h3&gt;
-
-&lt;p&gt;We present here the bottom-up approach. One can form a tree along the process. &lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;### 6.1. Algorithm
+We present here the bottom-up approach. One can form a tree along the process.&lt;/p&gt;
 
 &lt;ol&gt;
-&lt;li&gt;Define a notion of distance between a cluster and another cluster, for example use the minimum distance between any a point from this cluster to another point from the other cluster. &lt;/li&gt;
-&lt;li&gt;Starts with \( n\) clusters where each point is its own cluster&lt;/li&gt;
-&lt;li&gt;Repeat \( n - 1\) times : pick two clusters that are closest to each other and merge them.&lt;br&gt;&lt;/li&gt;
+  &lt;li&gt;Define a notion of distance between a cluster and another cluster, for example use the minimum distance between any a point from this cluster to another point from the other cluster.&lt;/li&gt;
+  &lt;li&gt;Starts with \( n\) clusters where each point is its own cluster&lt;/li&gt;
+  &lt;li&gt;Repeat \( n - 1\) times : pick two clusters that are closest to each other and merge them.&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h3 id=&quot;6-2-properties&quot;&gt;6.2. Properties&lt;/h3&gt;
-
+&lt;h3 id=&quot;properties-4&quot;&gt;6.2. Properties&lt;/h3&gt;
 &lt;ol&gt;
-&lt;li&gt;It is very slow \( O (n ^ 3)\) with the naive implementation. It can be reduced to \( O (n ^ 2)\)&lt;/li&gt;
-&lt;li&gt;The top-down approach, where one starts with one cluster and gradually breaking down cluster, have exponential complexity. &lt;/li&gt;
-&lt;li&gt;It is useful for visualizing and interpreting features when doing supervise learning. One can produce a dendogram of the features to see which one are correlated. &lt;/li&gt;
-&lt;li&gt;It perform clustering for all \( k \) - number of cluster - at the same time. &lt;/li&gt;
+  &lt;li&gt;It is very slow \( O (n ^ 3)\) with the naive implementation. It can be reduced to \( O (n ^ 2)\)&lt;/li&gt;
+  &lt;li&gt;The top-down approach, where one starts with one cluster and gradually breaking down cluster, have exponential complexity.&lt;/li&gt;
+  &lt;li&gt;It is useful for visualizing and interpreting features when doing supervise learning. One can produce a dendogram of the features to see which one are correlated.&lt;/li&gt;
+  &lt;li&gt;It perform clustering for all \( k \) - number of cluster - at the same time.&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h2 id=&quot;6-gaussian-mixture-models&quot;&gt;6. Gaussian Mixture Models&lt;/h2&gt;
-
-&lt;p&gt;GMM can be thought of as a soft version of K-Means. In K-Means each point either belong to this cluster or some other cluster. In GMM, each point has a probability \( \pi _i \) of being to cluster \( i\)&amp;#39;th. GMM can be solved somewhat similarly to K-Means. We won&amp;#39;t go into detail GMM here, and will cover it when we talk about Bayseian models, graphical models. &lt;/p&gt;
+&lt;h2 id=&quot;gaussian-mixture-models&quot;&gt;6. Gaussian Mixture Models&lt;/h2&gt;
+&lt;p&gt;GMM can be thought of as a soft version of K-Means. In K-Means each point either belong to this cluster or some other cluster. In GMM, each point has a probability \( \pi _i \) of being to cluster \( i\)’th. GMM can be solved somewhat similarly to K-Means. We won’t go into detail GMM here, and will cover it when we talk about Bayseian models, graphical models.&lt;/p&gt;
 </description>
         <pubDate>Wed, 10 Feb 2016 10:44:27 -0800</pubDate>
         <link>http://hduongtrong.github.io/2016/02/10/KMean-KMedoid-KernelPCA/</link>
@@ -588,280 +671,180 @@ $$\min _ {z,u} J(z, u) = \sum _ {i = 1} ^ n \sum _ {j = 1} ^ k z _ i \| x _ i - 
       </item>
     
       <item>
-        <title>Sequence to Sequence Model</title>
-        <description>&lt;h2 id=&quot;credits&quot;&gt;Credits&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&quot;http://arxiv.org/pdf/1406.1078v3.pdf&quot;&gt;Learning Phrase Representations using RNN Encoder–Decoder for Statistical Machine Translation&lt;/a&gt;. Kyunghyun Cho, Bart van Merrienboer Caglar Gulcehre, Dzmitry Bahdanau, Fethi Bougares Holger Schwenk, Yoshua Bengio. [1]&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;http://arxiv.org/pdf/1409.1259v2.pdf&quot;&gt;On the Properties of Neural Machine Translation: Encoder–Decoder Approaches&lt;/a&gt;. Kyunghyun Cho, Bart van Merrienboer, Dzmitry Bahdanau.&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;http://arxiv.org/pdf/1412.7449v3.pdf&quot;&gt;Grammar as a Foreign Language&lt;/a&gt;. Oriol Vinyals, Lukasz Kaiser, 
-Terry Koo, Slav Petrov, Ilya Sutskever. &lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;http://arxiv.org/pdf/1409.0473v6.pdf&quot;&gt;Neural Machine Translation by Jointly Learning to Align and Translate&lt;/a&gt;. Dzmitry Bahdanau, KyungHyun Cho, Yoshua Bengio. &lt;/li&gt;
-&lt;li&gt;Code Website: &lt;a href=&quot;http://www.tensorflow.org/tutorials/seq2seq/index.html#sequence-to-sequence-models&quot;&gt;Tensorflow seq2seq&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;the-core-model&quot;&gt;The Core Model&lt;/h2&gt;
-
-&lt;div class=&quot;imgcap&quot;&gt;
-&lt;div&gt;
-&lt;img src=&quot;/assets/seq2seq/seq2seq.png&quot; style=&quot;width: 500px;&quot;&gt;
-&lt;/div&gt;
-
-&lt;div class=&quot;thecap&quot;&gt; Sequence to Sequence Model &lt;/div&gt;
-
-&lt;p&gt;&lt;/div&gt;&lt;/p&gt;
-
-&lt;p&gt;First we define the data, which include encoder input, decoder input, decoder output, encoder hidden states, and decoder hidden states. Here \( S \) denotes the dummy START symbol. &lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;Encoder input sequence \( X _ 1, X _ 2, X _ 3  \in \mathbb{R} ^ p \), &lt;/li&gt;
-&lt;li&gt;Encoder hidden states be \( H _ 0, H _ 1, H _ 2, H _ 3 \in \mathbb{R} ^ s, H _ 0 = 0 \). &lt;/li&gt;
-&lt;li&gt;Decoder input sequence \( S, Y _ 1, Y _ 2 \in \mathbb{R} ^ {q} \)&lt;/li&gt;
-&lt;li&gt;Decoder output sequence \( Y _ 1, Y _ 2, Y _ 3 \in \mathbb{R} ^ {q} \)&lt;/li&gt;
-&lt;li&gt;Decoder hidden states be \( K _ 0, K _ 1, K _ 2 \in \mathbb{R} ^ t \)&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Let \( \sigma \) be the sigmoid function, we now define the parameter for our model: &lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;Weight matrix that connects encoder input to encoder hidden state be \( W _ x \in \mathbb{R} ^ {p \times s}\). &lt;/li&gt;
-&lt;li&gt;Weight matrix that connects this encoder hidden state to the next hidden state be \( W _ h \in \mathbb{R} ^ {s \times s}\). &lt;/li&gt;
-&lt;li&gt;Weight matrix that connects decoder input to decoder hidden state \( W _ y \in \mathbb{R} ^ {q \times }\)&lt;/li&gt;
-&lt;li&gt;Weight matrix that connects this decoder hidden state to the next hidden state \( W _ k \in \mathbb{R} ^ {t \times t}\)&lt;/li&gt;
-&lt;li&gt;Weight matrix that connects this decoder hidden state to the decoder hidden output \( W _ z \in \mathbb{R} ^ {t \times q}\)&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;We now model the probability of \( Y _ i\) as a function of \( X _ i &amp;#39;s\) through the intermediates \( H _ i &amp;#39;s , K _ i &amp;#39;s \)&lt;/p&gt;
-
-&lt;p&gt;$$
-    \begin{equation}
-    \begin{split}
-        H _ 1 &amp;amp;= \sigma (W _ x X _ 1 + W _ h H _ 0) \\
-        H _ 2 &amp;amp;= \sigma (W _ x X _ 2 + W _ h H _ 1) \\
-        H _ 3 &amp;amp;= \sigma (W _ x X _ 3 + W _ h H _ 2) \\
-        K _ 1 &amp;amp;= \sigma (W _ y S     + W _ k H _ 3) \\
-        K _ 2 &amp;amp;= \sigma (W _ y Y _ 1 + W _ k K _ 1) \\
-        K _ 3 &amp;amp;= \sigma (W _ y Y _ 2 + W _ k K _ 2) \\
-        \hat{Y} _ 1 &amp;amp;= \sigma (W _ z K _ 1)                 \\
-        \hat{Y} _ 2 &amp;amp;= \sigma (W _ z K _ 2)                 \\
-        \hat{Y} _ 3 &amp;amp;= \sigma (W _ z K _ 3)                 \\
-    \end{split}
-    \end{equation}
-$$&lt;/p&gt;
-
-&lt;p&gt;Now as we can see, \( Y _ 1\) is a function (composition of functions) of \(X _ 1, X _ 2, X _ 3\). \( Y _ 2 \) in addition also depends on \( Y _ 1\), and so on. The loss function in the case of classification, if we use the multinomial loss, is then just&lt;/p&gt;
-
-&lt;p&gt;$$
-    \begin{equation}
-    \begin{split}
-        L(W _ x, W _ h, W _ y, W _ k, W _ z) &amp;amp;= \sum _ {i = 1} ^ 3 f(Y _ i , \hat{Y _ i }) \\
-        f(Y, \hat{Y})                        &amp;amp;= \sum Y[j] \log \hat{Y}[j], \\
-    \end{split}
-    \end{equation}
-$$
-for in the last equation, we use array notation, \( Y[j]\) means the j&amp;#39;th element in vector \( Y \). &lt;/p&gt;
-
-&lt;p&gt;This loss function is only a function of the data and the 5 parameter matrix. We can calculate the gradient, and use gradient descent or mini-batch stochastic gradient descent to optimize it. &lt;/p&gt;
-
-&lt;h2 id=&quot;improvements&quot;&gt;Improvements&lt;/h2&gt;
-
-&lt;p&gt;Above is the core of a sequence to sequence model. In practice, we should use&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;LSTM cell instead of a vanilla RNN cell. What this means is instead of having \(H _ t = \sigma (W _ x \times X + W _ h H _ {t - 1})\), we have a more complicated function here. &lt;/li&gt;
-&lt;li&gt;Multiple layers instead of just one hidden layer as we have&lt;/li&gt;
-&lt;li&gt;Add a bias term in addition to the weight \( W \) term&lt;/li&gt;
-&lt;li&gt;For variable size output, we have an additional END symbol in addition to the START symbol. We cut the output when the model predict an END. &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Some implementation nodes&lt;/p&gt;
-
-&lt;p&gt;The code &lt;a href=&quot;https://github.com/hduongtrong/ScikitFlow/blob/master/seq2seq.py&quot;&gt;Seq2seq in Tensorflow&lt;/a&gt;&lt;/p&gt;
-</description>
-        <pubDate>Fri, 27 Nov 2015 00:00:00 -0800</pubDate>
-        <link>http://hduongtrong.github.io/2015/11/27/rnn-encoder-decoder/</link>
-        <guid isPermaLink="true">http://hduongtrong.github.io/2015/11/27/rnn-encoder-decoder/</guid>
-        
-        
-      </item>
-    
-      <item>
         <title>Gradient Descent and Variants - Convergence Rate Summary</title>
         <description>&lt;h4 id=&quot;credits&quot;&gt;Credits&lt;/h4&gt;
 
 &lt;ul&gt;
-&lt;li&gt;Ben Retch - Berkeley EE227C Convex Optimization Spring 2015&lt;/li&gt;
-&lt;li&gt;Moritz Hardt - &lt;a href=&quot;http://mrtzh.github.io/2013/09/07/the-zen-of-gradient-descent.html&quot;&gt;The Zen of Gradient Descent&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Yu. Nesterov - &lt;a href=&quot;http://www.optimization-online.org/DB_FILE/2010/01/2527.pdf&quot;&gt;Efficiency of coordinate descent methods on huge-scale optimization problems&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Peter Richtarik, Martin Takac - &lt;a href=&quot;http://arxiv.org/abs/1107.2848&quot;&gt;Iteration Complexity of Randomized Block-Coordinate Descent Methods for Minimizing a Composite Function&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Ben Retch - Berkeley EE227C Convex Optimization Spring 2015&lt;/li&gt;
+  &lt;li&gt;Moritz Hardt - &lt;a href=&quot;http://mrtzh.github.io/2013/09/07/the-zen-of-gradient-descent.html&quot;&gt;The Zen of Gradient Descent&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Yu. Nesterov - &lt;a href=&quot;http://www.optimization-online.org/DB_FILE/2010/01/2527.pdf&quot;&gt;Efficiency of coordinate descent methods on huge-scale optimization problems&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Peter Richtarik, Martin Takac - &lt;a href=&quot;http://arxiv.org/abs/1107.2848&quot;&gt;Iteration Complexity of Randomized Block-Coordinate Descent Methods for Minimizing a Composite Function&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h4 id=&quot;goals&quot;&gt;Goals&lt;/h4&gt;
-
 &lt;p&gt;Summary the convergence rate of various gradient descent variants.&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;Gradient Descent&lt;/li&gt;
-&lt;li&gt;Gradient Descent with Momentum&lt;/li&gt;
-&lt;li&gt;Stochastic Gradient Descent&lt;/li&gt;
-&lt;li&gt;Coordinate Gradient Descent&lt;/li&gt;
+  &lt;li&gt;Gradient Descent&lt;/li&gt;
+  &lt;li&gt;Gradient Descent with Momentum&lt;/li&gt;
+  &lt;li&gt;Stochastic Gradient Descent&lt;/li&gt;
+  &lt;li&gt;Coordinate Gradient Descent&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;with a focus on the last one.&lt;/p&gt;
 
-&lt;h2 id=&quot;1-gradient-descent&quot;&gt;&lt;strong&gt;1. Gradient Descent&lt;/strong&gt;&lt;/h2&gt;
-
-&lt;h4 id=&quot;1-1-defining-algorithm&quot;&gt;1.1. Defining Algorithm&lt;/h4&gt;
+&lt;h2 id=&quot;gradient-descent&quot;&gt;&lt;strong&gt;1. Gradient Descent&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;#### 1.1. Defining Algorithm&lt;/p&gt;
 
 &lt;div class=&quot;imgcap&quot;&gt;
 &lt;div&gt;
-&lt;img src=&quot;/assets/gradient_descent/gradient_descent.gif&quot;&gt;
+&lt;img src=&quot;/assets/gradient_descent/gradient_descent.gif&quot; /&gt;
+&lt;/div&gt;
+&lt;div class=&quot;thecap&quot;&gt;Gradient Descent in 2D. Images Credit: http://vis.supstat.com/2013/03/gradient-descent-algorithm-with-r/ &lt;/div&gt;
 &lt;/div&gt;
 
-&lt;div class=&quot;thecap&quot;&gt;Gradient Descent in 2D. Images Credit: http://vis.supstat.com/2013/03/gradient-descent-algorithm-with-r/ &lt;/div&gt;
-
-&lt;p&gt;&lt;/div&gt;&lt;/p&gt;
-
-&lt;p&gt;The goal here is to minimize a convex function \( f: \mathbb{R} ^ n \rightarrow \mathbb{R} \) without constraint. &lt;/p&gt;
+&lt;p&gt;The goal here is to minimize a convex function \( f: \mathbb{R} ^ n \rightarrow \mathbb{R} \) without constraint.&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Definition&lt;/strong&gt; [&lt;strong&gt;&lt;em&gt;Convex function&lt;/em&gt;&lt;/strong&gt;] A function \( f : \mathbb{R} ^ n \rightarrow \mathbb{R} \) is convex if its domain of \( f \) is a convex set, and \( \forall x, y \in \rm{dom}(f)\), we have 
-$$f(\theta x + (1 - \theta) y) \le \theta f(x) + (1 - \theta) f(y)$$&lt;/p&gt;
+&lt;script type=&quot;math/tex&quot;&gt;f(\theta x + (1 - \theta) y) \le \theta f(x) + (1 - \theta) f(y)&lt;/script&gt;&lt;/p&gt;
 
-&lt;p&gt;Graphically, it means if we connect two points in the graph of the function to create a linear line, that linear line lies above the function (for those points in between). We often work with a nicer definition of convex function, when it is differentiable, as in &lt;/p&gt;
+&lt;p&gt;Graphically, it means if we connect two points in the graph of the function to create a linear line, that linear line lies above the function (for those points in between). We often work with a nicer definition of convex function, when it is differentiable, as in&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Theorem&lt;/strong&gt; [&lt;strong&gt;&lt;em&gt;First Order Condition&lt;/em&gt;&lt;/strong&gt;] Suppose \( f \) is differentiable. Then \( f \) is convex iff its domain is convex and 
-$$ f(y) \ge f(x) + \nabla f(x) ^ T (y - x) , \forall x, y$$&lt;/p&gt;
+&lt;script type=&quot;math/tex&quot;&gt;f(y) \ge f(x) + \nabla f(x) ^ T (y - x) , \forall x, y&lt;/script&gt;&lt;/p&gt;
 
 &lt;p&gt;Graphically, it means the tangent line lies below the function at any point. Finally, we state the second-order condition for completeness.&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;Theorem&lt;/strong&gt; [&lt;strong&gt;&lt;em&gt;Second Order Condition&lt;/em&gt;&lt;/strong&gt;] Assume that \( f \) is twice differentiable, that is, its Hessian exists at each point in the domain of f, which is open. Then \( f \) is convex iff its Hessian is positive semidefinite. &lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Theorem&lt;/strong&gt; [&lt;strong&gt;&lt;em&gt;Second Order Condition&lt;/em&gt;&lt;/strong&gt;] Assume that \( f \) is twice differentiable, that is, its Hessian exists at each point in the domain of f, which is open. Then \( f \) is convex iff its Hessian is positive semidefinite.&lt;/p&gt;
 
 &lt;p&gt;Working with general convex function turns out to be very hard, we instead need the following condition&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Definition&lt;/strong&gt; [&lt;strong&gt;&lt;em&gt;L-Lipschitz Gradient&lt;/em&gt;&lt;/strong&gt;] \( f \) is said to has L-Lipschitz gradient iff 
-$$ \left | \nabla f(x) - \nabla f(y) \right | \le L || x - y || $$ 
-$$ \Leftrightarrow f(y) \le f(x) + \nabla f(x) ^ T (y - x) + \frac{L}{2} || y - x || ^ 2 $$&lt;/p&gt;
+&lt;script type=&quot;math/tex&quot;&gt;\left | \nabla f(x) - \nabla f(y) \right | \le L \|| x - y \||&lt;/script&gt; 
+&lt;script type=&quot;math/tex&quot;&gt;\Leftrightarrow f(y) \le f(x) + \nabla f(x) ^ T (y - x) + \frac{L}{2} \|| y - x \|| ^ 2&lt;/script&gt;&lt;/p&gt;
 
-&lt;p&gt;Graphically, it means the function is not too convex, it is upperbounded by a quadratic function. Having this condition is necessary in most of the convergence result in gradient descent. Having an additional condition will make life even easier, this condition is stated in &lt;/p&gt;
+&lt;p&gt;Graphically, it means the function is not too convex, it is upperbounded by a quadratic function. Having this condition is necessary in most of the convergence result in gradient descent. Having an additional condition will make life even easier, this condition is stated in&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Definition&lt;/strong&gt; [&lt;strong&gt;&lt;em&gt;m Strongly Convex&lt;/em&gt;&lt;/strong&gt;] \( f \) is strongly convex with constant \( m \) iff 
-$$ f(y) \ge f(x) + \nabla f(x) ^ T (y - x) + \frac{m}{2} || y - x || ^ 2 $$&lt;/p&gt;
+&lt;script type=&quot;math/tex&quot;&gt;f(y) \ge f(x) + \nabla f(x) ^ T (y - x) + \frac{m}{2} \|| y - x \|| ^ 2&lt;/script&gt;&lt;/p&gt;
 
-&lt;p&gt;Basically, it is the opposite of L-Lipschitz gradient, it means the function is not too flat, it is lowerbounded by some quadratic function. We know that at the minimum, a function \( f \) has derivative equal to 0. As such the two L-Lipschitz can be thought of as establishing an upperbound of the change in function values in term of input values. The strongly convex can be thought of as establishing a lowerbound of the change in function values in term of input values. &lt;/p&gt;
+&lt;p&gt;Basically, it is the opposite of L-Lipschitz gradient, it means the function is not too flat, it is lowerbounded by some quadratic function. We know that at the minimum, a function \( f \) has derivative equal to 0. As such the two L-Lipschitz can be thought of as establishing an upperbound of the change in function values in term of input values. The strongly convex can be thought of as establishing a lowerbound of the change in function values in term of input values.&lt;/p&gt;
 
-&lt;p&gt;We are now ready to define the Gradient Descent algorithm: &lt;/p&gt;
+&lt;p&gt;We are now ready to define the Gradient Descent algorithm:&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Algorithm&lt;/strong&gt; [&lt;strong&gt;&lt;em&gt;Gradient Descent&lt;/em&gt;&lt;/strong&gt;] 
 For a stepsize \( \alpha \) chosen before hand&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;Initialize \( x _ 0 \)&lt;/li&gt;
-&lt;li&gt;For \( k = 1,2,...\), compute \( x _ {k + 1} = x _ k - \alpha \nabla f(x _ k )\)&lt;/li&gt;
+  &lt;li&gt;Initialize \( x _ 0 \)&lt;/li&gt;
+  &lt;li&gt;For \( k = 1,2,…\), compute \( x _ {k + 1} = x _ k - \alpha \nabla f(x _ k )\)&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;Basically, it adjust the \( x _ k \) a little bit in the direction where \( f \) decreases the most (the negative gradient direction). In practice, one often choose a variable \( \alpha \) instead of a constant \( \alpha \). &lt;/p&gt;
+&lt;p&gt;Basically, it adjust the \( x _ k \) a little bit in the direction where \( f \) decreases the most (the negative gradient direction). In practice, one often choose a variable \( \alpha \) instead of a constant \( \alpha \).&lt;/p&gt;
 
-&lt;h4 id=&quot;1-2-convergence-rate&quot;&gt;1.2. Convergence Rate&lt;/h4&gt;
+&lt;h4 id=&quot;convergence-rate&quot;&gt;1.2. Convergence Rate&lt;/h4&gt;
 
 &lt;p&gt;&lt;strong&gt;Theorem&lt;/strong&gt; [&lt;strong&gt;&lt;em&gt;Rate for L-Lipschitz and m Strongly Convex&lt;/em&gt;&lt;/strong&gt;]. If \( f \) is L-Lipschitz and strongly convex with constant \( m \), then the Gradient Descent algorithm converges to the right solution, and picking the stepsize \( \alpha = 1 / L \) we have 
-$$ f(x _ {k + 1}) - f(x _ \star) \le \left( 1 - \frac{m}{L} \right) (f(x _ k) - f(x _ \star))$$
-$$ \Rightarrow f(x _ {k + 1} - f(x _ \star) \le \left( 1 - \frac{m}{L} \right) ^ k (f ( x _ k) - f(x _ \star))$$&lt;/p&gt;
+&lt;script type=&quot;math/tex&quot;&gt;f(x _ {k + 1}) - f(x _ \star) \le \left( 1 - \frac{m}{L} \right) (f(x _ k) - f(x _ \star))&lt;/script&gt;
+&lt;script type=&quot;math/tex&quot;&gt;\Rightarrow f(x _ {k + 1} - f(x _ \star) \le \left( 1 - \frac{m}{L} \right) ^ k (f ( x _ k) - f(x _ \star))&lt;/script&gt;&lt;/p&gt;
 
-&lt;p&gt;We say the function values converges linearly to the optimal value. Also, since we have the relation between function values and input values, we have \( || x _ k - x _ \star ||\) converges linearly to 0. Here \( x _ \star \) denotes the solution to the optimization problem. For an error threshold of \( \epsilon \), we would need number of iteration in the order of \log \frac{1}{\epsilon} to find a solution within that error threshold. &lt;/p&gt;
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;We say the function values converges linearly to the optimal value. Also, since we have the relation between function values and input values, we have \( |&lt;/td&gt;
+      &lt;td&gt;x _ k - x _ \star |&lt;/td&gt;
+      &lt;td&gt;\) converges linearly to 0. Here \( x _ \star \) denotes the solution to the optimization problem. For an error threshold of \( \epsilon \), we would need number of iteration in the order of \log \frac{1}{\epsilon} to find a solution within that error threshold.&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
 
 &lt;p&gt;&lt;strong&gt;Theorem&lt;/strong&gt; [&lt;strong&gt;&lt;em&gt;Rate for L-Lipschizt&lt;/em&gt;&lt;/strong&gt;] If f has L-Lipschitz gradient, then 
-$$ f(x _ k) - f(x _ \star) \le \frac{2L}{k + 1} || x _ 0 - x _ \star|| ^ 2 $$&lt;/p&gt;
+&lt;script type=&quot;math/tex&quot;&gt;f(x _ k) - f(x _ \star) \le \frac{2L}{k + 1} \|| x _ 0 - x _ \star\|| ^ 2&lt;/script&gt;&lt;/p&gt;
 
-&lt;p&gt;The convergence rate is not as good, since we are in a more general case. We say the function values converges in log. For an error threshold of \( \epsilon \), we now need in the order of \( \frac{1}{\epsilon} \) iteraions to find a solution within that error threshold. Note that this is much worse than the previous result. &lt;/p&gt;
+&lt;p&gt;The convergence rate is not as good, since we are in a more general case. We say the function values converges in log. For an error threshold of \( \epsilon \), we now need in the order of \( \frac{1}{\epsilon} \) iteraions to find a solution within that error threshold. Note that this is much worse than the previous result.&lt;/p&gt;
 
-&lt;p&gt;We quickly mention the (Nesterov) momentum method here, basically, each iteration, instead of updating \( x _ k \) along the direction of gradient, it updates along the weighted average of all the gradient computed so far, with more weight to the recent gradients. I don&amp;#39;t think it&amp;#39;s quite like that but it is the idea, using the previous computed gradients. &lt;/p&gt;
+&lt;p&gt;We quickly mention the (Nesterov) momentum method here, basically, each iteration, instead of updating \( x _ k \) along the direction of gradient, it updates along the weighted average of all the gradient computed so far, with more weight to the recent gradients. I don’t think it’s quite like that but it is the idea, using the previous computed gradients.&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Algorithm&lt;/strong&gt; [&lt;strong&gt;&lt;em&gt;Nesterov Momentum&lt;/em&gt;&lt;/strong&gt;] The update rule for Nesterov method, for constant stepsize \( \alpha \) and momentum rate \( \beta \) is 
-$$x _ {k + 1} = x _ k - \alpha \nabla f ( x _ k + \beta (x _ k - x _ { k - 1} ) + $$ 
-$$+ \beta ( x _ k - x _ { k - 1})$$&lt;/p&gt;
+&lt;script type=&quot;math/tex&quot;&gt;x _ {k + 1} = x _ k - \alpha \nabla f ( x _ k + \beta (x _ k - x _ { k - 1} ) +&lt;/script&gt; 
+&lt;script type=&quot;math/tex&quot;&gt;+ \beta ( x _ k - x _ { k - 1})&lt;/script&gt;&lt;/p&gt;
 
 &lt;p&gt;If we were to be careful with the analysis before, for L-Lipschitz gradient and strongly convex function with parameter \( m \), we have the rate of convergence is \( O \left( \frac{L}{m} \log \frac{1}{\epsilon} \right)\). With the Nesterov method, we get an improvement to \( O \left( \sqrt{\frac{L}{m}} \log \frac{1}{\epsilon} \right)\). Similarly, for L-Lipschitz gradient, the error rate before was \( O \left( \frac{L}{\epsilon} \right)\), now with Nesterov momentum method, we have \( O \left( \sqrt{\frac{L}{\epsilon}}\right)\). 
-So Nesteve momentum method gives a bit better rate for very little computational cost. &lt;/p&gt;
+So Nesteve momentum method gives a bit better rate for very little computational cost.&lt;/p&gt;
 
-&lt;h2 id=&quot;2-coordinate-descent&quot;&gt;&lt;strong&gt;2. Coordinate Descent&lt;/strong&gt;&lt;/h2&gt;
-
-&lt;h4 id=&quot;2-1-defining-algorithm&quot;&gt;2.1. Defining Algorithm&lt;/h4&gt;
+&lt;h2 id=&quot;coordinate-descent&quot;&gt;&lt;strong&gt;2. Coordinate Descent&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;#### 2.1. Defining Algorithm&lt;/p&gt;
 
 &lt;div class=&quot;imgcap&quot;&gt;
 &lt;div&gt;
-&lt;img src=&quot;/assets/gradient_descent/coordinate_descent.gif&quot;&gt;
+&lt;img src=&quot;/assets/gradient_descent/coordinate_descent.gif&quot; /&gt;
 &lt;/div&gt;
-
 &lt;div class=&quot;thecap&quot;&gt;Coordinate Descent in 2D. Images Credit: Martin Takac&lt;/div&gt;
-
-&lt;p&gt;&lt;/div&gt;&lt;/p&gt;
+&lt;/div&gt;
 
 &lt;p&gt;In Machine Learning, we sometimes work with the case where the dimension is too big, or there is too many datapoint. Consider a data matrix \( X \in \mathbb{R} ^ {m \times n}\), if \( m \) is too big, one can do Stochastic (Batch) Gradient Descent, which instead of calculating the gradient on all \( m \) data points, it approximate the gradient with only \( b \) data points, for \( b \) is the batch size (for example \( b = 128\), while \( m \approx 1000000 \)). On the other hand, if \( n\) is big, we can upgrade a few of coordinate per iteration, instead of updating the whole \( n \) dimension. This is Coordinate descent.&lt;/p&gt;
 
-&lt;p&gt;For those problem where calculating coordinate gradient (i.e. partial derivative) is simple, it turns out the the rate for coordinate descent is as good as for typical gradient descent. First let&amp;#39;s define the L-Lipschitz condition coordinatewise&lt;/p&gt;
+&lt;p&gt;For those problem where calculating coordinate gradient (i.e. partial derivative) is simple, it turns out the the rate for coordinate descent is as good as for typical gradient descent. First let’s define the L-Lipschitz condition coordinatewise&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Definition&lt;/strong&gt; [&lt;strong&gt;&lt;em&gt;Coordinate-wise Lipschitz gradient&lt;/em&gt;&lt;/strong&gt;] \( f \) is L-Lipschitz coordinate-wise with constant \( L _ i\) at coordinate \( i \) iff
-$$ \left\lVert \nabla f (x + h _ i) - \nabla f (x) \right\rVert \le L _ i \left\lVert h _ i \right\rVert$$
-for \( h_i \) is zero everywhere except at coordinate \( i \). &lt;/p&gt;
+&lt;script type=&quot;math/tex&quot;&gt;\left\lVert \nabla f (x + h _ i) - \nabla f (x) \right\rVert \le L _ i \left\lVert h _ i \right\rVert&lt;/script&gt;
+for \( h_i \) is zero everywhere except at coordinate \( i \).&lt;/p&gt;
 
-&lt;p&gt;We assume our function \( f \) is L-Lipschitz coordinate wise with constant \( L _ i, i = 1,2,...,n \). Then the Randomized Coordinate Descent Method is defined as followed:&lt;/p&gt;
+&lt;p&gt;We assume our function \( f \) is L-Lipschitz coordinate wise with constant \( L _ i, i = 1,2,…,n \). Then the Randomized Coordinate Descent Method is defined as followed:&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;Algorithm&lt;/strong&gt; [&lt;strong&gt;&lt;em&gt;Randomized Coordinate Descent&lt;/em&gt;&lt;/strong&gt;] &lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Pick an initial point \( x _ 0\)&lt;/li&gt;
-&lt;li&gt;For \( k = 1,2,... \) 
+&lt;p&gt;&lt;strong&gt;Algorithm&lt;/strong&gt; [&lt;strong&gt;&lt;em&gt;Randomized Coordinate Descent&lt;/em&gt;&lt;/strong&gt;]&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;pick coordinate \( i \) randomly with uniform probability&lt;/li&gt;
-&lt;li&gt;compute \( x _ {k + 1} = x _ k - \frac{1}{L _ i} \nabla f (x)[i]\).&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
+  &lt;li&gt;Pick an initial point \( x _ 0\)&lt;/li&gt;
+  &lt;li&gt;For \( k = 1,2,… \)
+    &lt;ul&gt;
+      &lt;li&gt;pick coordinate \( i \) randomly with uniform probability&lt;/li&gt;
+      &lt;li&gt;compute \( x _ {k + 1} = x _ k - \frac{1}{L _ i} \nabla f (x)[i]\).&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;Here we introduce the notation \( \nabla f(x)[i]\) from array notation to say take the \( i ^ {th} \) element of vector \( \nabla f(x) \). A lot of things can be relaxed from this, for example, the probability can be general not uniform. Instead of doing single coordinate-wise, one can do block coordinate-wise. One can also add a regularization term like \( \ell _ 1 \) (Lasso) or \( \ell _ 2\) Ridge. See paper by Peter Richtarik and Martin Takac for details. Once can also work with more general norm (in the L-Lipschitz condition). We just state this simple case for simplicity. &lt;/p&gt;
+&lt;p&gt;Here we introduce the notation \( \nabla f(x)[i]\) from array notation to say take the \( i ^ {th} \) element of vector \( \nabla f(x) \). A lot of things can be relaxed from this, for example, the probability can be general not uniform. Instead of doing single coordinate-wise, one can do block coordinate-wise. One can also add a regularization term like \( \ell _ 1 \) (Lasso) or \( \ell _ 2\) Ridge. See paper by Peter Richtarik and Martin Takac for details. Once can also work with more general norm (in the L-Lipschitz condition). We just state this simple case for simplicity.&lt;/p&gt;
 
-&lt;h4 id=&quot;2-2-convergence-in-expectation&quot;&gt;2.2. Convergence in Expectation&lt;/h4&gt;
+&lt;h4 id=&quot;convergence-in-expectation&quot;&gt;2.2. Convergence in Expectation&lt;/h4&gt;
 
 &lt;p&gt;&lt;strong&gt;Theorem&lt;/strong&gt; [&lt;strong&gt;&lt;em&gt;Rate Coordinate Descent with Lipschitz&lt;/em&gt;&lt;/strong&gt;] If we run the above algorithm for coordinate-wise L-Lipschitz gradient, we have
-$$\mathbb{E} _ {k - 1} f(x _ k) - f ^ \star \le \frac{2n}{k + 4}  R ^ 2 (x _ 0),$$
-for $$ R(x _ 0) = \max _ x \left[ \max _ { x _ {\star} \in X _ {\star}} \left\lVert x - x _ \star \right\rVert _ 1  \right] : f(x) \le f(x _ 0) $$&lt;/p&gt;
+&lt;script type=&quot;math/tex&quot;&gt;\mathbb{E} _ {k - 1} f(x _ k) - f ^ \star \le \frac{2n}{k + 4}  R ^ 2 (x _ 0),&lt;/script&gt;
+for &lt;script type=&quot;math/tex&quot;&gt;R(x _ 0) = \max _ x \left[ \max _ { x _ {\star} \in X _ {\star}} \left\lVert x - x _ \star \right\rVert _ 1  \right] : f(x) \le f(x _ 0)&lt;/script&gt;&lt;/p&gt;
 
-&lt;p&gt;So basically, we have the log-convergence rate in expectation, very similar to Gradient Descent. Analogously, the result for strongly convex (globally, not coordinate-wise) is stated in &lt;/p&gt;
+&lt;p&gt;So basically, we have the log-convergence rate in expectation, very similar to Gradient Descent. Analogously, the result for strongly convex (globally, not coordinate-wise) is stated in&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Theorem&lt;/strong&gt; [&lt;strong&gt;&lt;em&gt;Rate Coordinate Descent with Lipschitz and Strongly Convex m&lt;/em&gt;&lt;/strong&gt;] If we run the above algorithm, we have 
-$$ \mathbb{E} _ {k - 1} f(x _ k) - f ^ \star \le \left( 1 - \frac{m}{n} \right) ^ k (f(x _ 0) - f ^ \star)$$&lt;/p&gt;
+&lt;script type=&quot;math/tex&quot;&gt;\mathbb{E} _ {k - 1} f(x _ k) - f ^ \star \le \left( 1 - \frac{m}{n} \right) ^ k (f(x _ 0) - f ^ \star)&lt;/script&gt;&lt;/p&gt;
 
-&lt;p&gt;Note that here \( m \) is the strongly convex parameter, not the number of observation as we used it before. For those of you who are curious, this result and the previous theorem are in Nesterov paper (his Theorem 1 and Theorem 2), applying for the case \( \alpha = 0\), which then imply \( S _ \alpha (f) = n\). &lt;/p&gt;
+&lt;p&gt;Note that here \( m \) is the strongly convex parameter, not the number of observation as we used it before. For those of you who are curious, this result and the previous theorem are in Nesterov paper (his Theorem 1 and Theorem 2), applying for the case \( \alpha = 0\), which then imply \( S _ \alpha (f) = n\).&lt;/p&gt;
 
 &lt;p&gt;So basically, we get that for Strongly convex and L-Lipschitz gradient, we also get linear convergence rate in the expectation for Coordinate Descent.&lt;/p&gt;
 
-&lt;h4 id=&quot;2-3-high-probability-statement&quot;&gt;2.3. High Probability Statement&lt;/h4&gt;
-
+&lt;h4 id=&quot;high-probability-statement&quot;&gt;2.3. High Probability Statement&lt;/h4&gt;
 &lt;p&gt;One might also wonder that maybe it works on average, but we only run it once, what is the probability that the result we get from that one time is good. It turns out that our result is good with high probability, as seen in Peter Richtarik, Martin Takac paper. The idea is to used Markov inequality to convert a statement in expectation to a high probability statement. To summary, for a fix confidence interval \( \rho \in (0,1) \), if we pick 
-$$ k \ge O \left( \frac{2n}{\epsilon} \log \frac{f(x _ 0) - f(x _ \star)}{\epsilon \rho} \right), $$ 
-we have \( \mathbb{P} [f (x _ k) - f (x _ \star) \le \epsilon ] \ge 1 - \rho \), if the function is coordinate-wise L-Lipschitz gradient. &lt;/p&gt;
+&lt;script type=&quot;math/tex&quot;&gt;k \ge O \left( \frac{2n}{\epsilon} \log \frac{f(x _ 0) - f(x _ \star)}{\epsilon \rho} \right),&lt;/script&gt; 
+we have \( \mathbb{P} [f (x _ k) - f (x _ \star) \le \epsilon ] \ge 1 - \rho \), if the function is coordinate-wise L-Lipschitz gradient.&lt;/p&gt;
 
 &lt;p&gt;If in addition, we have strongly convex, then the number of iteration needed is only 
-$$ k \ge O \left ( n \log \left( \frac{f(x _ 0) - f(x _ \star)}{\rho \epsilon} \right)\right).$$&lt;/p&gt;
+&lt;script type=&quot;math/tex&quot;&gt;k \ge O \left ( n \log \left( \frac{f(x _ 0) - f(x _ \star)}{\rho \epsilon} \right)\right).&lt;/script&gt;&lt;/p&gt;
 
 &lt;p&gt;Staring at these high-probability result, we see that the number of iteration needed is almost identical to the case of vanilla Gradient Descent. We have \( 1 / \epsilon \) rate for Lipschitz gradient, and \( \log (1 / \epsilon)\) if we have strongly convexity in addition. The rate is however \( n \) times slower, because each iteration of Coordinate Descent is approximately \( n \) times faster than Gradient Descent (calculating gradient along one coordinate vs calculating gradient along all coordinate). The minor difference is the cost of \( \log {1}{\epsilon} \) for the case of only L-Lipschitz can in fact be removed. It is only there when we are optimizing an objective with regularization term (L1 or L2 regularization).&lt;/p&gt;
 
-&lt;p&gt;Finally, on a note about momentum for Coordinate Descent, it seems Nesterov recommends not using it, because of the computation complexity for getting the momentum.  &lt;/p&gt;
+&lt;p&gt;Finally, on a note about momentum for Coordinate Descent, it seems Nesterov recommends not using it, because of the computation complexity for getting the momentum.&lt;/p&gt;
 
-&lt;h2 id=&quot;3-stochastic-gradient-descent&quot;&gt;&lt;strong&gt;3. Stochastic Gradient Descent&lt;/strong&gt;&lt;/h2&gt;
+&lt;h2 id=&quot;stochastic-gradient-descent&quot;&gt;&lt;strong&gt;3. Stochastic Gradient Descent&lt;/strong&gt;&lt;/h2&gt;
 
 &lt;div class=&quot;imgcap&quot;&gt;
 &lt;div&gt;
-&lt;img src=&quot;/assets/gradient_descent/all.gif&quot;&gt;
+&lt;img src=&quot;/assets/gradient_descent/all.gif&quot; /&gt;
+&lt;/div&gt;
+&lt;div class=&quot;thecap&quot;&gt;Popular optimization algorithms. Images Credit: Daniel Nouri&lt;/div&gt;
 &lt;/div&gt;
 
-&lt;div class=&quot;thecap&quot;&gt;Popular optimization algorithms. Images Credit: Daniel Nouri&lt;/div&gt;
-
-&lt;p&gt;&lt;/div&gt;&lt;/p&gt;
-
-&lt;p&gt;It is quite surprised for me that analyzing Stochastic Gradient Descent is much harder than Coordinate Descent. The two algorithms sounds very similar, it is just the former one is vertical, while the later one is horizontal. SGD in fact works very well in practice, it is just proving convergence result is harder. For strongly convex, it seems we only get log convergence rate (as compared to linear in Gradient Descent), as seen in &lt;a href=&quot;http://research.microsoft.com/en-us/um/cambridge/events/mls2013/downloads/stochastic_gradient.pdf&quot;&gt;SGD for Machine Learning&lt;/a&gt;. For non-strongly convex, we get half the rate. Why??? What is the rate of SGD? To be discovered and written. If you have some ideas please comment. &lt;/p&gt;
+&lt;p&gt;It is quite surprised for me that analyzing Stochastic Gradient Descent is much harder than Coordinate Descent. The two algorithms sounds very similar, it is just the former one is vertical, while the later one is horizontal. SGD in fact works very well in practice, it is just proving convergence result is harder. For strongly convex, it seems we only get log convergence rate (as compared to linear in Gradient Descent), as seen in &lt;a href=&quot;http://research.microsoft.com/en-us/um/cambridge/events/mls2013/downloads/stochastic_gradient.pdf&quot;&gt;SGD for Machine Learning&lt;/a&gt;. For non-strongly convex, we get half the rate. Why??? What is the rate of SGD? To be discovered and written. If you have some ideas please comment.&lt;/p&gt;
 </description>
-        <pubDate>Mon, 23 Nov 2015 06:44:27 -0800</pubDate>
+        <pubDate>Mon, 23 Nov 2015 07:44:27 -0800</pubDate>
         <link>http://hduongtrong.github.io/2015/11/23/coordinate-descent/</link>
         <guid isPermaLink="true">http://hduongtrong.github.io/2015/11/23/coordinate-descent/</guid>
         
@@ -873,149 +856,150 @@ $$ k \ge O \left ( n \log \left( \frac{f(x _ 0) - f(x _ \star)}{\rho \epsilon} \
         <description>&lt;h2 id=&quot;credits&quot;&gt;Credits&lt;/h2&gt;
 
 &lt;ul&gt;
-&lt;li&gt;Original authors: &lt;a href=&quot;http://arxiv.org/abs/1301.3781&quot;&gt;Efficient Estimation of Word Representations in Vector Space&lt;/a&gt;. Tomas Mikolov, Kai Chen, Greg Corrado, Jeffrey Dean.&lt;/li&gt;
-&lt;li&gt;Code Website: &lt;a href=&quot;https://code.google.com/p/word2vec/&quot;&gt;Word2Vec&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Explained Paper: &lt;a href=&quot;http://u.cs.biu.ac.il/%7Enlp/wp-content/uploads/Neural-Word-Embeddings-as-Implicit-Matrix-Factorization-NIPS-2014.pdf&quot;&gt;Neural Word Embedding as Implicit Matrix Factorization&lt;/a&gt;. Omer Levy, Yoav Goldberg&lt;/li&gt;
-&lt;li&gt;Explained Paper Short Version: &lt;a href=&quot;http://arxiv.org/abs/1402.3722&quot;&gt;Word2vec Explained&lt;/a&gt;. Yoav Goldberg, Omer Levy&lt;/li&gt;
-&lt;li&gt;Code easier to understand: &lt;a href=&quot;https://github.com/fchollet/keras/blob/master/examples/skipgram_word_embeddings.py&quot;&gt;Keras Word2vec&lt;/a&gt;. Francois Chollet. &lt;/li&gt;
-&lt;li&gt;TensorFlow code: &lt;a href=&quot;http://tensorflow.org/tutorials/word2vec/index.md&quot;&gt;TensorFlow word2vec&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Original authors: &lt;a href=&quot;http://arxiv.org/abs/1301.3781&quot;&gt;Efficient Estimation of Word Representations in Vector Space&lt;/a&gt;. Tomas Mikolov, Kai Chen, Greg Corrado, Jeffrey Dean.&lt;/li&gt;
+  &lt;li&gt;Code Website: &lt;a href=&quot;https://code.google.com/p/word2vec/&quot;&gt;Word2Vec&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Explained Paper: &lt;a href=&quot;http://u.cs.biu.ac.il/~nlp/wp-content/uploads/Neural-Word-Embeddings-as-Implicit-Matrix-Factorization-NIPS-2014.pdf&quot;&gt;Neural Word Embedding as Implicit Matrix Factorization&lt;/a&gt;. Omer Levy, Yoav Goldberg&lt;/li&gt;
+  &lt;li&gt;Explained Paper Short Version: &lt;a href=&quot;http://arxiv.org/abs/1402.3722&quot;&gt;Word2vec Explained&lt;/a&gt;. Yoav Goldberg, Omer Levy&lt;/li&gt;
+  &lt;li&gt;Code easier to understand: &lt;a href=&quot;https://github.com/fchollet/keras/blob/master/examples/skipgram_word_embeddings.py&quot;&gt;Keras Word2vec&lt;/a&gt;. Francois Chollet.&lt;/li&gt;
+  &lt;li&gt;TensorFlow code: &lt;a href=&quot;http://tensorflow.org/tutorials/word2vec/index.md&quot;&gt;TensorFlow word2vec&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;If your time is in short supply, just read the Explained Paper Short Version. &lt;/p&gt;
+&lt;p&gt;If your time is in short supply, just read the Explained Paper Short Version.&lt;/p&gt;
 
 &lt;h2 id=&quot;goals&quot;&gt;Goals&lt;/h2&gt;
-
-&lt;p&gt;English language has in the order of 100,000 words. If we are working on an NLP problem, one can represent each word as a one-hot vector of dimension 100,000. This is a sparse and high dimension input. Our goal is to map this into dense low dimensional input of around 300 dimension, \( v _w\). Then we can feed this to some other model like LSTM for some NLP tasks. Hopefully, our new representation respects some semantic rules like &lt;/p&gt;
+&lt;p&gt;English language has in the order of 100,000 words. If we are working on an NLP problem, one can represent each word as a one-hot vector of dimension 100,000. This is a sparse and high dimension input. Our goal is to map this into dense low dimensional input of around 300 dimension, \( v _w\). Then we can feed this to some other model like LSTM for some NLP tasks. Hopefully, our new representation respects some semantic rules like&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;Words with similar meaning should be close to each other&lt;/li&gt;
-&lt;li&gt;The direction from &amp;quot;do&amp;quot; to &amp;quot;doing&amp;quot; should be similar to &amp;quot;go&amp;quot; to &amp;quot;going&amp;quot;&lt;/li&gt;
-&lt;li&gt;Doing addition: King - male + female ~ queen&lt;/li&gt;
+  &lt;li&gt;Words with similar meaning should be close to each other&lt;/li&gt;
+  &lt;li&gt;The direction from “do” to “doing” should be similar to “go” to “going”&lt;/li&gt;
+  &lt;li&gt;Doing addition: King - male + female ~ queen&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;It is surprising that word2vec can give us this, without any label on the meaning of words. All it needs is words cooccurance. It is also surpsisingly simple, nothing more complicated than logistic regression.&lt;/p&gt;
 
 &lt;h2 id=&quot;ideas-of-word2vec&quot;&gt;Ideas of Word2vec&lt;/h2&gt;
-
-&lt;p&gt;Given a sentence: &lt;/p&gt;
+&lt;p&gt;Given a sentence:&lt;/p&gt;
 
 &lt;blockquote&gt;
-&lt;p&gt;You used to call me on my cell phone. &lt;/p&gt;
+  &lt;p&gt;You used to call me on my cell phone.&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;and a window k (consider k = 1 for simplicity), we define the context of a word as its 2k neighbor words. Word2vec defines the positive dataset \( \mathcal{D} \) of &lt;/p&gt;
+&lt;p&gt;and a window k (consider k = 1 for simplicity), we define the context of a word as its 2k neighbor words. Word2vec defines the positive dataset \( \mathcal{D} \) of&lt;/p&gt;
 
-&lt;table&gt;&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;word&lt;/th&gt;
-&lt;th&gt;context&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;you&lt;/td&gt;
-&lt;td&gt;used&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;used&lt;/td&gt;
-&lt;td&gt;you&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;used&lt;/td&gt;
-&lt;td&gt;to&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;to&lt;/td&gt;
-&lt;td&gt;used&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;to&lt;/td&gt;
-&lt;td&gt;call&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;&lt;/table&gt;
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;word&lt;/th&gt;
+      &lt;th&gt;context&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;you&lt;/td&gt;
+      &lt;td&gt;used&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;used&lt;/td&gt;
+      &lt;td&gt;you&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;used&lt;/td&gt;
+      &lt;td&gt;to&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;to&lt;/td&gt;
+      &lt;td&gt;used&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;to&lt;/td&gt;
+      &lt;td&gt;call&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
 
-&lt;p&gt;Each of these pair did appear in the dataset, so we associate them with a label 1. We now define the negative word pairs dataset \( \mathcal{D&amp;#39;} \) &lt;/p&gt;
+&lt;p&gt;Each of these pair did appear in the dataset, so we associate them with a label 1. We now define the negative word pairs dataset \( \mathcal{D’} \)&lt;/p&gt;
 
-&lt;table&gt;&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;word&lt;/th&gt;
-&lt;th&gt;non_context&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;you&lt;/td&gt;
-&lt;td&gt;random_word1&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;used&lt;/td&gt;
-&lt;td&gt;random_word2&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;to&lt;/td&gt;
-&lt;td&gt;random_word3&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;call&lt;/td&gt;
-&lt;td&gt;random_word4&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;&lt;/table&gt;
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;word&lt;/th&gt;
+      &lt;th&gt;non_context&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;you&lt;/td&gt;
+      &lt;td&gt;random_word1&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;used&lt;/td&gt;
+      &lt;td&gt;random_word2&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;to&lt;/td&gt;
+      &lt;td&gt;random_word3&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;call&lt;/td&gt;
+      &lt;td&gt;random_word4&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
 
-&lt;p&gt;and label these pair as 0 (Note that when we pick one random word from the vocabulary, there is some tiny chance that the picked word is actually a valid context, but it is very small that we consider it 0).  &lt;/p&gt;
+&lt;p&gt;and label these pair as 0 (Note that when we pick one random word from the vocabulary, there is some tiny chance that the picked word is actually a valid context, but it is very small that we consider it 0).&lt;/p&gt;
 
 &lt;p&gt;We then use the logistic loss to train a vector representation for each word such as it maximize
-$$ \arg \max _{\theta} \prod _{(w,c) \in \mathcal{D}}  p(D _{w,c} = 1 \mid w,c,\theta) 
-                       \prod _{(w,c) \in \mathcal{D&amp;#39;}} p(D _{w,c} = 0 \mid w,c,\theta).$$
-So we basically maximize the probability of seeing those word pairs in \( \mathcal{D}\), and not seeing those word pairs in \( \mathcal{D&amp;#39;}\). Taking log, we can rewrite the optimization as 
-$$ \arg \max _{\theta} \sum _{(w,c) \in \mathcal{D }} \log \sigma(  v _c \cdot v _w) + 
-                       \sum _{(w,c) \in \mathcal{D&amp;#39;}} \log \sigma(- v _c \cdot v _w),$$
+&lt;script type=&quot;math/tex&quot;&gt;\arg \max _{\theta} \prod _{(w,c) \in \mathcal{D}}  p(D _{w,c} = 1 \mid w,c,\theta) 
+					   \prod _{(w,c) \in \mathcal{D&#39;}} p(D _{w,c} = 0 \mid w,c,\theta).&lt;/script&gt;
+So we basically maximize the probability of seeing those word pairs in \( \mathcal{D}\), and not seeing those word pairs in \( \mathcal{D’}\). Taking log, we can rewrite the optimization as 
+&lt;script type=&quot;math/tex&quot;&gt;\arg \max _{\theta} \sum _{(w,c) \in \mathcal{D }} \log \sigma(  v _c \cdot v _w) + 
+					   \sum _{(w,c) \in \mathcal{D&#39;}} \log \sigma(- v _c \cdot v _w),&lt;/script&gt;
 for \( \sigma(x) = \frac{1}{1 + e ^ {-x}} \)&lt;/p&gt;
 
-&lt;p&gt;Now to be clear, all of the \( v _w\) are our vector representation of word, together, they form a matrix of size (vocabulary size by projection size), e.g. (100,000 by 300). All of the \( v _c \) are our vector representation of context, together, they form a matrix of similar size if we have one negative sample per positive sample. In practice this later matrix is often discarded. We basically optimize with respect to those two matrix, such that the product \( v _c \cdot v _w\) is big for those [word, context] we see in our dataset, and small for those [word, context] we do not see in our dataset. &lt;/p&gt;
+&lt;p&gt;Now to be clear, all of the \( v _w\) are our vector representation of word, together, they form a matrix of size (vocabulary size by projection size), e.g. (100,000 by 300). All of the \( v _c \) are our vector representation of context, together, they form a matrix of similar size if we have one negative sample per positive sample. In practice this later matrix is often discarded. We basically optimize with respect to those two matrix, such that the product \( v _c \cdot v _w\) is big for those [word, context] we see in our dataset, and small for those [word, context] we do not see in our dataset.&lt;/p&gt;
 
 &lt;h2 id=&quot;enhancement&quot;&gt;Enhancement&lt;/h2&gt;
-
 &lt;p&gt;The final method used is a bit more complicated, with tricks that make it work better, for example&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;Instead of sampling one negative context per [word, context] pair uniformly, it samples \(m\) context words with probability distribution proportional to how often each context word is in the dataset.&lt;br&gt;&lt;/li&gt;
-&lt;li&gt;Instead of using a fix \( k\) window around each word, the window is uniformly distributed from \( 1,2, ..., K \)&lt;/li&gt;
-&lt;li&gt;Treat all rare words as an &amp;quot;UNK&amp;quot; token, and downsampling most common words. &lt;/li&gt;
-&lt;li&gt;The method we mention so far is called the Skip-Gram Negative Sampling, the original paper also mentions the Continuous Bag of Words, where it models the probability of word given context.  The authors claim that the skip-gram negative sampling works better for bigger dataset (see more in the TensorFlow example). &lt;/li&gt;
+  &lt;li&gt;Instead of sampling one negative context per [word, context] pair uniformly, it samples \(m\) context words with probability distribution proportional to how often each context word is in the dataset.&lt;/li&gt;
+  &lt;li&gt;Instead of using a fix \( k\) window around each word, the window is uniformly distributed from \( 1,2, …, K \)&lt;/li&gt;
+  &lt;li&gt;Treat all rare words as an “UNK” token, and downsampling most common words.&lt;/li&gt;
+  &lt;li&gt;The method we mention so far is called the Skip-Gram Negative Sampling, the original paper also mentions the Continuous Bag of Words, where it models the probability of word given context.  The authors claim that the skip-gram negative sampling works better for bigger dataset (see more in the TensorFlow example).&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h2 id=&quot;extra&quot;&gt;Extra&lt;/h2&gt;
-
 &lt;p&gt;This word representation, finding the two vector (matrix) representation \( V _w\) and \( V _c\) can be thought of as factorizing an implicit matrix \( M = V _w \cdot V _c ^ T \), where each element of \( M, M _{ij}\) reflect the strength of association between word \( i \) and context \( j\). More specifically, it is found that 
-$$ M _{ij} = v _w \cdot v _c = PMI(w _i, c _j) - \log k$$, 
+&lt;script type=&quot;math/tex&quot;&gt;M _{ij} = v _w \cdot v _c = PMI(w _i, c _j) - \log k&lt;/script&gt;, 
 for PMI is the pointwise mutual information, defined as 
-$$PMI(w _i, c _j) = \log \left( \frac { N(w,c) |\mathcal{D}|}{ N(w) N(c) } \right)$$, 
+&lt;script type=&quot;math/tex&quot;&gt;PMI(w _i, c _j) = \log \left( \frac { N(w,c) |\mathcal{D}|}{ N(w) N(c) } \right)&lt;/script&gt;, 
 for \( N(w)\) counts the number of occurance of \(w  \) in \( \mathcal{D}\)&lt;/p&gt;
 
 &lt;h2 id=&quot;testing-out&quot;&gt;Testing out&lt;/h2&gt;
-
-&lt;p&gt;The official website of word2vec has a very fast code in C++, where one can test things out pretty easily. Head over there, training the model should take five minutes. It even has the option of download pre-trained models. Here I&amp;#39;m using there pre-trained model on Google News words, and find similar words to a word (think of this like a Thesaurus)&lt;/p&gt;
+&lt;p&gt;The official website of word2vec has a very fast code in C++, where one can test things out pretty easily. Head over there, training the model should take five minutes. It even has the option of download pre-trained models. Here I’m using there pre-trained model on Google News words, and find similar words to a word (think of this like a Thesaurus)&lt;/p&gt;
 
 &lt;blockquote&gt;
-&lt;p&gt;Word: eminem  Position in vocabulary: 566691&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;        Word       Cosine distance
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;hr&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;       jay z      0.732697
-   rick_ross      0.731509
-       kanye      0.715282
-        shyt      0.705407
- chris brown      0.697447
-       i luv      0.694622
-   lady gaga      0.690142
-  john mayer      0.686606
-        ozzy      0.678592
-  soulja boy      0.671136
-     rihanna      0.670854
-        juss      0.670568
-   lil wayne      0.669848
-     beyonce      0.667990
-       cuz u      0.664925
-      mariah      0.664813
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/blockquote&gt;
+  &lt;p&gt;Word: eminem  Position in vocabulary: 566691&lt;/p&gt;
+
+  &lt;pre&gt;&lt;code&gt;        Word       Cosine distance --------------------------------------
+       jay z		0.732697
+   rick_ross		0.731509
+       kanye		0.715282
+        shyt		0.705407
+ chris brown		0.697447
+       i luv		0.694622
+   lady gaga		0.690142
+  john mayer		0.686606
+        ozzy		0.678592
+  soulja boy		0.671136
+     rihanna		0.670854
+        juss		0.670568
+   lil wayne		0.669848
+     beyonce		0.667990
+       cuz u		0.664925
+      mariah		0.664813
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/blockquote&gt;
 </description>
         <pubDate>Fri, 20 Nov 2015 07:28:27 -0800</pubDate>
         <link>http://hduongtrong.github.io/2015/11/20/word2vec/</link>
@@ -1032,26 +1016,25 @@ different fields: computer science, optimal control, statistics, machine
 learning, and so on. Its application are numerous.&lt;/p&gt;
 
 &lt;h2 id=&quot;policy-gradient&quot;&gt;Policy Gradient&lt;/h2&gt;
-
 &lt;p&gt;&lt;strong&gt;Definition&lt;/strong&gt; A Markov Decision Process contains&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;\( \pi : \mathcal{S} \rightarrow \Delta(\mathcal(A)) \), the stochastic policy. &lt;/li&gt;
-&lt;li&gt;\( \eta(\pi) = \mathbb{E} \left[ R_0 + \gamma R_1 + \gamma&lt;sup&gt;2&lt;/sup&gt; R_2 +&lt;br&gt;
-... \right] \)&lt;/li&gt;
-&lt;li&gt;\( p: \mathcal{S} \times \mathcal{A} \times \mathcal{S} \rightarrow \mathbb{R} \), the state transition probability&lt;/li&gt;
-&lt;li&gt;\( \mu : \mathcal{S} \rightarrow \mathbb{R} \), the probability distribution over the initial state, \( s_0 \)&lt;/li&gt;
-&lt;li&gt;\( \theta \in \mathbb{R}&lt;sup&gt;n&lt;/sup&gt; \), a vector of parameter that parameterizes the stochastic policy \(\pi\)&lt;/li&gt;
+  &lt;li&gt;\( \pi : \mathcal{S} \rightarrow \Delta(\mathcal(A)) \), the stochastic policy.&lt;/li&gt;
+  &lt;li&gt;\( \eta(\pi) = \mathbb{E} \left[ R_0 + \gamma R_1 + \gamma^2 R_2 +&lt;br /&gt;
+ … \right] \)&lt;/li&gt;
+  &lt;li&gt;\( p: \mathcal{S} \times \mathcal{A} \times \mathcal{S} \rightarrow \mathbb{R} \), the state transition probability&lt;/li&gt;
+  &lt;li&gt;\( \mu : \mathcal{S} \rightarrow \mathbb{R} \), the probability distribution over the initial state, \( s_0 \)&lt;/li&gt;
+  &lt;li&gt;\( \theta \in \mathbb{R}^n \), a vector of parameter that parameterizes the stochastic policy \(\pi\)&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;A policy gradient algorithm then calculate \( \nabla_ {\theta} \eta (\theta) \), and make proceed as a standard gradient ascent algorithm. We approximate the gradient using Monte Carlo estimation, since we don&amp;#39;t have access to the underlying probability distribution. &lt;/p&gt;
+&lt;p&gt;A policy gradient algorithm then calculate \( \nabla_ {\theta} \eta (\theta) \), and make proceed as a standard gradient ascent algorithm. We approximate the gradient using Monte Carlo estimation, since we don’t have access to the underlying probability distribution.&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;Theorem&lt;/strong&gt; Monte Carlo estimation. Let \( X : \Omega \rightarrow \mathbb{R} ^ n \) be a random variable with probability distribution \(q\), and \(f : \mathbb {R}&lt;sup&gt;n&lt;/sup&gt; \rightarrow \mathbb{R} \). Then 
-    $$ \frac{\partial}{\partial \theta } \mathbb {E} \left[ f(X) \right] = 
-        \mathbb{E} \left[ f(X) \frac{\partial}{\partial \theta } 
-        \log q(X;\theta) \right]$$&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Theorem&lt;/strong&gt; Monte Carlo estimation. Let \( X : \Omega \rightarrow \mathbb{R} ^ n \) be a random variable with probability distribution \(q\), and \(f : \mathbb {R}^n \rightarrow \mathbb{R} \). Then 
+	&lt;script type=&quot;math/tex&quot;&gt;\frac{\partial}{\partial \theta } \mathbb {E} \left[ f(X) \right] = 
+		\mathbb{E} \left[ f(X) \frac{\partial}{\partial \theta } 
+		\log q(X;\theta) \right]&lt;/script&gt;&lt;/p&gt;
 
-&lt;p&gt;Armed with this theorem, we can use a sample average to estimate the expectation. &lt;/p&gt;
+&lt;p&gt;Armed with this theorem, we can use a sample average to estimate the expectation.&lt;/p&gt;
 </description>
         <pubDate>Mon, 19 Oct 2015 18:28:27 -0700</pubDate>
         <link>http://hduongtrong.github.io/2015/10/19/deep-reinforcement-learning/</link>
@@ -1063,31 +1046,29 @@ learning, and so on. Its application are numerous.&lt;/p&gt;
       <item>
         <title>How to make a blog like this</title>
         <description>&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;/h2&gt;
-
-&lt;p&gt;I have been seeing beautiful blog posts coupled with great contents such as &lt;/p&gt;
+&lt;p&gt;I have been seeing beautiful blog posts coupled with great contents such as&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&quot;http://blog.mrtz.org/2013/09/07/the-zen-of-gradient-descent.html&quot;&gt;The Zen of Gradient Descent&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;http://karpathy.github.io/2015/05/21/rnn-effectiveness/&quot;&gt;The Unreasonable Effectiveness of Recurrent Neural Networks&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;http://colah.github.io/posts/2015-08-Understanding-LSTMs/&quot;&gt;Understanding LSTM Networks&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://blog.mrtz.org/2013/09/07/the-zen-of-gradient-descent.html&quot;&gt;The Zen of Gradient Descent&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://karpathy.github.io/2015/05/21/rnn-effectiveness/&quot;&gt;The Unreasonable Effectiveness of Recurrent Neural Networks&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://colah.github.io/posts/2015-08-Understanding-LSTMs/&quot;&gt;Understanding LSTM Networks&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;My definition of being &amp;quot;beautiful&amp;quot; is just text and no distraction, look
-good both on mobile and on desktop, and display Latex. My definition of &amp;quot;great
-content&amp;quot; often involve machine learning, optimization, and related topics. &lt;/p&gt;
+&lt;p&gt;My definition of being “beautiful” is just text and no distraction, look
+good both on mobile and on desktop, and display Latex. My definition of “great
+content” often involve machine learning, optimization, and related topics.&lt;/p&gt;
 
 &lt;h2 id=&quot;setting-up&quot;&gt;Setting up&lt;/h2&gt;
-
-&lt;p&gt;So without being further ado, let&amp;#39;s start with how to make a blog like those
+&lt;p&gt;So without being further ado, let’s start with how to make a blog like those
 three mentioned above blog. You will need a couple components:&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&quot;http://jekyllrb.com&quot;&gt;Jekyll&lt;/a&gt;: Pretty easy to install on Mac, just follow the
+  &lt;li&gt;&lt;a href=&quot;http://jekyllrb.com&quot;&gt;Jekyll&lt;/a&gt;: Pretty easy to install on Mac, just follow the
 link&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;https://pages.gith%E2%80%A6&quot;&gt;Github Pages&lt;/a&gt;: Also pretty easy to setup. Create a
-github account if you haven&amp;#39;t got one, then follow the link.&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;https://help.github.com/articles/markdown-basics/&quot;&gt;Markdown&lt;/a&gt;: Used to generate html file from simpler looking file (no need to install this)&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;https://www.mathjax.org&quot;&gt;Mathjax&lt;/a&gt;: For typing Latex. No need to install this either&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://pages.gith…&quot;&gt;Github Pages&lt;/a&gt;: Also pretty easy to setup. Create a
+github account if you haven’t got one, then follow the link.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://help.github.com/articles/markdown-basics/&quot;&gt;Markdown&lt;/a&gt;: Used to generate html file from simpler looking file (no need to install this)&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.mathjax.org&quot;&gt;Mathjax&lt;/a&gt;: For typing Latex. No need to install this either&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;After spending some good hours and failing at setting up the various 
@@ -1095,57 +1076,66 @@ requirements, here is the trick I found: just clone the blog of the people
 above. In particular, I clone Karpathy blog into mine. Many thanks to Andre
 Karpathy for this, and my apology if my blog accidentally contains some stuffs
 from yours. Ok now open &lt;strong&gt;Terminal&lt;/strong&gt; in Mac:&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;mkdir MyBlog
-&lt;span class=&quot;c&quot;&gt;# Downloading sample github page from Andre Karpathy&lt;/span&gt;
+
+&lt;p&gt;&lt;code&gt;bash
+mkdir MyBlog
+# Downloading sample github page from Andre Karpathy
 git clone https://github.com/karpathy/karpathy.github.io.git
-&lt;span class=&quot;c&quot;&gt;# Downloading your own github page blog. Replacing username with your github&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;# user name&lt;/span&gt;
+# Downloading your own github page blog. Replacing username with your github
+# user name
 git clone https://github.com/username/username.github.io.git
 cp ./karpathy.github.io/* ./username.github.io/
-&lt;span class=&quot;c&quot;&gt;# Removing stuff associated with the original owner&lt;/span&gt;
+# Removing stuff associated with the original owner
 rm nntutorial.md
-rm _posts/* &lt;span class=&quot;c&quot;&gt;# Hist posts&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+rm _posts/* # Hist posts
+&lt;/code&gt;&lt;/p&gt;
+
 &lt;p&gt;You will need to change a few more information. Open &lt;code&gt;_config.yaml&lt;/code&gt;_ and change
 all the detail in there to your username. Change things in &lt;code&gt;about.md&lt;/code&gt; as well. 
 Also in &lt;code&gt;_layouts/post.html&lt;/code&gt; and
-&lt;code&gt;_layouts/page.html&lt;/code&gt;, there is a part with &amp;quot;karpathy&amp;quot;, change that to your
-username. Basically, search for all text with the original owner&amp;#39;s name and
+&lt;code&gt;_layouts/page.html&lt;/code&gt;, there is a part with “karpathy”, change that to your
+username. Basically, search for all text with the original owner’s name and
 replace them with your name. You might also want to delete everything in i
-&lt;code&gt;assets&lt;/code&gt;, as those are the picture that the original owner uses.  &lt;/p&gt;
+&lt;code&gt;assets&lt;/code&gt;, as those are the picture that the original owner uses.&lt;/p&gt;
 
 &lt;p&gt;And voila, you are done.&lt;/p&gt;
 
 &lt;h2 id=&quot;hello-world&quot;&gt;Hello World&lt;/h2&gt;
-
 &lt;p&gt;To create your first blog post, again copy over a sample post say from&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;cp ./karpathy.github.io/_posts/2015-05-21-rnn-effectiveness.markdown
+
+&lt;p&gt;&lt;code&gt;bash
+cp ./karpathy.github.io/_posts/2015-05-21-rnn-effectiveness.markdown
    ./username.github.io/_posts/
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;And you can start changing things in there. Then do this &lt;code&gt;jekyll serve&lt;/code&gt; inside
+&lt;/code&gt;
+And you can start changing things in there. Then do this &lt;code&gt;jekyll serve&lt;/code&gt; inside
 your &lt;code&gt;username.github.io&lt;/code&gt; folder. You should see something like this if
-successful &lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;Configuration file: /Users/hd/Documents/Blog/hduongtrong.github.io/_config.yml
+successful&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;
+Configuration file: /Users/hd/Documents/Blog/hduongtrong.github.io/_config.yml
             Source: /Users/hd/Documents/Blog/hduongtrong.github.io
        Destination: /Users/hd/Documents/Blog/hduongtrong.github.io/_site
       Generating... 
-     Build Warning: Layout &amp;#39;none&amp;#39; requested in feed.xml does not exist.
+     Build Warning: Layout &#39;none&#39; requested in feed.xml does not exist.
                     done.
- Auto-regeneration: enabled for &amp;#39;/Users/hd/Documents/Blog/hduongtrong.github.io&amp;#39;
+ Auto-regeneration: enabled for &#39;/Users/hd/Documents/Blog/hduongtrong.github.io&#39;
 Configuration file: /Users/hd/Documents/Blog/hduongtrong.github.io/_config.yml
     Server address: http://127.0.0.1:4000/
   Server running... press ctrl-c to stop.
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Open your web browser, and go to &lt;code&gt;http://127.0.0.1:4000/&lt;/code&gt;, you will see your
-post there. &lt;/p&gt;
+&lt;/code&gt;&lt;/p&gt;
 
-&lt;p&gt;Now to push this online, just &lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;username.github.io/
+&lt;p&gt;Open your web browser, and go to &lt;code&gt;http://127.0.0.1:4000/&lt;/code&gt;, you will see your
+post there.&lt;/p&gt;
+
+&lt;p&gt;Now to push this online, just&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;bash
+cd username.github.io/
 git add .
-git commit -m &lt;span class=&quot;s2&quot;&gt;&amp;quot;First blog&amp;quot;&lt;/span&gt;
+git commit -m &quot;First blog&quot;
 git push origin master
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;And go to &lt;code&gt;username.github.io&lt;/code&gt;.&lt;/p&gt;
+&lt;/code&gt;
+And go to &lt;code&gt;username.github.io&lt;/code&gt;.&lt;/p&gt;
 </description>
         <pubDate>Mon, 19 Oct 2015 09:46:27 -0700</pubDate>
         <link>http://hduongtrong.github.io/2015/10/19/how-setting-up-blog/</link>

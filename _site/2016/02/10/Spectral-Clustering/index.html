@@ -89,99 +89,101 @@ to minimize the sum of distance between all points to a center. It is global in 
 Spectral Clustering is different in that aspect, it only try to minimize the distance
 between a point and its closest neighbors. So within a cluster, for example the circle shape, 
 two points can be very far away, but as long as there is a sequence of points with in that 
-cluster that connect them, then that is fine. </p>
+cluster that connect them, then that is fine.</p>
 
 <p>So Spectral Clustering will work well with clusters that are connected, but can have 
-any shape (does not have to be convex). </p>
+any shape (does not have to be convex).</p>
 
 <div class="imgcap">
 <div>
-<img src="/assets/spectral_clustering/plot_cluster_comparison_001.png">
+<img src="/assets/spectral_clustering/plot_cluster_comparison_001.png" />
+</div>
+<div class="thecap">Comparision of CLustering Algorithm - Credit: Scikit-Learn </div>
 </div>
 
-<div class="thecap">Comparision of CLustering Algorithm - Credit: Scikit-Learn </div>
-
-<p></div></p>
-
 <h2 id="the-vanilla-spectral-clustering">The Vanilla Spectral Clustering</h2>
-
 <p>The Spectral Clustering is as followed: given a dataset \( X  \in \mathbb{R} ^ {n \times p}\)</p>
 
 <ol>
-<li><p>Compute the affinity matrix 
-$$<br>
-a_{ij} = \exp\left(-\frac{\|x_{i}-x_{j}\| ^ {2}}{2\sigma ^ {2}}\right)
-$$
+  <li>
+    <p>Compute the affinity matrix 
+<script type="math/tex">a\_{ij} = \exp\left(-\frac{\\|x\_{i}-x\_{j}\\| ^ {2}}{2\sigma ^ {2}}\right)</script>
 This has the effect of focusing on small distance, and making all
 big distance equal to 0. It emphasize local, connectedness. This matrix
-is symmetric. </p></li>
-<li><p>Construct degree matrix 
-$$ D=   diag  \left( d_{1}, d_{2},...,d_{n}\right) $$
-$$ d_{i}=  \sum_{j=1} ^ {n}a_{ij} $$</p></li>
-<li><p>Construct Laplacian matrix
-$$ L=  D-A $$
-This matrix is symmetric, PSD</p></li>
-<li><p>Find \(m\) smallest eigenvalues and associated eigenvectors (possibly
+is symmetric.</p>
+  </li>
+  <li>
+    <p>Construct degree matrix 
+<script type="math/tex">D=   diag  \left( d\_{1}, d\_{2},...,d\_{n}\right)</script>
+<script type="math/tex">d\_{i}=  \sum\_{j=1} ^ {n}a_{ij}</script></p>
+  </li>
+  <li>
+    <p>Construct Laplacian matrix
+<script type="math/tex">L=  D-A</script>
+This matrix is symmetric, PSD</p>
+  </li>
+  <li>
+    <p>Find \(m\) smallest eigenvalues and associated eigenvectors (possibly
 ignoring the first). Let \(V \in \mathbb{R} ^ {n \times k}\) be the matrix
-containing the vector as columns</p></li>
-<li><p>Performing k-Means on V. The cluster obtained from here is the result. </p></li>
+containing the vector as columns</p>
+  </li>
+  <li>
+    <p>Performing k-Means on V. The cluster obtained from here is the result.</p>
+  </li>
 </ol>
 
 <h2 id="variants">Variants</h2>
 
 <div class="imgcap">
 <div>
-<img src="/assets/spectral_clustering/lena.png">
+<img src="/assets/spectral_clustering/lena.png" />
+</div>
+<div class="thecap">Spectral Clustering is good for image segmentation. - Credit: Scikit-Learn </div>
 </div>
 
-<div class="thecap">Spectral Clustering is good for image segmentation. - Credit: Scikit-Learn </div>
-
-<p></div></p>
-
-<p>Following are some popular variants of the spectral clustering algorithm. Each variant has a different computational or theoretical aspect. </p>
+<p>Following are some popular variants of the spectral clustering algorithm. Each variant has a different computational or theoretical aspect.</p>
 
 <ol>
-<li><p>Affinity Matrix: all of these affinity matrix try to make the</p>
-
-<ul>
-<li>The version we use is a fully connected version using Gaussian kernel transform. It is 
+  <li>Affinity Matrix: all of these affinity matrix try to make the
+    <ul>
+      <li>The version we use is a fully connected version using Gaussian kernel transform. It is 
 fully connected because even though the distance which are far away is very close to zero,
-it is still non-zero. </li>
-<li>\(\epsilon \)-neighborhood: make a graph where two points are connected if distance is less than \(  \epsilon \). This in effect is a hard threshold version of the Gaussian kernel. This is a sparse matrix, and is computationally cheaper than the fully connected version. </li>
-<li>k-NN graph: two points ((i,j)) are connected if ((i)) is in ((k))-NN of ((j)) and vice versa. This is also a sparse matrix. </li>
-</ul></li>
-<li><p>Graph Laplacian</p>
-
-<ul>
-<li>Unnormalized: \( L = D - A \)</li>
-<li>Normalized \( L = I - D ^ {-1/2} A D ^ {-1/2}\)</li>
-<li>Normalized \( L = I - D ^ {-1} A\)</li>
-</ul></li>
+it is still non-zero.</li>
+      <li>\(\epsilon \)-neighborhood: make a graph where two points are connected if distance is less than \(  \epsilon \). This in effect is a hard threshold version of the Gaussian kernel. This is a sparse matrix, and is computationally cheaper than the fully connected version.</li>
+      <li>k-NN graph: two points ((i,j)) are connected if ((i)) is in ((k))-NN of ((j)) and vice versa. This is also a sparse matrix.</li>
+    </ul>
+  </li>
+  <li>Graph Laplacian
+    <ul>
+      <li>Unnormalized: \( L = D - A \)</li>
+      <li>Normalized \( L = I - D ^ {-1/2} A D ^ {-1/2}\)</li>
+      <li>Normalized \( L = I - D ^ {-1} A\)</li>
+    </ul>
+  </li>
 </ol>
 
 <h2 id="properties">Properties</h2>
 
 <ul>
-<li>Spectral Clustering emphasize connectedness, close neighbor distances, while ignoring faraway observations. It is then a local method (not global like K-Means). </li>
-<li>It is \( O(n ^ 3)\) in general and can be reduced to  \( O(n ^ 2)\). In practice it is quite slow with large dataset (i.e. &gt; 5000 observations). One should use the sparse version of affinity matrix.<br></li>
-<li>There are many theoretical results on Spectral Clustering</li>
-<li>Sensitive w.r.t. similarity graph</li>
-<li>Choose \( k \) the number of cluster such that \( \lambda_1, ..., \lambda_k \) are small while \( \lambda_{k+1} \) is relatively large, i.e. there is a gape. </li>
-<li>What Laplacian to use: if degree are similar, then they are all the
-same. If degree are spread out, then use \(L=I-D ^ {-1}W\) is recommended. </li>
-<li>Consistency issues: the unnormalized might converge to trivial solution
+  <li>Spectral Clustering emphasize connectedness, close neighbor distances, while ignoring faraway observations. It is then a local method (not global like K-Means).</li>
+  <li>It is \( O(n ^ 3)\) in general and can be reduced to  \( O(n ^ 2)\). In practice it is quite slow with large dataset (i.e. &gt; 5000 observations). One should use the sparse version of affinity matrix.</li>
+  <li>There are many theoretical results on Spectral Clustering</li>
+  <li>Sensitive w.r.t. similarity graph</li>
+  <li>Choose \( k \) the number of cluster such that \( \lambda_1, …, \lambda_k \) are small while \( \lambda_{k+1} \) is relatively large, i.e. there is a gape.</li>
+  <li>What Laplacian to use: if degree are similar, then they are all the
+same. If degree are spread out, then use \(L=I-D ^ {-1}W\) is recommended.</li>
+  <li>Consistency issues: the unnormalized might converge to trivial solution
 (1 point vs rest), or fail to converge as \( n\rightarrow\infty.\) Both
 normalized version converge under mild condition. To avoid trivial
 solution, make sure \( \lambda_{k}\ll\min d_{j}.\)</li>
 </ul>
 
 <h2 id="reference">Reference</h2>
-
 <ul>
-<li>Ulrike von Luxburg. <a href="http://www.stat.berkeley.edu/%7Ehhuang/STAT141/SpectralClustering.pdf">A Tutorial on Spectral Clustering.</a></li>
-<li>Donghui Yan, Ling Huang, Michael I. Jordan. <a href="http://www.cs.berkeley.edu/%7Ejordan/papers/yan-etal-long.pdf">Fast Approximate Spectral
+  <li>Ulrike von Luxburg. <a href="http://www.stat.berkeley.edu/~hhuang/STAT141/SpectralClustering.pdf">A Tutorial on Spectral Clustering.</a></li>
+  <li>Donghui Yan, Ling Huang, Michael I. Jordan. <a href="http://www.cs.berkeley.edu/~jordan/papers/yan-etal-long.pdf">Fast Approximate Spectral
 Clustering.</a></li>
-<li>Trevor Hastie, Rob Tibshirani, Jerome Friedman. <a href="http://statweb.stanford.edu/%7Etibs/ElemStatLearn/">Element of Statistical
+  <li>Trevor Hastie, Rob Tibshirani, Jerome Friedman. <a href="http://statweb.stanford.edu/~tibs/ElemStatLearn/">Element of Statistical
 Learning.</a></li>
 </ul>
 

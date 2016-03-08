@@ -2,7 +2,7 @@
 layout: post
 comments: true
 title:  "Gradient Descent and Variants - Convergence Rate Summary"
-date:   2015-11-23 14:44:27
+date:   2015-11-23 15:44:27
 excerpt: Summary of Gradient Descent, Coordinate Descent. Stochastic Gradient Descent. Their Convergence Rate (Iteration Complexity). 
 mathjax: true
 ---

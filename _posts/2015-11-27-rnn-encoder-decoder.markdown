@@ -2,7 +2,7 @@
 layout: post
 comments: true
 title:  "Sequence to Sequence Model"
-date:   2015-11-27 
+date:   2016-03-07 21:30
 excerpt: Also known as Neural Encoder-Decoder model
 mathjax: true
 ---

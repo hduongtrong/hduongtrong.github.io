@@ -77,31 +77,29 @@
 
   <article class="post-content">
   <h2 id="motivation">Motivation</h2>
-
-<p>I have been seeing beautiful blog posts coupled with great contents such as </p>
+<p>I have been seeing beautiful blog posts coupled with great contents such as</p>
 
 <ul>
-<li><a href="http://blog.mrtz.org/2013/09/07/the-zen-of-gradient-descent.html">The Zen of Gradient Descent</a></li>
-<li><a href="http://karpathy.github.io/2015/05/21/rnn-effectiveness/">The Unreasonable Effectiveness of Recurrent Neural Networks</a></li>
-<li><a href="http://colah.github.io/posts/2015-08-Understanding-LSTMs/">Understanding LSTM Networks</a></li>
+  <li><a href="http://blog.mrtz.org/2013/09/07/the-zen-of-gradient-descent.html">The Zen of Gradient Descent</a></li>
+  <li><a href="http://karpathy.github.io/2015/05/21/rnn-effectiveness/">The Unreasonable Effectiveness of Recurrent Neural Networks</a></li>
+  <li><a href="http://colah.github.io/posts/2015-08-Understanding-LSTMs/">Understanding LSTM Networks</a></li>
 </ul>
 
-<p>My definition of being &quot;beautiful&quot; is just text and no distraction, look
-good both on mobile and on desktop, and display Latex. My definition of &quot;great
-content&quot; often involve machine learning, optimization, and related topics. </p>
+<p>My definition of being “beautiful” is just text and no distraction, look
+good both on mobile and on desktop, and display Latex. My definition of “great
+content” often involve machine learning, optimization, and related topics.</p>
 
 <h2 id="setting-up">Setting up</h2>
-
-<p>So without being further ado, let&#39;s start with how to make a blog like those
+<p>So without being further ado, let’s start with how to make a blog like those
 three mentioned above blog. You will need a couple components:</p>
 
 <ul>
-<li><a href="http://jekyllrb.com">Jekyll</a>: Pretty easy to install on Mac, just follow the
+  <li><a href="http://jekyllrb.com">Jekyll</a>: Pretty easy to install on Mac, just follow the
 link</li>
-<li><a href="https://pages.gith%E2%80%A6">Github Pages</a>: Also pretty easy to setup. Create a
-github account if you haven&#39;t got one, then follow the link.</li>
-<li><a href="https://help.github.com/articles/markdown-basics/">Markdown</a>: Used to generate html file from simpler looking file (no need to install this)</li>
-<li><a href="https://www.mathjax.org">Mathjax</a>: For typing Latex. No need to install this either</li>
+  <li><a href="https://pages.gith…">Github Pages</a>: Also pretty easy to setup. Create a
+github account if you haven’t got one, then follow the link.</li>
+  <li><a href="https://help.github.com/articles/markdown-basics/">Markdown</a>: Used to generate html file from simpler looking file (no need to install this)</li>
+  <li><a href="https://www.mathjax.org">Mathjax</a>: For typing Latex. No need to install this either</li>
 </ul>
 
 <p>After spending some good hours and failing at setting up the various 
@@ -109,57 +107,66 @@ requirements, here is the trick I found: just clone the blog of the people
 above. In particular, I clone Karpathy blog into mine. Many thanks to Andre
 Karpathy for this, and my apology if my blog accidentally contains some stuffs
 from yours. Ok now open <strong>Terminal</strong> in Mac:</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash">mkdir MyBlog
-<span class="c"># Downloading sample github page from Andre Karpathy</span>
+
+<p><code>bash
+mkdir MyBlog
+# Downloading sample github page from Andre Karpathy
 git clone https://github.com/karpathy/karpathy.github.io.git
-<span class="c"># Downloading your own github page blog. Replacing username with your github</span>
-<span class="c"># user name</span>
+# Downloading your own github page blog. Replacing username with your github
+# user name
 git clone https://github.com/username/username.github.io.git
 cp ./karpathy.github.io/* ./username.github.io/
-<span class="c"># Removing stuff associated with the original owner</span>
+# Removing stuff associated with the original owner
 rm nntutorial.md
-rm _posts/* <span class="c"># Hist posts</span>
-</code></pre></div>
+rm _posts/* # Hist posts
+</code></p>
+
 <p>You will need to change a few more information. Open <code>_config.yaml</code>_ and change
 all the detail in there to your username. Change things in <code>about.md</code> as well. 
 Also in <code>_layouts/post.html</code> and
-<code>_layouts/page.html</code>, there is a part with &quot;karpathy&quot;, change that to your
-username. Basically, search for all text with the original owner&#39;s name and
+<code>_layouts/page.html</code>, there is a part with “karpathy”, change that to your
+username. Basically, search for all text with the original owner’s name and
 replace them with your name. You might also want to delete everything in i
-<code>assets</code>, as those are the picture that the original owner uses.  </p>
+<code>assets</code>, as those are the picture that the original owner uses.</p>
 
 <p>And voila, you are done.</p>
 
 <h2 id="hello-world">Hello World</h2>
-
 <p>To create your first blog post, again copy over a sample post say from</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash">cp ./karpathy.github.io/_posts/2015-05-21-rnn-effectiveness.markdown
+
+<p><code>bash
+cp ./karpathy.github.io/_posts/2015-05-21-rnn-effectiveness.markdown
    ./username.github.io/_posts/
-</code></pre></div>
-<p>And you can start changing things in there. Then do this <code>jekyll serve</code> inside
+</code>
+And you can start changing things in there. Then do this <code>jekyll serve</code> inside
 your <code>username.github.io</code> folder. You should see something like this if
-successful </p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">Configuration file: /Users/hd/Documents/Blog/hduongtrong.github.io/_config.yml
+successful</p>
+
+<p><code>
+Configuration file: /Users/hd/Documents/Blog/hduongtrong.github.io/_config.yml
             Source: /Users/hd/Documents/Blog/hduongtrong.github.io
        Destination: /Users/hd/Documents/Blog/hduongtrong.github.io/_site
       Generating... 
-     Build Warning: Layout &#39;none&#39; requested in feed.xml does not exist.
+     Build Warning: Layout 'none' requested in feed.xml does not exist.
                     done.
- Auto-regeneration: enabled for &#39;/Users/hd/Documents/Blog/hduongtrong.github.io&#39;
+ Auto-regeneration: enabled for '/Users/hd/Documents/Blog/hduongtrong.github.io'
 Configuration file: /Users/hd/Documents/Blog/hduongtrong.github.io/_config.yml
     Server address: http://127.0.0.1:4000/
   Server running... press ctrl-c to stop.
-</code></pre></div>
-<p>Open your web browser, and go to <code>http://127.0.0.1:4000/</code>, you will see your
-post there. </p>
+</code></p>
 
-<p>Now to push this online, just </p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">cd </span>username.github.io/
+<p>Open your web browser, and go to <code>http://127.0.0.1:4000/</code>, you will see your
+post there.</p>
+
+<p>Now to push this online, just</p>
+
+<p><code>bash
+cd username.github.io/
 git add .
-git commit -m <span class="s2">&quot;First blog&quot;</span>
+git commit -m "First blog"
 git push origin master
-</code></pre></div>
-<p>And go to <code>username.github.io</code>.</p>
+</code>
+And go to <code>username.github.io</code>.</p>
 
   </article>
 
