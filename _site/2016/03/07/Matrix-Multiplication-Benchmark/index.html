@@ -90,8 +90,8 @@
 <tr>
 <th style="text-align: right">CPU</th>
 <th style="text-align: right">Freq</th>
-<th style="text-align: right">Num-Cores</th>
-<th style="text-align: right">L3-Cache</th>
+<th style="text-align: right">N_Cores</th>
+<th style="text-align: right">L3_Cache</th>
 <th style="text-align: right">Date</th>
 <th style="text-align: right">Price</th>
 <th style="text-align: right">Passmark</th>
@@ -99,15 +99,187 @@
 </thead><tbody>
 <tr>
 <td style="text-align: right">Intel Core i5-4260U</td>
-<td style="text-align: right">1.40Ghz</td>
+<td style="text-align: right">1.4GHz</td>
 <td style="text-align: right">2</td>
 <td style="text-align: right">3MB</td>
 <td style="text-align: right">Q2-14</td>
 <td style="text-align: right">315</td>
 <td style="text-align: right">3548</td>
 </tr>
+<tr>
+<td style="text-align: right">Intel Xeon E5-2643 v2</td>
+<td style="text-align: right">3.5GHz</td>
+<td style="text-align: right">2x6=12</td>
+<td style="text-align: right">2x25MB</td>
+<td style="text-align: right">Q3-13</td>
+<td style="text-align: right">2x1552</td>
+<td style="text-align: right">2x11735</td>
+</tr>
+<tr>
+<td style="text-align: right">AMD Opteron 8384</td>
+<td style="text-align: right">2.7GHz</td>
+<td style="text-align: right">8x4=32</td>
+<td style="text-align: right">8x6MB</td>
+<td style="text-align: right">Q4-08</td>
+<td style="text-align: right">8x2149</td>
+<td style="text-align: right">NA</td>
+</tr>
+<tr>
+<td style="text-align: right">AMD Opteron 8272</td>
+<td style="text-align: right">1.4Ghz</td>
+<td style="text-align: right">2x8=16</td>
+<td style="text-align: right">2x6MB</td>
+<td style="text-align: right">Q4-11</td>
+<td style="text-align: right">2x523</td>
+<td style="text-align: right">2x6748</td>
+</tr>
 </tbody></table>
 
+<h2 id="mkl-vs-openblas">MKL vs OpenBlas</h2>
+
+<p>Here are the running time in seconds. The number in () are roughly the fluctuation of running time. For the GPU result, Tesla K80 is a dual GPU, and this is only using one of them, which is equivalent to Tasla K40. In addition, calculation is carried out with float64, which GPU is bad at. Note for non-mkl, we use the default Blas library on OS X El Capitan. For the other, they are Openblas. MKL in general gives more variable results, but slightly better than the non-MKL on Intel CPUs. </p>
+
+<table><thead>
+<tr>
+<th style="text-align: right">CPU</th>
+<th style="text-align: right">Non-MKL</th>
+<th style="text-align: right">MKL</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: right">Intel Core i5-4260U</td>
+<td style="text-align: right">43</td>
+<td style="text-align: right">32</td>
+</tr>
+<tr>
+<td style="text-align: right">Intel Xeon E5-2643 v2</td>
+<td style="text-align: right">15.6</td>
+<td style="text-align: right">10.4 (3)</td>
+</tr>
+<tr>
+<td style="text-align: right">AMD Opteron 8384</td>
+<td style="text-align: right">15.4 (2)</td>
+<td style="text-align: right">12.3 (1)</td>
+</tr>
+<tr>
+<td style="text-align: right">AMD Opteron 8272</td>
+<td style="text-align: right">17.3</td>
+<td style="text-align: right">22 (5)</td>
+</tr>
+<tr>
+<td style="text-align: right">Tesla K-80</td>
+<td style="text-align: right">16.3</td>
+<td style="text-align: right"></td>
+</tr>
+</tbody></table>
+
+<h2 id="cpu-vs-gpu">CPU vs GPU</h2>
+
+<p>To really see the power of GPU, we use float32 instead.</p>
+
+<table><thead>
+<tr>
+<th style="text-align: right">Matrix dim</th>
+<th style="text-align: right">CPU</th>
+<th style="text-align: right">GPU Tensorflow</th>
+<th style="text-align: right">GPU Skcuda</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: right">10000</td>
+<td style="text-align: right">6.3</td>
+<td style="text-align: right">2.3</td>
+<td style="text-align: right">1.3</td>
+</tr>
+<tr>
+<td style="text-align: right">15000</td>
+<td style="text-align: right">17</td>
+<td style="text-align: right">6.8</td>
+<td style="text-align: right">3.7</td>
+</tr>
+<tr>
+<td style="text-align: right">20000</td>
+<td style="text-align: right">39</td>
+<td style="text-align: right">10.8</td>
+<td style="text-align: right">8.32</td>
+</tr>
+<tr>
+<td style="text-align: right">30000</td>
+<td style="text-align: right">122</td>
+<td style="text-align: right">NA</td>
+<td style="text-align: right">27.0</td>
+</tr>
+</tbody></table>
+
+<p>GPU only provides a speed up of around 4-5 times. The GPU 1 is done by Tensorflow, which might not be very efficient. The GPU 2 is done by Scikit-cuda, which is a wrapper for pycuda. For the later one, we also see a breakdown of communication time between CPU and GPU. It spends around 15% of the time copying data in and out of GPU. </p>
+
+<p>Tools for doing linear algebra on GPU.  </p>
+
+<ol>
+<li>Pycuda: this is the lowest level, a wrapper of CUDA for Python</li>
+<li>Scikit-cuda: a wrapper over pycuda</li>
+<li>Cula: provide LAPACK type of matrix multiplication for CUDA</li>
+<li>Numbapro / accelerate: from Anaconda</li>
+<li>Theano / Tensorflow</li>
+</ol>
+
+<h2 id="codes">Codes</h2>
+
+<h4 id="skcuda-pycuda">Skcuda + Pycuda</h4>
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">pycuda.gpuarray</span> <span class="kn">as</span> <span class="nn">gpuarray</span>
+<span class="kn">import</span> <span class="nn">pycuda.autoinit</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span><span class="o">,</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">skcuda.linalg</span> <span class="kn">as</span> <span class="nn">culinalg</span>
+<span class="kn">import</span> <span class="nn">skcuda</span>
+<span class="n">culinalg</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+
+<span class="n">dim</span> <span class="o">=</span> <span class="mi">30000</span>
+<span class="n">rnd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">rnd</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">a_gpu</span> <span class="o">=</span> <span class="n">gpuarray</span><span class="o">.</span><span class="n">to_gpu</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="k">print</span> <span class="s">&#39;Copy in&#39;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
+
+<span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">rescpu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+<span class="k">print</span> <span class="s">&#39;CPU:&#39;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
+
+<span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">resgpu</span> <span class="o">=</span> <span class="n">culinalg</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">a_gpu</span><span class="p">,</span> <span class="n">a_gpu</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">skcuda</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">resgpu</span><span class="p">)</span>
+<span class="k">print</span> <span class="s">&#39;GPU:&#39;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
+
+<span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">resgpu</span> <span class="o">=</span> <span class="n">resgpu</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+<span class="k">print</span> <span class="s">&#39;Copy out&#39;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
+<span class="k">print</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">rescpu</span><span class="p">,</span> <span class="n">resgpu</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">resgpu</span><span class="p">,</span> <span class="n">rescpu</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="tensorflow">Tensorflow</h4>
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="kn">as</span> <span class="nn">tf</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">20000</span><span class="p">,</span><span class="mi">20000</span><span class="p">),</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>
+
+<span class="n">init</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">initialize_all_variables</span><span class="p">()</span>
+<span class="n">sess</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
+<span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">init</span><span class="p">)</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">a</span>
+</code></pre></div>
+<h4 id="cpu-both-openblas-and-mkl">CPU (both OpenBLAS and MKL)</h4>
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">30000</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">),</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">();</span> <span class="n">x</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">);</span> <span class="k">print</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">a</span>
+</code></pre></div>
   </article>
 
   <!-- mathjax -->
