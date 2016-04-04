@@ -5,8 +5,8 @@
     <description>Learning Machine Learning</description>
     <link>http://hduongtrong.github.io/</link>
     <atom:link href="http://hduongtrong.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Mon, 04 Apr 2016 16:24:29 -0700</pubDate>
-    <lastBuildDate>Mon, 04 Apr 2016 16:24:29 -0700</lastBuildDate>
+    <pubDate>Mon, 04 Apr 2016 16:26:38 -0700</pubDate>
+    <lastBuildDate>Mon, 04 Apr 2016 16:26:38 -0700</lastBuildDate>
     <generator>Jekyll v3.1.2</generator>
     
       <item>
@@ -176,6 +176,14 @@ For classification, the deviance loss function can be used.&lt;/p&gt;
 &lt;p&gt;Finally, Scikit-learn has an implementation of &lt;strong&gt;Extra Trees&lt;/strong&gt; (also called Extremely Randomized Trees). Instead of using the best split for each feature, it uses a &lt;strong&gt;random split for each feature&lt;/strong&gt;. This allows the variance to be reduced, and quite often performs better than Random Forest.&lt;/p&gt;
 
 &lt;p&gt;In R, &lt;strong&gt;H2O&lt;/strong&gt; also provide fast implementation of Random Forest and Gradient Boosting.&lt;/p&gt;
+
+&lt;h2 id=&quot;references-and-credits&quot;&gt;References and Credits&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;Element of Statistical Learning&lt;/li&gt;
+  &lt;li&gt;Tianqi Chen (Author of XGBoost)&lt;/li&gt;
+  &lt;li&gt;Leo Breiman (Author of CART, Random Forest)&lt;/li&gt;
+  &lt;li&gt;Jerome Friedman (Author of CART, GBM)&lt;/li&gt;
+&lt;/ol&gt;
 </description>
         <pubDate>Mon, 04 Apr 2016 06:06:27 -0700</pubDate>
         <link>http://hduongtrong.github.io/2016/04/04/Trees-Based-Models/</link>

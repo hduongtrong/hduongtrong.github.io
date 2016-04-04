@@ -149,3 +149,9 @@ To be specific, the loss function is added with an **L2 term** \\( \frac{1}{2} \
 Finally, Scikit-learn has an implementation of **Extra Trees** (also called Extremely Randomized Trees). Instead of using the best split for each feature, it uses a **random split for each feature**. This allows the variance to be reduced, and quite often performs better than Random Forest. 
 
 In R, **H2O** also provide fast implementation of Random Forest and Gradient Boosting. 
+
+## References and Credits
+1. Element of Statistical Learning
+2. Tianqi Chen (Author of XGBoost)
+3. Leo Breiman (Author of CART, Random Forest)
+4. Jerome Friedman (Author of CART, GBM)
