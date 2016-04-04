@@ -5,9 +5,49 @@
     <description>Learning Machine Learning</description>
     <link>http://hduongtrong.github.io/</link>
     <atom:link href="http://hduongtrong.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Mon, 07 Mar 2016 21:30:31 -0800</pubDate>
-    <lastBuildDate>Mon, 07 Mar 2016 21:30:31 -0800</lastBuildDate>
+    <pubDate>Mon, 04 Apr 2016 13:57:16 -0700</pubDate>
+    <lastBuildDate>Mon, 04 Apr 2016 13:57:16 -0700</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
+    
+      <item>
+        <title>Decision Trees, Random Forest, Gradient Boosting</title>
+        <description>&lt;h2 id=&quot;decision-tree&quot;&gt;Decision Tree&lt;/h2&gt;
+&lt;p&gt;Decision trees sound straightforward enough, as for example seen in Figure 1. It is however not that straightforward to implement. We try to do it here.&lt;/p&gt;
+
+&lt;div class=&quot;imgcap&quot;&gt;
+&lt;div&gt;
+&lt;img src=&quot;/assets/tree/rpart.plot-example1.png&quot; /&gt;
+&lt;/div&gt;
+&lt;div class=&quot;thecap&quot;&gt;Figure 1: An example of a decision tree - Credit: RPart &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h2 id=&quot;codes&quot;&gt;Codes&lt;/h2&gt;
+&lt;p&gt;Assuming we are doing classification, \(y \in {0,1} ^ n\), and \(X \in \mathbb{R} ^ {n \times p}\)&lt;/p&gt;
+
+&lt;p&gt;A decision tree starts as follow:&lt;/p&gt;
+
+&lt;p&gt;```python
+from &lt;strong&gt;future&lt;/strong&gt; import division
+import numpy as np&lt;/p&gt;
+
+&lt;p&gt;def GetP(y):
+    n = len(y)
+    return (y.cumsum()[:-1] / np.arange(1,n))&lt;/p&gt;
+
+&lt;p&gt;def GetGini(y):
+    n = len(y)
+    p1 = GetP(y)
+    p2 = GetP(y[::-1])[::-1]
+    res = np.arange(1,n) * p1&lt;em&gt;(1 - p1) + np.arange(1,n)[::-1] * p2&lt;/em&gt;(1 - p2)
+    return res / n
+```python&lt;/p&gt;
+</description>
+        <pubDate>Mon, 04 Apr 2016 06:06:27 -0700</pubDate>
+        <link>http://hduongtrong.github.io/2016/04/04/Trees-Based-Models/</link>
+        <guid isPermaLink="true">http://hduongtrong.github.io/2016/04/04/Trees-Based-Models/</guid>
+        
+        
+      </item>
     
       <item>
         <title>Sequence to Sequence Model</title>
