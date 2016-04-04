@@ -5,9 +5,9 @@
     <description>Learning Machine Learning</description>
     <link>http://hduongtrong.github.io/</link>
     <atom:link href="http://hduongtrong.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Mon, 04 Apr 2016 15:18:52 -0700</pubDate>
-    <lastBuildDate>Mon, 04 Apr 2016 15:18:52 -0700</lastBuildDate>
-    <generator>Jekyll v2.5.3</generator>
+    <pubDate>Mon, 04 Apr 2016 16:24:29 -0700</pubDate>
+    <lastBuildDate>Mon, 04 Apr 2016 16:24:29 -0700</lastBuildDate>
+    <generator>Jekyll v3.1.2</generator>
     
       <item>
         <title>Decision Trees, Random Forest, Gradient Boosting</title>
@@ -54,32 +54,33 @@
 
 &lt;p&gt;The codes to get the \(n - 1\) Gini score efficiently in \(O(n)\) is as followed.&lt;/p&gt;
 
-&lt;p&gt;```python
-from &lt;strong&gt;future&lt;/strong&gt; import division
-import numpy as np&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;__future__&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;division&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;numpy&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;np&lt;/span&gt;
 
-&lt;p&gt;def GetP(y):
-	“”” This function return the proportion of 1 in y[:i], for i from 1 to length(y)
-	Parameters:
-	———–
-		y: numpy binary 1D array
-	Returns:
-	——–
-		numpy float 1D array of length n - 1, containing proportion of 1
-	“””
-    n = len(y)
-    return (y.cumsum()[:-1] / np.arange(1,n))&lt;/p&gt;
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;GetP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot; This function return the proportion of 1 in y[:i], 
+	for i from 1 to length(y)
+    Parameters:
+    -----------
+        y: numpy binary 1D array
+    Returns:
+    --------
+        numpy float 1D array of length n - 1, containing proportion of 1
+    &quot;&quot;&quot;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cumsum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()[:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arange&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
 
-&lt;p&gt;def GetGini(y):
-	“”” Return the Gini score of y for each way of splitting, 
-		i.e. Gini( y[:1], y[1:] ), Gini(y[:2], y[2:], …)
-	“””
-    n = len(y)
-    p1 = GetP(y)
-    p2 = GetP(y[::-1])[::-1]
-    res = np.arange(1,n) * p1*(1 - p1) + np.arange(1,n)[::-1] * p2 * (1 - p2)
-    return res / n
-```&lt;/p&gt;
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;GetGini&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot; Return the Gini score of y for each way of splitting, 
+        i.e. Gini( y[:1], y[1:] ), Gini(y[:2], y[2:], ...)
+    &quot;&quot;&quot;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;p1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GetP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;p2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GetP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[::&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])[::&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;res&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arange&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arange&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)[::&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;res&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;h3 id=&quot;hyper-parameters&quot;&gt;1.4. Hyper Parameters&lt;/h3&gt;
 
@@ -89,7 +90,7 @@ import numpy as np&lt;/p&gt;
   &lt;li&gt;Max Depth: the lower it is, the less complex. It should not be much higher than \( \log _ 2 n \)&lt;/li&gt;
   &lt;li&gt;Min Sample Nodes: each node should contain at least this many samples&lt;/li&gt;
   &lt;li&gt;Min Sample split: to consider split a node, the node must have at least this many samples (note that this is different from 2.)&lt;/li&gt;
-  &lt;li&gt;Max number of nodes: this is straight forward, and is roughly equal to \(2 ^ maxdepth\).&lt;/li&gt;
+  &lt;li&gt;Max number of nodes: this is straight forward, and is roughly equal to \(2 ^ {maxdepth}\).&lt;/li&gt;
   &lt;li&gt;Criterion: for classification, in addition to Gini score, one can use entropy, which is \(p \log p + (1 - p) \log (1 - p)\). The two functions are in fact very similar&lt;/li&gt;
 &lt;/ol&gt;
 
@@ -111,6 +112,8 @@ import numpy as np&lt;/p&gt;
   &lt;li&gt;Number of trees: basically the bigger the better, but just more computation.&lt;/li&gt;
 &lt;/ol&gt;
 
+&lt;p&gt;Each of the trees in Random Forest is independent of each other, and thus can be embarrassingly paralleled. In general, the technique of averaging many small models, where each model use a bootstrap sample of the data, is called bagging (bootstrap aggregation).&lt;/p&gt;
+
 &lt;h3 id=&quot;gradient-boosting-machine&quot;&gt;2.2. Gradient Boosting Machine&lt;/h3&gt;
 
 &lt;p&gt;The algorithm is as followed (credit ESL)&lt;/p&gt;
@@ -118,9 +121,61 @@ import numpy as np&lt;/p&gt;
 &lt;ol&gt;
   &lt;li&gt;Initialize \(f _ 0 (x) = \arg \min _ {\gamma} \sum _ {i = 1} L(y _ i, \gamma) \)&lt;/li&gt;
   &lt;li&gt;For m = 1 to M:
-⋅⋅a. For i = 1, 2, …, N compute 
-⋅⋅b. asdsa&lt;/li&gt;
+    &lt;ol&gt;
+      &lt;li&gt;For \(i = 1, 2, …, N\) compute 
+ &lt;script type=&quot;math/tex&quot;&gt;r _ {im} = -\left[ \frac{\partial L(y _ i, f(x _ i))}{\partial f (x _ i)}\right] _ {f = f _ {m - 1}}&lt;/script&gt;&lt;/li&gt;
+      &lt;li&gt;Fit a regression tree to the target \(r _ {im}\) giving terminal regions \(R _ {jm}, j = 1, 2, …, J _ m.\)&lt;/li&gt;
+      &lt;li&gt;For \(j = 1, 2, …, J _ m\) compute &lt;script type=&quot;math/tex&quot;&gt;\gamma _ {jm} = \arg \min \sum _ {x _ i \in R _ {jm} } L(y _ i, f _ {m - 1} (x _ i) + \gamma)&lt;/script&gt;&lt;/li&gt;
+      &lt;li&gt;Update \( f _ m (x) = f _ {m - 1} (x) + \sum _ {j = 1} ^ {J _ m} \gamma _ {jm} I(x \in R _ {jm})\)&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Output \(\hat{f} (x) = f _ M (x).\)&lt;/li&gt;
 &lt;/ol&gt;
+
+&lt;p&gt;For regression with loss function \(L(y, \gamma) = (y - \gamma) ^ 2\), we have&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Initialize \(f _ 0 (x) = \bar{y} \)&lt;/li&gt;
+  &lt;li&gt;For m = 1 to M:
+    &lt;ol&gt;
+      &lt;li&gt;For \(i = 1, 2, …, N\) compute 
+ &lt;script type=&quot;math/tex&quot;&gt;r _ {im} = y _ i - f _ {m - 1} (x _ i)&lt;/script&gt;&lt;/li&gt;
+      &lt;li&gt;Fit a regression tree to the target \(r _ {im}\) giving terminal regions \(R _ {jm}, j = 1, 2, …, J _ m.\)&lt;/li&gt;
+      &lt;li&gt;For \(j = 1, 2, …, J _ m\) compute &lt;script type=&quot;math/tex&quot;&gt;\gamma _ {jm} = \bar{y} _ {jm} - f _ {m - 1} (x _ i)&lt;/script&gt;, for \(\bar{y} _ {jm}\) is the mean of \(y\) in that region&lt;/li&gt;
+      &lt;li&gt;Update \( f _ m (x) = f _ {m - 1} (x) + \sum _ {j = 1} ^ {J _ m} \gamma _ {jm} I(x \in R _ {jm})\)&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Output \(\hat{f} (x) = f _ M (x).\)&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Basically, we start with a simple regression tree, and calculate the residual. We then fit a model to the residual, and calculate the aggregated model. We calculate the new residual and keep proceeding. 
+For classification, the deviance loss function can be used.&lt;/p&gt;
+
+&lt;p&gt;Some improvements&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Use shrinkage in Step 2.4. The update rule is \( f _ m (x) = f _ {m - 1} (x) + \nu \sum _ {j = 1} ^ {J _ m} \gamma _ {jm} I(x \in R _ {jm})\), for \(\nu \in (0, 1]\). This is similar to a learning rate. Lower learning rate needs more iteration (more trees)&lt;/li&gt;
+  &lt;li&gt;Subsample observations, and columns&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;For hyperparameters, in addition to the 3 hyperparameters as found in Random Forest, Gradient Boosting Machine has 1 additional important hyperparameter which is learning rate. Typically, lower learning rate is better for testing error, but should be accompanied with more trees.&lt;/p&gt;
+
+&lt;p&gt;Unlike Random Forest, Gradient Boosting is not easily paralleled. It is still however still doable at each step. More specifically one can use multiple cores to speed up the building of each tree. In some sense Gradient Boosting is similar to Neural Network training with gradient descent. There is both a learning rate, and early stopping. It is not parallelizable along the iteration, but each iteration can be parallelized.&lt;/p&gt;
+
+&lt;h2 id=&quot;implementations&quot;&gt;3. Implementations&lt;/h2&gt;
+&lt;p&gt;In R, decision tree is implemented in &lt;em&gt;rpart&lt;/em&gt;, while in Python, one can use &lt;em&gt;scikit-klearn&lt;/em&gt;. Since we rarely use decision tree, but more often the ensembles, we talk about these more here. Random Forest and Gradient Boosting have their official packages built by the original algorithm of the inventor in R (Leo Breiman and Jerome Friedman). These two packages have a lot of parameters to tweak; however, they are slow and only use 1 core.&lt;/p&gt;
+
+&lt;p&gt;In Python, RandomForest of Scikit-Learn is fast and uses multiple core. GBM is slow here however. In both R and Python, one can use &lt;strong&gt;XGBoost&lt;/strong&gt; to run Random Forest and GBM really fast and on multiple cores. The algorithm in XGBoost is actually slightly different than GBM. According to the author&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Both xgboost and gbm follows the principle of gradient boosting.  There are however, the difference in modeling details. Specifically,  xgboost used a &lt;strong&gt;regularized&lt;/strong&gt; model formalization to control over-fitting, which gives it better performance.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;To be specific, the loss function is added with an &lt;strong&gt;L2 term&lt;/strong&gt; \( \frac{1}{2} \lambda \sum _ {j = 1} ^ T w _ j ^ 2\), where \(w _ j\) is the tree prediction for each leaf. XGBoost is very popular among Kaggle competitors. It is in many of the winning solutions, and can also be used to run Random Forest. In fact, one can have a hybrid of both Random Forest and Gradient Boosting, in that we grow multiple boosted model and averaging them at the end.&lt;/p&gt;
+
+&lt;p&gt;Finally, Scikit-learn has an implementation of &lt;strong&gt;Extra Trees&lt;/strong&gt; (also called Extremely Randomized Trees). Instead of using the best split for each feature, it uses a &lt;strong&gt;random split for each feature&lt;/strong&gt;. This allows the variance to be reduced, and quite often performs better than Random Forest.&lt;/p&gt;
+
+&lt;p&gt;In R, &lt;strong&gt;H2O&lt;/strong&gt; also provide fast implementation of Random Forest and Gradient Boosting.&lt;/p&gt;
 </description>
         <pubDate>Mon, 04 Apr 2016 06:06:27 -0700</pubDate>
         <link>http://hduongtrong.github.io/2016/04/04/Trees-Based-Models/</link>
@@ -228,14 +283,14 @@ Terry Koo, Slav Petrov, Ilya Sutskever.&lt;/li&gt;
         <title>Matrix Multiplication Benchmark</title>
         <description>&lt;h2 id=&quot;the-setting&quot;&gt;The setting&lt;/h2&gt;
 
-&lt;p&gt;```python
-import numpy as np
-import time&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;numpy&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;np&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;time&lt;/span&gt;
 
-&lt;p&gt;n = 10000
-x = np.random.randn(n,n)
-a = time.time(); x.dot(x); print time.time() - a
-```&lt;/p&gt;
+&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10000&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;randn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;The contestants&lt;/p&gt;
 
@@ -388,65 +443,65 @@ a = time.time(); x.dot(x); print time.time() - a
 &lt;h2 id=&quot;codes&quot;&gt;Codes&lt;/h2&gt;
 &lt;p&gt;#### Skcuda + Pycuda&lt;/p&gt;
 
-&lt;p&gt;```python
-import pycuda.gpuarray as gpuarray
-import pycuda.autoinit
-import numpy as np, time
-import skcuda.linalg as culinalg
-import skcuda
-culinalg.init()&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;pycuda.gpuarray&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;gpuarray&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;pycuda.autoinit&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;numpy&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;time&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;skcuda.linalg&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;culinalg&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;skcuda&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;culinalg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
 
-&lt;p&gt;dim = 30000
-rnd = np.random.RandomState(0)
-a = rnd.rand(dim, dim).astype(np.float32)&lt;/p&gt;
+&lt;span class=&quot;n&quot;&gt;dim&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;30000&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;rnd&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RandomState&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rnd&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rand&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dim&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dim&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;astype&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;float32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
-&lt;p&gt;start = time.time()
-a_gpu = gpuarray.to_gpu(a)
-print ‘Copy in’, time.time() - start&lt;/p&gt;
+&lt;span class=&quot;n&quot;&gt;start&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;a_gpu&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;gpuarray&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;to_gpu&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;Copy in&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;start&lt;/span&gt;
 
-&lt;p&gt;start = time.time()
-rescpu = np.dot(a, b)
-print ‘CPU:’, time.time() - start&lt;/p&gt;
+&lt;span class=&quot;n&quot;&gt;start&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;rescpu&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;CPU:&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;start&lt;/span&gt;
 
-&lt;p&gt;start = time.time()
-resgpu = culinalg.dot(a_gpu, a_gpu)
-print skcuda.misc.sum(resgpu)
-print ‘GPU:’, time.time() - start&lt;/p&gt;
+&lt;span class=&quot;n&quot;&gt;start&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;resgpu&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;culinalg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a_gpu&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a_gpu&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;skcuda&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;misc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;resgpu&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;GPU:&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;start&lt;/span&gt;
 
-&lt;p&gt;start = time.time()
-resgpu = resgpu.get()
-print ‘Copy out’, time.time() - start
-print np.allclose(rescpu, resgpu)
-print np.allclose(resgpu, rescpu)
-```&lt;/p&gt;
+&lt;span class=&quot;n&quot;&gt;start&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;resgpu&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;resgpu&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;Copy out&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;start&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;allclose&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rescpu&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;resgpu&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;allclose&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;resgpu&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rescpu&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;h4 id=&quot;tensorflow&quot;&gt;Tensorflow&lt;/h4&gt;
-&lt;p&gt;```python
-import numpy as np
-import tensorflow as tf
-import time&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;numpy&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;np&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;tensorflow&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;tf&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;time&lt;/span&gt;
 
-&lt;p&gt;X = tf.constant(np.array(np.random.randn(20000,20000), dtype = np.float32), dtype = tf.float32)
-Y = tf.matmul(X, tf.transpose(X))&lt;/p&gt;
+&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;constant&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;randn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;20000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;20000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dtype&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;float32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dtype&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;float32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Y&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;matmul&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;transpose&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
 
-&lt;p&gt;init = tf.initialize_all_variables()
-sess = tf.Session()
-sess.run(init)&lt;/p&gt;
+&lt;span class=&quot;n&quot;&gt;init&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;initialize_all_variables&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;sess&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Session&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;sess&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
-&lt;p&gt;a = time.time()
-sess.run(Y)
-print time.time() - a
-```&lt;/p&gt;
+&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;sess&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;h4 id=&quot;cpu-both-openblas-and-mkl&quot;&gt;CPU (both OpenBLAS and MKL)&lt;/h4&gt;
-&lt;p&gt;&lt;code&gt;python
-import numpy as np
-import time
-np.random.seed(1)
-n = 30000
-x = np.array(np.random.randn(n,n), dtype = np.float32)
-a = time.time(); x.dot(x); print time.time() - a
-&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;numpy&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;np&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;time&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;seed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;30000&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;randn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dtype&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;float32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 </description>
         <pubDate>Mon, 07 Mar 2016 05:06:27 -0800</pubDate>
         <link>http://hduongtrong.github.io/2016/03/07/Matrix-Multiplication-Benchmark/</link>
@@ -1102,7 +1157,7 @@ for \( N(w)\) counts the number of occurance of \(w  \) in \( \mathcal{D}\)&lt;/
 &lt;blockquote&gt;
   &lt;p&gt;Word: eminem  Position in vocabulary: 566691&lt;/p&gt;
 
-  &lt;pre&gt;&lt;code&gt;        Word       Cosine distance --------------------------------------
+  &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;        Word       Cosine distance --------------------------------------
        jay z		0.732697
    rick_ross		0.731509
        kanye		0.715282
@@ -1120,6 +1175,7 @@ for \( N(w)\) counts the number of occurance of \(w  \) in \( \mathcal{D}\)&lt;/
        cuz u		0.664925
       mariah		0.664813
 &lt;/code&gt;&lt;/pre&gt;
+  &lt;/div&gt;
 &lt;/blockquote&gt;
 </description>
         <pubDate>Fri, 20 Nov 2015 07:28:27 -0800</pubDate>
@@ -1198,42 +1254,41 @@ above. In particular, I clone Karpathy blog into mine. Many thanks to Andre
 Karpathy for this, and my apology if my blog accidentally contains some stuffs
 from yours. Ok now open &lt;strong&gt;Terminal&lt;/strong&gt; in Mac:&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;bash
-mkdir MyBlog
-# Downloading sample github page from Andre Karpathy
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mkdir MyBlog
+&lt;span class=&quot;c&quot;&gt;# Downloading sample github page from Andre Karpathy&lt;/span&gt;
 git clone https://github.com/karpathy/karpathy.github.io.git
-# Downloading your own github page blog. Replacing username with your github
-# user name
+&lt;span class=&quot;c&quot;&gt;# Downloading your own github page blog. Replacing username with your github&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# user name&lt;/span&gt;
 git clone https://github.com/username/username.github.io.git
-cp ./karpathy.github.io/* ./username.github.io/
-# Removing stuff associated with the original owner
+cp ./karpathy.github.io/&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; ./username.github.io/
+&lt;span class=&quot;c&quot;&gt;# Removing stuff associated with the original owner&lt;/span&gt;
 rm nntutorial.md
-rm _posts/* # Hist posts
-&lt;/code&gt;&lt;/p&gt;
+rm _posts/&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# Hist posts&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
-&lt;p&gt;You will need to change a few more information. Open &lt;code&gt;_config.yaml&lt;/code&gt;_ and change
-all the detail in there to your username. Change things in &lt;code&gt;about.md&lt;/code&gt; as well. 
-Also in &lt;code&gt;_layouts/post.html&lt;/code&gt; and
-&lt;code&gt;_layouts/page.html&lt;/code&gt;, there is a part with “karpathy”, change that to your
+&lt;p&gt;You will need to change a few more information. Open &lt;code class=&quot;highlighter-rouge&quot;&gt;_config.yaml&lt;/code&gt;_ and change
+all the detail in there to your username. Change things in &lt;code class=&quot;highlighter-rouge&quot;&gt;about.md&lt;/code&gt; as well. 
+Also in &lt;code class=&quot;highlighter-rouge&quot;&gt;_layouts/post.html&lt;/code&gt; and
+&lt;code class=&quot;highlighter-rouge&quot;&gt;_layouts/page.html&lt;/code&gt;, there is a part with “karpathy”, change that to your
 username. Basically, search for all text with the original owner’s name and
 replace them with your name. You might also want to delete everything in i
-&lt;code&gt;assets&lt;/code&gt;, as those are the picture that the original owner uses.&lt;/p&gt;
+&lt;code class=&quot;highlighter-rouge&quot;&gt;assets&lt;/code&gt;, as those are the picture that the original owner uses.&lt;/p&gt;
 
 &lt;p&gt;And voila, you are done.&lt;/p&gt;
 
 &lt;h2 id=&quot;hello-world&quot;&gt;Hello World&lt;/h2&gt;
 &lt;p&gt;To create your first blog post, again copy over a sample post say from&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;bash
-cp ./karpathy.github.io/_posts/2015-05-21-rnn-effectiveness.markdown
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;cp ./karpathy.github.io/_posts/2015-05-21-rnn-effectiveness.markdown
    ./username.github.io/_posts/
-&lt;/code&gt;
-And you can start changing things in there. Then do this &lt;code&gt;jekyll serve&lt;/code&gt; inside
-your &lt;code&gt;username.github.io&lt;/code&gt; folder. You should see something like this if
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;And you can start changing things in there. Then do this &lt;code class=&quot;highlighter-rouge&quot;&gt;jekyll serve&lt;/code&gt; inside
+your &lt;code class=&quot;highlighter-rouge&quot;&gt;username.github.io&lt;/code&gt; folder. You should see something like this if
 successful&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;
-Configuration file: /Users/hd/Documents/Blog/hduongtrong.github.io/_config.yml
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Configuration file: /Users/hd/Documents/Blog/hduongtrong.github.io/_config.yml
             Source: /Users/hd/Documents/Blog/hduongtrong.github.io
        Destination: /Users/hd/Documents/Blog/hduongtrong.github.io/_site
       Generating... 
@@ -1243,20 +1298,21 @@ Configuration file: /Users/hd/Documents/Blog/hduongtrong.github.io/_config.yml
 Configuration file: /Users/hd/Documents/Blog/hduongtrong.github.io/_config.yml
     Server address: http://127.0.0.1:4000/
   Server running... press ctrl-c to stop.
-&lt;/code&gt;&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
-&lt;p&gt;Open your web browser, and go to &lt;code&gt;http://127.0.0.1:4000/&lt;/code&gt;, you will see your
+&lt;p&gt;Open your web browser, and go to &lt;code class=&quot;highlighter-rouge&quot;&gt;http://127.0.0.1:4000/&lt;/code&gt;, you will see your
 post there.&lt;/p&gt;
 
 &lt;p&gt;Now to push this online, just&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;bash
-cd username.github.io/
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;username.github.io/
 git add .
-git commit -m &quot;First blog&quot;
+git commit -m &lt;span class=&quot;s2&quot;&gt;&quot;First blog&quot;&lt;/span&gt;
 git push origin master
-&lt;/code&gt;
-And go to &lt;code&gt;username.github.io&lt;/code&gt;.&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;And go to &lt;code class=&quot;highlighter-rouge&quot;&gt;username.github.io&lt;/code&gt;.&lt;/p&gt;
 </description>
         <pubDate>Mon, 19 Oct 2015 09:46:27 -0700</pubDate>
         <link>http://hduongtrong.github.io/2015/10/19/how-setting-up-blog/</link>

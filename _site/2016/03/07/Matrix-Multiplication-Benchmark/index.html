@@ -78,14 +78,14 @@
   <article class="post-content">
   <h2 id="the-setting">The setting</h2>
 
-<p>```python
-import numpy as np
-import time</p>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">time</span>
 
-<p>n = 10000
-x = np.random.randn(n,n)
-a = time.time(); x.dot(x); print time.time() - a
-```</p>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">10000</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">();</span> <span class="n">x</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">);</span> <span class="k">print</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">a</span>
+</code></pre>
+</div>
 
 <p>The contestants</p>
 
@@ -238,65 +238,65 @@ a = time.time(); x.dot(x); print time.time() - a
 <h2 id="codes">Codes</h2>
 <p>#### Skcuda + Pycuda</p>
 
-<p>```python
-import pycuda.gpuarray as gpuarray
-import pycuda.autoinit
-import numpy as np, time
-import skcuda.linalg as culinalg
-import skcuda
-culinalg.init()</p>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">pycuda.gpuarray</span> <span class="kn">as</span> <span class="nn">gpuarray</span>
+<span class="kn">import</span> <span class="nn">pycuda.autoinit</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span><span class="o">,</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">skcuda.linalg</span> <span class="kn">as</span> <span class="nn">culinalg</span>
+<span class="kn">import</span> <span class="nn">skcuda</span>
+<span class="n">culinalg</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
 
-<p>dim = 30000
-rnd = np.random.RandomState(0)
-a = rnd.rand(dim, dim).astype(np.float32)</p>
+<span class="n">dim</span> <span class="o">=</span> <span class="mi">30000</span>
+<span class="n">rnd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">rnd</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
 
-<p>start = time.time()
-a_gpu = gpuarray.to_gpu(a)
-print ‘Copy in’, time.time() - start</p>
+<span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">a_gpu</span> <span class="o">=</span> <span class="n">gpuarray</span><span class="o">.</span><span class="n">to_gpu</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="k">print</span> <span class="s">'Copy in'</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
 
-<p>start = time.time()
-rescpu = np.dot(a, b)
-print ‘CPU:’, time.time() - start</p>
+<span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">rescpu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+<span class="k">print</span> <span class="s">'CPU:'</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
 
-<p>start = time.time()
-resgpu = culinalg.dot(a_gpu, a_gpu)
-print skcuda.misc.sum(resgpu)
-print ‘GPU:’, time.time() - start</p>
+<span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">resgpu</span> <span class="o">=</span> <span class="n">culinalg</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">a_gpu</span><span class="p">,</span> <span class="n">a_gpu</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">skcuda</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="nb">sum</span><span class="p">(</span><span class="n">resgpu</span><span class="p">)</span>
+<span class="k">print</span> <span class="s">'GPU:'</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
 
-<p>start = time.time()
-resgpu = resgpu.get()
-print ‘Copy out’, time.time() - start
-print np.allclose(rescpu, resgpu)
-print np.allclose(resgpu, rescpu)
-```</p>
+<span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">resgpu</span> <span class="o">=</span> <span class="n">resgpu</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+<span class="k">print</span> <span class="s">'Copy out'</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
+<span class="k">print</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">rescpu</span><span class="p">,</span> <span class="n">resgpu</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">resgpu</span><span class="p">,</span> <span class="n">rescpu</span><span class="p">)</span>
+</code></pre>
+</div>
 
 <h4 id="tensorflow">Tensorflow</h4>
-<p>```python
-import numpy as np
-import tensorflow as tf
-import time</p>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="kn">as</span> <span class="nn">tf</span>
+<span class="kn">import</span> <span class="nn">time</span>
 
-<p>X = tf.constant(np.array(np.random.randn(20000,20000), dtype = np.float32), dtype = tf.float32)
-Y = tf.matmul(X, tf.transpose(X))</p>
+<span class="n">X</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">20000</span><span class="p">,</span><span class="mi">20000</span><span class="p">),</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>
 
-<p>init = tf.initialize_all_variables()
-sess = tf.Session()
-sess.run(init)</p>
+<span class="n">init</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">initialize_all_variables</span><span class="p">()</span>
+<span class="n">sess</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
+<span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">init</span><span class="p">)</span>
 
-<p>a = time.time()
-sess.run(Y)
-print time.time() - a
-```</p>
+<span class="n">a</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">a</span>
+</code></pre>
+</div>
 
 <h4 id="cpu-both-openblas-and-mkl">CPU (both OpenBLAS and MKL)</h4>
-<p><code>python
-import numpy as np
-import time
-np.random.seed(1)
-n = 30000
-x = np.array(np.random.randn(n,n), dtype = np.float32)
-a = time.time(); x.dot(x); print time.time() - a
-</code></p>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">30000</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">),</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">();</span> <span class="n">x</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">);</span> <span class="k">print</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">a</span>
+</code></pre>
+</div>
 
   </article>
 

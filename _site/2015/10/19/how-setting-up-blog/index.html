@@ -108,42 +108,41 @@ above. In particular, I clone Karpathy blog into mine. Many thanks to Andre
 Karpathy for this, and my apology if my blog accidentally contains some stuffs
 from yours. Ok now open <strong>Terminal</strong> in Mac:</p>
 
-<p><code>bash
-mkdir MyBlog
-# Downloading sample github page from Andre Karpathy
+<div class="highlighter-rouge"><pre class="highlight"><code>mkdir MyBlog
+<span class="c"># Downloading sample github page from Andre Karpathy</span>
 git clone https://github.com/karpathy/karpathy.github.io.git
-# Downloading your own github page blog. Replacing username with your github
-# user name
+<span class="c"># Downloading your own github page blog. Replacing username with your github</span>
+<span class="c"># user name</span>
 git clone https://github.com/username/username.github.io.git
-cp ./karpathy.github.io/* ./username.github.io/
-# Removing stuff associated with the original owner
+cp ./karpathy.github.io/<span class="k">*</span> ./username.github.io/
+<span class="c"># Removing stuff associated with the original owner</span>
 rm nntutorial.md
-rm _posts/* # Hist posts
-</code></p>
+rm _posts/<span class="k">*</span> <span class="c"># Hist posts</span>
+</code></pre>
+</div>
 
-<p>You will need to change a few more information. Open <code>_config.yaml</code>_ and change
-all the detail in there to your username. Change things in <code>about.md</code> as well. 
-Also in <code>_layouts/post.html</code> and
-<code>_layouts/page.html</code>, there is a part with “karpathy”, change that to your
+<p>You will need to change a few more information. Open <code class="highlighter-rouge">_config.yaml</code>_ and change
+all the detail in there to your username. Change things in <code class="highlighter-rouge">about.md</code> as well. 
+Also in <code class="highlighter-rouge">_layouts/post.html</code> and
+<code class="highlighter-rouge">_layouts/page.html</code>, there is a part with “karpathy”, change that to your
 username. Basically, search for all text with the original owner’s name and
 replace them with your name. You might also want to delete everything in i
-<code>assets</code>, as those are the picture that the original owner uses.</p>
+<code class="highlighter-rouge">assets</code>, as those are the picture that the original owner uses.</p>
 
 <p>And voila, you are done.</p>
 
 <h2 id="hello-world">Hello World</h2>
 <p>To create your first blog post, again copy over a sample post say from</p>
 
-<p><code>bash
-cp ./karpathy.github.io/_posts/2015-05-21-rnn-effectiveness.markdown
+<div class="highlighter-rouge"><pre class="highlight"><code>cp ./karpathy.github.io/_posts/2015-05-21-rnn-effectiveness.markdown
    ./username.github.io/_posts/
-</code>
-And you can start changing things in there. Then do this <code>jekyll serve</code> inside
-your <code>username.github.io</code> folder. You should see something like this if
+</code></pre>
+</div>
+<p>And you can start changing things in there. Then do this <code class="highlighter-rouge">jekyll serve</code> inside
+your <code class="highlighter-rouge">username.github.io</code> folder. You should see something like this if
 successful</p>
 
-<p><code>
-Configuration file: /Users/hd/Documents/Blog/hduongtrong.github.io/_config.yml
+<div class="highlighter-rouge"><pre class="highlight"><code>Configuration file: /Users/hd/Documents/Blog/hduongtrong.github.io/_config.yml
             Source: /Users/hd/Documents/Blog/hduongtrong.github.io
        Destination: /Users/hd/Documents/Blog/hduongtrong.github.io/_site
       Generating... 
@@ -153,20 +152,21 @@ Configuration file: /Users/hd/Documents/Blog/hduongtrong.github.io/_config.yml
 Configuration file: /Users/hd/Documents/Blog/hduongtrong.github.io/_config.yml
     Server address: http://127.0.0.1:4000/
   Server running... press ctrl-c to stop.
-</code></p>
+</code></pre>
+</div>
 
-<p>Open your web browser, and go to <code>http://127.0.0.1:4000/</code>, you will see your
+<p>Open your web browser, and go to <code class="highlighter-rouge">http://127.0.0.1:4000/</code>, you will see your
 post there.</p>
 
 <p>Now to push this online, just</p>
 
-<p><code>bash
-cd username.github.io/
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nb">cd </span>username.github.io/
 git add .
-git commit -m "First blog"
+git commit -m <span class="s2">"First blog"</span>
 git push origin master
-</code>
-And go to <code>username.github.io</code>.</p>
+</code></pre>
+</div>
+<p>And go to <code class="highlighter-rouge">username.github.io</code>.</p>
 
   </article>
 

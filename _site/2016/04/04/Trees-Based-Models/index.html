@@ -119,32 +119,33 @@
 
 <p>The codes to get the \(n - 1\) Gini score efficiently in \(O(n)\) is as followed.</p>
 
-<p>```python
-from <strong>future</strong> import division
-import numpy as np</p>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 
-<p>def GetP(y):
-	“”” This function return the proportion of 1 in y[:i], for i from 1 to length(y)
-	Parameters:
-	———–
-		y: numpy binary 1D array
-	Returns:
-	——–
-		numpy float 1D array of length n - 1, containing proportion of 1
-	“””
-    n = len(y)
-    return (y.cumsum()[:-1] / np.arange(1,n))</p>
+<span class="k">def</span> <span class="nf">GetP</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+    <span class="s">""" This function return the proportion of 1 in y[:i], 
+	for i from 1 to length(y)
+    Parameters:
+    -----------
+        y: numpy binary 1D array
+    Returns:
+    --------
+        numpy float 1D array of length n - 1, containing proportion of 1
+    """</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">n</span><span class="p">))</span>
 
-<p>def GetGini(y):
-	“”” Return the Gini score of y for each way of splitting, 
-		i.e. Gini( y[:1], y[1:] ), Gini(y[:2], y[2:], …)
-	“””
-    n = len(y)
-    p1 = GetP(y)
-    p2 = GetP(y[::-1])[::-1]
-    res = np.arange(1,n) * p1*(1 - p1) + np.arange(1,n)[::-1] * p2 * (1 - p2)
-    return res / n
-```</p>
+<span class="k">def</span> <span class="nf">GetGini</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+    <span class="s">""" Return the Gini score of y for each way of splitting, 
+        i.e. Gini( y[:1], y[1:] ), Gini(y[:2], y[2:], ...)
+    """</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">p1</span> <span class="o">=</span> <span class="n">GetP</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">p2</span> <span class="o">=</span> <span class="n">GetP</span><span class="p">(</span><span class="n">y</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">p1</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">p1</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">n</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">p2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">p2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">res</span> <span class="o">/</span> <span class="n">n</span>
+</code></pre>
+</div>
 
 <h3 id="hyper-parameters">1.4. Hyper Parameters</h3>
 
@@ -154,7 +155,7 @@ import numpy as np</p>
   <li>Max Depth: the lower it is, the less complex. It should not be much higher than \( \log _ 2 n \)</li>
   <li>Min Sample Nodes: each node should contain at least this many samples</li>
   <li>Min Sample split: to consider split a node, the node must have at least this many samples (note that this is different from 2.)</li>
-  <li>Max number of nodes: this is straight forward, and is roughly equal to \(2 ^ maxdepth\).</li>
+  <li>Max number of nodes: this is straight forward, and is roughly equal to \(2 ^ {maxdepth}\).</li>
   <li>Criterion: for classification, in addition to Gini score, one can use entropy, which is \(p \log p + (1 - p) \log (1 - p)\). The two functions are in fact very similar</li>
 </ol>
 
@@ -176,6 +177,8 @@ import numpy as np</p>
   <li>Number of trees: basically the bigger the better, but just more computation.</li>
 </ol>
 
+<p>Each of the trees in Random Forest is independent of each other, and thus can be embarrassingly paralleled. In general, the technique of averaging many small models, where each model use a bootstrap sample of the data, is called bagging (bootstrap aggregation).</p>
+
 <h3 id="gradient-boosting-machine">2.2. Gradient Boosting Machine</h3>
 
 <p>The algorithm is as followed (credit ESL)</p>
@@ -183,9 +186,61 @@ import numpy as np</p>
 <ol>
   <li>Initialize \(f _ 0 (x) = \arg \min _ {\gamma} \sum _ {i = 1} L(y _ i, \gamma) \)</li>
   <li>For m = 1 to M:
-⋅⋅a. For i = 1, 2, …, N compute 
-⋅⋅b. asdsa</li>
+    <ol>
+      <li>For \(i = 1, 2, …, N\) compute 
+ <script type="math/tex">r _ {im} = -\left[ \frac{\partial L(y _ i, f(x _ i))}{\partial f (x _ i)}\right] _ {f = f _ {m - 1}}</script></li>
+      <li>Fit a regression tree to the target \(r _ {im}\) giving terminal regions \(R _ {jm}, j = 1, 2, …, J _ m.\)</li>
+      <li>For \(j = 1, 2, …, J _ m\) compute <script type="math/tex">\gamma _ {jm} = \arg \min \sum _ {x _ i \in R _ {jm} } L(y _ i, f _ {m - 1} (x _ i) + \gamma)</script></li>
+      <li>Update \( f _ m (x) = f _ {m - 1} (x) + \sum _ {j = 1} ^ {J _ m} \gamma _ {jm} I(x \in R _ {jm})\)</li>
+    </ol>
+  </li>
+  <li>Output \(\hat{f} (x) = f _ M (x).\)</li>
 </ol>
+
+<p>For regression with loss function \(L(y, \gamma) = (y - \gamma) ^ 2\), we have</p>
+
+<ol>
+  <li>Initialize \(f _ 0 (x) = \bar{y} \)</li>
+  <li>For m = 1 to M:
+    <ol>
+      <li>For \(i = 1, 2, …, N\) compute 
+ <script type="math/tex">r _ {im} = y _ i - f _ {m - 1} (x _ i)</script></li>
+      <li>Fit a regression tree to the target \(r _ {im}\) giving terminal regions \(R _ {jm}, j = 1, 2, …, J _ m.\)</li>
+      <li>For \(j = 1, 2, …, J _ m\) compute <script type="math/tex">\gamma _ {jm} = \bar{y} _ {jm} - f _ {m - 1} (x _ i)</script>, for \(\bar{y} _ {jm}\) is the mean of \(y\) in that region</li>
+      <li>Update \( f _ m (x) = f _ {m - 1} (x) + \sum _ {j = 1} ^ {J _ m} \gamma _ {jm} I(x \in R _ {jm})\)</li>
+    </ol>
+  </li>
+  <li>Output \(\hat{f} (x) = f _ M (x).\)</li>
+</ol>
+
+<p>Basically, we start with a simple regression tree, and calculate the residual. We then fit a model to the residual, and calculate the aggregated model. We calculate the new residual and keep proceeding. 
+For classification, the deviance loss function can be used.</p>
+
+<p>Some improvements</p>
+
+<ol>
+  <li>Use shrinkage in Step 2.4. The update rule is \( f _ m (x) = f _ {m - 1} (x) + \nu \sum _ {j = 1} ^ {J _ m} \gamma _ {jm} I(x \in R _ {jm})\), for \(\nu \in (0, 1]\). This is similar to a learning rate. Lower learning rate needs more iteration (more trees)</li>
+  <li>Subsample observations, and columns</li>
+</ol>
+
+<p>For hyperparameters, in addition to the 3 hyperparameters as found in Random Forest, Gradient Boosting Machine has 1 additional important hyperparameter which is learning rate. Typically, lower learning rate is better for testing error, but should be accompanied with more trees.</p>
+
+<p>Unlike Random Forest, Gradient Boosting is not easily paralleled. It is still however still doable at each step. More specifically one can use multiple cores to speed up the building of each tree. In some sense Gradient Boosting is similar to Neural Network training with gradient descent. There is both a learning rate, and early stopping. It is not parallelizable along the iteration, but each iteration can be parallelized.</p>
+
+<h2 id="implementations">3. Implementations</h2>
+<p>In R, decision tree is implemented in <em>rpart</em>, while in Python, one can use <em>scikit-klearn</em>. Since we rarely use decision tree, but more often the ensembles, we talk about these more here. Random Forest and Gradient Boosting have their official packages built by the original algorithm of the inventor in R (Leo Breiman and Jerome Friedman). These two packages have a lot of parameters to tweak; however, they are slow and only use 1 core.</p>
+
+<p>In Python, RandomForest of Scikit-Learn is fast and uses multiple core. GBM is slow here however. In both R and Python, one can use <strong>XGBoost</strong> to run Random Forest and GBM really fast and on multiple cores. The algorithm in XGBoost is actually slightly different than GBM. According to the author</p>
+
+<blockquote>
+  <p>Both xgboost and gbm follows the principle of gradient boosting.  There are however, the difference in modeling details. Specifically,  xgboost used a <strong>regularized</strong> model formalization to control over-fitting, which gives it better performance.</p>
+</blockquote>
+
+<p>To be specific, the loss function is added with an <strong>L2 term</strong> \( \frac{1}{2} \lambda \sum _ {j = 1} ^ T w _ j ^ 2\), where \(w _ j\) is the tree prediction for each leaf. XGBoost is very popular among Kaggle competitors. It is in many of the winning solutions, and can also be used to run Random Forest. In fact, one can have a hybrid of both Random Forest and Gradient Boosting, in that we grow multiple boosted model and averaging them at the end.</p>
+
+<p>Finally, Scikit-learn has an implementation of <strong>Extra Trees</strong> (also called Extremely Randomized Trees). Instead of using the best split for each feature, it uses a <strong>random split for each feature</strong>. This allows the variance to be reduced, and quite often performs better than Random Forest.</p>
+
+<p>In R, <strong>H2O</strong> also provide fast implementation of Random Forest and Gradient Boosting.</p>
 
   </article>
 
