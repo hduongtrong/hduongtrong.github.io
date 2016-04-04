@@ -18,7 +18,7 @@ Decision trees sound straightforward enough, as for example seen in Figure 1. It
 
 <div class="imgcap">
 <div>
-<img src="/assets/tree/rpart.plot-example1.png">
+<img src="/assets/tree/rpart.plot-example1.png" width="300">
 </div>
 <div class="thecap">Figure 1: An example of a decision tree - Credit: RPart </div>
 </div>
@@ -136,6 +136,8 @@ Some improvements
 For hyperparameters, in addition to the 3 hyperparameters as found in Random Forest, Gradient Boosting Machine has 1 additional important hyperparameter which is learning rate. Typically, lower learning rate is better for testing error, but should be accompanied with more trees. 
 
 Unlike Random Forest, Gradient Boosting is not easily paralleled. It is still however still doable at each step. More specifically one can use multiple cores to speed up the building of each tree. In some sense Gradient Boosting is similar to Neural Network training with gradient descent. There is both a learning rate, and early stopping. It is not parallelizable along the iteration, but each iteration can be parallelized.  
+
+Gradient Boosting is also similar to Stagewise Regression, in that it fits to the residual iteratively at each step. 
 
 ## 3. Implementations
 In R, decision tree is implemented in *rpart*, while in Python, one can use *scikit-klearn*. Since we rarely use decision tree, but more often the ensembles, we talk about these more here. Random Forest and Gradient Boosting have their official packages built by the original algorithm of the inventor in R (Leo Breiman and Jerome Friedman). These two packages have a lot of parameters to tweak; however, they are slow and only use 1 core. 

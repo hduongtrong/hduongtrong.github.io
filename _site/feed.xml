@@ -5,8 +5,8 @@
     <description>Learning Machine Learning</description>
     <link>http://hduongtrong.github.io/</link>
     <atom:link href="http://hduongtrong.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Mon, 04 Apr 2016 16:26:38 -0700</pubDate>
-    <lastBuildDate>Mon, 04 Apr 2016 16:26:38 -0700</lastBuildDate>
+    <pubDate>Mon, 04 Apr 2016 16:48:13 -0700</pubDate>
+    <lastBuildDate>Mon, 04 Apr 2016 16:48:13 -0700</lastBuildDate>
     <generator>Jekyll v3.1.2</generator>
     
       <item>
@@ -19,7 +19,7 @@
 
 &lt;div class=&quot;imgcap&quot;&gt;
 &lt;div&gt;
-&lt;img src=&quot;/assets/tree/rpart.plot-example1.png&quot; /&gt;
+&lt;img src=&quot;/assets/tree/rpart.plot-example1.png&quot; width=&quot;300&quot; /&gt;
 &lt;/div&gt;
 &lt;div class=&quot;thecap&quot;&gt;Figure 1: An example of a decision tree - Credit: RPart &lt;/div&gt;
 &lt;/div&gt;
@@ -161,6 +161,8 @@ For classification, the deviance loss function can be used.&lt;/p&gt;
 &lt;p&gt;For hyperparameters, in addition to the 3 hyperparameters as found in Random Forest, Gradient Boosting Machine has 1 additional important hyperparameter which is learning rate. Typically, lower learning rate is better for testing error, but should be accompanied with more trees.&lt;/p&gt;
 
 &lt;p&gt;Unlike Random Forest, Gradient Boosting is not easily paralleled. It is still however still doable at each step. More specifically one can use multiple cores to speed up the building of each tree. In some sense Gradient Boosting is similar to Neural Network training with gradient descent. There is both a learning rate, and early stopping. It is not parallelizable along the iteration, but each iteration can be parallelized.&lt;/p&gt;
+
+&lt;p&gt;Gradient Boosting is also similar to Stagewise Regression, in that it fits to the residual iteratively at each step.&lt;/p&gt;
 
 &lt;h2 id=&quot;implementations&quot;&gt;3. Implementations&lt;/h2&gt;
 &lt;p&gt;In R, decision tree is implemented in &lt;em&gt;rpart&lt;/em&gt;, while in Python, one can use &lt;em&gt;scikit-klearn&lt;/em&gt;. Since we rarely use decision tree, but more often the ensembles, we talk about these more here. Random Forest and Gradient Boosting have their official packages built by the original algorithm of the inventor in R (Leo Breiman and Jerome Friedman). These two packages have a lot of parameters to tweak; however, they are slow and only use 1 core.&lt;/p&gt;
