@@ -38,4 +38,4 @@ def GetGini(y):
     p2 = GetP(y[::-1])[::-1]
     res = np.arange(1,n) * p1*(1 - p1) + np.arange(1,n)[::-1] * p2*(1 - p2)
     return res / n
-```python
+```
